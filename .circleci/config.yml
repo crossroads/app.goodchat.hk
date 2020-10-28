@@ -51,18 +51,18 @@ jobs:
       - restore_cache: *repo-cache
       - restore_cache: *npm-cache
       - run:
-        name: Setup Environment variables
-        command: |
-          case "$CIRCLE_BRANCH" in
-            live)
-              echo 'export NODE_ENV=production' >> $BASH_ENV
-              echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_PROD' >> $BASH_ENV
-              ;;
-            *)
-              echo 'export NODE_ENV=staging' >> $BASH_ENV
-              echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_STAGING' >> $BASH_ENV
-              ;;
-          esac
+          name: Setup Environment variables
+          command: |
+            case "$CIRCLE_BRANCH" in
+              live)
+                echo 'export NODE_ENV=production' >> $BASH_ENV
+                echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_PROD' >> $BASH_ENV
+                ;;
+              *)
+                echo 'export NODE_ENV=staging' >> $BASH_ENV
+                echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_STAGING' >> $BASH_ENV
+                ;;
+            esac
       - run: npm run build
       - azure-cli/install
       - azure-cli/login-with-service-principal
