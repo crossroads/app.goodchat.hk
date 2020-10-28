@@ -34,6 +34,8 @@ jobs:
   test:
     <<: *defaults
     steps:
+      - restore_cache: *repo-cache
+      - restore_cache: *npm-cache
       - run:
           command: npm test
           environment:
