@@ -1,8 +1,29 @@
 version: 2.1
+aliases:
+  - defaults: &defaults
+      executor:
+        name: node/default
+        tag: '14.50'
+      working_directory: ~/code
 orbs:
-  node: circleci/node@3.0.0
+  node: circleci/node@4.1.0
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm test
+          environment:
+            CI: true
+
 workflows:
-  node-tests:
+  test_and_deploy:
     jobs:
-      - node/test
+      - test
+      # - prepare
+      # - test:
+      #     requires:
+      #       - prepare
 
