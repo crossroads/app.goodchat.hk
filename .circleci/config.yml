@@ -1,4 +1,5 @@
 version: 2.1
+
 aliases:
   - defaults: &defaults
       executor:
@@ -9,8 +10,11 @@ aliases:
       key: v1-app-goodchat-{{ .Environment.CIRCLE_SHA1 }}
   - npm-cache: &npm-cache
       key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
+
 orbs:
   node: circleci/node@4.1.0
+  azure-cli: circleci/azure-cli@1.1.0
+
 jobs:
   checkout_code:
     <<: *defaults
@@ -41,6 +45,29 @@ jobs:
           environment:
             CI: true
 
+  deploy_www:
+    <<: *defaults
+    steps:
+      - restore_cache: *repo-cache
+      - restore_cache: *npm-cache
+      - run:
+        name: Setup Environment variables
+        command: |
+          case "$CIRCLE_BRANCH" in
+            live)
+              echo 'export NODE_ENV=production' >> $BASH_ENV
+              echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_PROD' >> $BASH_ENV
+              ;;
+            *)
+              echo 'export NODE_ENV=staging' >> $BASH_ENV
+              echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_STAGING' >> $BASH_ENV
+              ;;
+          esac
+      - run: npm run build
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_STORAGE_NAME
+
 workflows:
   test_and_deploy:
     jobs:
@@ -51,4 +78,10 @@ workflows:
       - test:
           requires:
             - package_dependencies
+      - deploy_www:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^(circleci-project-setup|main|live)$/
 
