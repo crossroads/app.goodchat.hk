@@ -24,7 +24,7 @@ jobs:
   package_dependencies:
     <<: *defaults
     steps:
-      - restore-cache: *repo-cache
+      - restore_cache: *repo-cache
       - run: npm install
       - save-cache:
           <<: *npm-cache
