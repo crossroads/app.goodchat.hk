@@ -1,5 +1,7 @@
 {
   "name": "app.goodchat.hk",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react"
 }
