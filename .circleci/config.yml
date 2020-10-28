@@ -3,7 +3,7 @@ aliases:
   - defaults: &defaults
       executor:
         name: node/default
-        tag: '14.50'
+        tag: '14.15'
       working_directory: ~/code
 orbs:
   node: circleci/node@4.1.0
