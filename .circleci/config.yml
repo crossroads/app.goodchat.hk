@@ -26,7 +26,7 @@ jobs:
     steps:
       - restore_cache: *repo-cache
       - run: npm install
-      - save-cache:
+      - save_cache:
           <<: *npm-cache
           paths:
             - node_modules
