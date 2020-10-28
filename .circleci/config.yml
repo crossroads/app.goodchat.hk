@@ -5,14 +5,35 @@ aliases:
         name: node/default
         tag: '14.15'
       working_directory: ~/code
+  - repo-cache: &repo-cache
+      key: v1-app-goodchat-{{ .Environment.CIRCLE_SHA1 }}
+  - npm-cache: &npm-cache
+      key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
 orbs:
   node: circleci/node@4.1.0
 jobs:
-  test:
+  checkout_code:
     <<: *defaults
     steps:
       - checkout
-      - node/install-packages
+      - save_cache:
+          <<: *repo-cache
+          paths:
+            - ~/code
+
+  package_dependencies:
+    <<: *defaults
+    steps:
+      - restore-cache: *repo-cache
+      - run: npm install
+      - save-cache:
+          <<: *npm-cache
+          paths:
+            - node_modules
+            - ~/.npm
+  test:
+    <<: *defaults
+    steps:
       - run:
           command: npm test
           environment:
@@ -21,9 +42,11 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - test
-      # - prepare
-      # - test:
-      #     requires:
-      #       - prepare
+      - checkout_code
+      - package_dependencies:
+          requires:
+            - checkout_code
+      - test:
+          requires:
+            - package_dependencies
 
