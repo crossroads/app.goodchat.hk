@@ -1,5 +1,9 @@
 version: 2.1
 
+# -----------------------------
+# Configs
+# -----------------------------
+
 aliases:
   - defaults: &defaults
       executor:
@@ -10,10 +14,46 @@ aliases:
       key: v1-app-goodchat-{{ .Environment.CIRCLE_SHA1 }}
   - npm-cache: &npm-cache
       key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
+  - build-cache:  &build-cache
+      key: v1-app-goodchat-build-{{ .Environment.CIRCLE_SHA1 }}
+
+# -----------------------------
+# Reusable commands
+# -----------------------------
+
+commands:
+  setup_environment:  
+    steps:
+      - run:
+          name: Setup Environment variables
+          command: |
+            case "$CIRCLE_BRANCH" in
+              live)
+                echo 'export NODE_ENV=production' >> $BASH_ENV
+                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
+                echo 'export AZURE_WEB_STORAGE_NAME=$AZURE_WEB_STORAGE_NAME_PROD' >> $BASH_ENV
+                ;;
+              *)
+                echo 'export NODE_ENV=staging' >> $BASH_ENV
+                echo 'export CERTIFICATE=GoodCity_2020_Development.p12' >> $BASH_ENV
+                echo 'export AZURE_WEB_STORAGE_NAME=$AZURE_WEB_STORAGE_NAME_STAGING' >> $BASH_ENV
+                ;;
+            esac
+      - run:
+          name: Decode AppStore connect API Key (to preserver line returns)
+          command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $BASH_ENV
+
+# -----------------------------
+# Orbs
+# -----------------------------
 
 orbs:
   node: circleci/node@4.1.0
   azure-cli: circleci/azure-cli@1.1.0
+
+# -----------------------------
+# Jobs
+# -----------------------------
 
 jobs:
   checkout_code:
@@ -50,23 +90,39 @@ jobs:
     steps:
       - restore_cache: *repo-cache
       - restore_cache: *npm-cache
-      - run:
-          name: Setup Environment variables
-          command: |
-            case "$CIRCLE_BRANCH" in
-              live)
-                echo 'export NODE_ENV=production' >> $BASH_ENV
-                echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_PROD' >> $BASH_ENV
-                ;;
-              *)
-                echo 'export NODE_ENV=staging' >> $BASH_ENV
-                echo 'export AZURE_STORAGE_NAME=$AZURE_STORAGE_NAME_STAGING' >> $BASH_ENV
-                ;;
-            esac
+      - setup_environment
       - run: npm run build
       - azure-cli/install
       - azure-cli/login-with-service-principal
-      - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_STORAGE_NAME
+      - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_WEB_STORAGE_NAME
+
+  deploy_ios:
+    macos:
+      xcode: "14.1.0"
+    working_directory: ~/code
+    steps:
+      - restore_cache: *repo-cache
+      - restore_cache: *npm-cache
+      - setup_environment
+      - run: bundle install
+      - run: npm run build
+      - run: npx ionic capacitor copy
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - when:
+          condition:
+            equal: [ live, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and release to app store
+                command: bundle exec fastlane ios release
+      - when:
+          condition:
+            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and push to Testflight
+                command: bundle exec fastlane ios beta
 
 workflows:
   test_and_deploy:
