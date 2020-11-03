@@ -21,10 +21,10 @@ commands:
   cache_node_modules:
     steps:
       - save_cache:
-        <<: *npm-cache
-        paths:
-          - node_modules
-          - ~/.npm
+          <<: *npm-cache
+          paths:
+            - node_modules
+            - ~/.npm
 
   restore_node_modules:
     steps:
