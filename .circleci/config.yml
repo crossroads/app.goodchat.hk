@@ -85,7 +85,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - cache_repo
+      - persist_repo
 
   package_dependencies:
     <<: *defaults
