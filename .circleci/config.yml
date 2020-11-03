@@ -93,9 +93,9 @@ jobs:
       - setup_environment
       - run: npm run build
       - save_cache:
-        <<: *build-cache
-        paths:
-          - build
+          <<: *build-cache
+          paths:
+            - build
 
   deploy_www:
     <<: *defaults
