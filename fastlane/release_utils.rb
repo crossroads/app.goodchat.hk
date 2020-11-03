@@ -8,7 +8,7 @@ module ReleaseUtils
   end
 
   def prepare_assets!
-    Shell.sh %{ npx ionic capacitor sync }
+    Shell.sh %{ npx run cap:sync }
   end
 
   def package_json
