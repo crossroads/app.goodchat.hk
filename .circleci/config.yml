@@ -10,34 +10,42 @@ aliases:
         name: node/default
         tag: '14.15'
       working_directory: ~/code
-  - repo-cache: &repo-cache
-      key: v1-app-goodchat-{{ .Environment.CIRCLE_SHA1 }}
   - npm-cache: &npm-cache
       key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
-  - build-cache:  &build-cache
-      key: v1-app-goodchat-build-{{ .Environment.CIRCLE_SHA1 }}
 
 # -----------------------------
 # Reusable commands
 # -----------------------------
 
 commands:
-  cache_bundle_js:
+  cache_node_modules:
     steps:
-      - run:
-          name: Tar build folder
-          command: tar -czf build.out.tar.gz ./build
       - save_cache:
-          <<: *build-cache
-          paths:
-            - build.out.tar.gz
+        <<: *npm-cache
+        paths:
+          - node_modules
+          - ~/.npm
 
-  restore_cached_bundle_js:
+  restore_node_modules:
     steps:
-      - restore_cache: *build-cache
-      - run:
-          name: Untar build folder
-          command: tar -xzf build.out.tar.gz
+      - restore_cache: *npm-cache
+
+  persist_repo:
+    steps:
+      - persist_to_workspace:
+          root: ~/code
+          paths: .
+
+  restore_repo:
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+  persist_build_to_repo:
+    steps:
+      - persist_to_workspace:
+          root: ~/code
+          paths: build
 
   setup_environment:  
     steps:
@@ -77,26 +85,20 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - save_cache:
-          <<: *repo-cache
-          paths:
-            - ~/code
+      - cache_repo
 
   package_dependencies:
     <<: *defaults
     steps:
-      - restore_cache: *repo-cache
+      - restore_repo
       - run: npm install
-      - save_cache:
-          <<: *npm-cache
-          paths:
-            - node_modules
-            - ~/.npm
+      - cache_node_modules
+
   test:
     <<: *defaults
     steps:
-      - restore_cache: *repo-cache
-      - restore_cache: *npm-cache
+      - restore_repo
+      - restore_node_modules
       - run:
           command: npm test
           environment:
@@ -105,17 +107,16 @@ jobs:
   bundle_js:
     <<: *defaults
     steps:
-      - restore_cache: *repo-cache
-      - restore_cache: *npm-cache
+      - restore_repo
+      - restore_node_modules
       - setup_environment
       - run: npm run build
-      - cache_bundle_js
+      - persist_build_to_repo
 
   deploy_www:
     <<: *defaults
     steps:
-      - restore_cache: *repo-cache
-      - restore_cached_bundle_js
+      - restore_repo
       - setup_environment
       - azure-cli/install
       - azure-cli/login-with-service-principal
@@ -126,8 +127,7 @@ jobs:
       xcode: "12.1.0"
     working_directory: ~/code
     steps:
-      - checkout
-      - restore_cached_bundle_js
+      - restore_repo
       - setup_environment
       - run: bundle install
       - azure-cli/install
