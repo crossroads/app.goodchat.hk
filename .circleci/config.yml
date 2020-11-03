@@ -85,13 +85,22 @@ jobs:
           environment:
             CI: true
 
-  deploy_www:
+  bundle_js:
     <<: *defaults
     steps:
       - restore_cache: *repo-cache
       - restore_cache: *npm-cache
       - setup_environment
       - run: npm run build
+      - save_cache:
+        <<: *build-cache
+        paths:
+          - build
+
+  deploy_www:
+    <<: *defaults
+    steps:
+      - restore_cache: *build-cache
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_WEB_STORAGE_NAME
@@ -101,12 +110,9 @@ jobs:
       xcode: "12.1.0"
     working_directory: ~/code
     steps:
-      - restore_cache: *repo-cache
-      - restore_cache: *npm-cache
+      - restore_cache: *build-cache
       - setup_environment
       - run: bundle install
-      - run: npm run build
-      - run: npx ionic capacitor copy
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - when:
@@ -134,15 +140,18 @@ workflows:
       - test:
           requires:
             - package_dependencies
-      - deploy_www:
+      - bundle_js:
           requires:
             - test
+      - deploy_www:
+          requires:
+            - bundle_js
           filters:
             branches:
               only: /^(circleci-project-setup|main|live)$/
       - deploy_ios:
           requires:
-            - test
+            - bundle_js
           filters:
             branches:
               only: /^(circleci-project-setup|main|live)$/
