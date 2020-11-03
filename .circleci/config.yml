@@ -95,12 +95,13 @@ jobs:
       - save_cache:
           <<: *build-cache
           paths:
-            - build
+            - ./build
 
   deploy_www:
     <<: *defaults
     steps:
       - restore_cache: *build-cache
+      - setup_environment
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_WEB_STORAGE_NAME
