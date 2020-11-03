@@ -33,19 +33,19 @@ commands:
   persist_repo:
     steps:
       - persist_to_workspace:
-          root: ~/code
-          paths: *
+          root: ~/
+          paths: code
 
   restore_repo:
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/
 
   persist_build_to_repo:
     steps:
       - persist_to_workspace:
-          root: ~/code
-          paths: build
+          root: ~/
+          paths: code/build
 
   setup_environment:  
     steps:
