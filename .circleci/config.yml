@@ -98,7 +98,7 @@ jobs:
 
   deploy_ios:
     macos:
-      xcode: "14.1.0"
+      xcode: "12.1.0"
     working_directory: ~/code
     steps:
       - restore_cache: *repo-cache
