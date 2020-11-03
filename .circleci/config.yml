@@ -22,6 +22,23 @@ aliases:
 # -----------------------------
 
 commands:
+  # cache_bundle_js:
+  #   steps:
+  #     - run:
+  #         name: Tar build folder
+  #         command: tar -czf build.out.tar.gz ./build
+  #     - save_cache:
+  #       <<: *build-cache
+  #       paths:
+  #         - build.out.tar.gz
+
+  # restore_cached_bundle_js:
+  #   steps:
+  #     - restore_cache: *build-cache
+  #     - run:
+  #         name: Untar build folder
+  #         command: tar -xzf build.out.tar.gz
+
   setup_environment:  
     steps:
       - run:
@@ -100,6 +117,7 @@ jobs:
   deploy_www:
     <<: *defaults
     steps:
+      - restore_cache: *repo-cache
       - restore_cache: *build-cache
       - setup_environment
       - azure-cli/install
@@ -111,6 +129,7 @@ jobs:
       xcode: "12.1.0"
     working_directory: ~/code
     steps:
+      - restore_cache: *repo-cache
       - restore_cache: *build-cache
       - setup_environment
       - run: bundle install
