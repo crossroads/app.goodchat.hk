@@ -18,7 +18,7 @@ aliases:
 # -----------------------------
 
 commands:
-  cache_node_modules:
+  persist_node_modules:
     steps:
       - save_cache:
           <<: *npm-cache
@@ -34,7 +34,7 @@ commands:
     steps:
       - persist_to_workspace:
           root: ~/code
-          paths: .
+          paths: *
 
   restore_repo:
     steps:
@@ -92,7 +92,7 @@ jobs:
     steps:
       - restore_repo
       - run: npm install
-      - cache_node_modules
+      - persist_node_modules
 
   test:
     <<: *defaults
