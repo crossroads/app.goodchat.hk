@@ -129,7 +129,7 @@ jobs:
       xcode: "12.1.0"
     working_directory: ~/code
     steps:
-      - restore_cache: *repo-cache
+      - checkout
       - restore_cache: *build-cache
       - setup_environment
       - run: bundle install
