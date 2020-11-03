@@ -28,9 +28,9 @@ commands:
           name: Tar build folder
           command: tar -czf build.out.tar.gz ./build
       - save_cache:
-        <<: *build-cache
-        paths:
-          - build.out.tar.gz
+          <<: *build-cache
+          paths:
+            - build.out.tar.gz
 
   restore_cached_bundle_js:
     steps:
