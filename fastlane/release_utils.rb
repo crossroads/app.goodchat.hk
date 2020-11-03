@@ -8,7 +8,7 @@ module ReleaseUtils
   end
 
   def prepare_assets!
-    Shell.sh %{ npx run cap:sync }
+    Shell.sh %{ npm run cap:sync }
   end
 
   def package_json
