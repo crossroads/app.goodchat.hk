@@ -22,22 +22,22 @@ aliases:
 # -----------------------------
 
 commands:
-  # cache_bundle_js:
-  #   steps:
-  #     - run:
-  #         name: Tar build folder
-  #         command: tar -czf build.out.tar.gz ./build
-  #     - save_cache:
-  #       <<: *build-cache
-  #       paths:
-  #         - build.out.tar.gz
+  cache_bundle_js:
+    steps:
+      - run:
+          name: Tar build folder
+          command: tar -czf build.out.tar.gz ./build
+      - save_cache:
+        <<: *build-cache
+        paths:
+          - build.out.tar.gz
 
-  # restore_cached_bundle_js:
-  #   steps:
-  #     - restore_cache: *build-cache
-  #     - run:
-  #         name: Untar build folder
-  #         command: tar -xzf build.out.tar.gz
+  restore_cached_bundle_js:
+    steps:
+      - restore_cache: *build-cache
+      - run:
+          name: Untar build folder
+          command: tar -xzf build.out.tar.gz
 
   setup_environment:  
     steps:
@@ -109,16 +109,13 @@ jobs:
       - restore_cache: *npm-cache
       - setup_environment
       - run: npm run build
-      - save_cache:
-          <<: *build-cache
-          paths:
-            - ./build
+      - cache_bundle_js
 
   deploy_www:
     <<: *defaults
     steps:
       - restore_cache: *repo-cache
-      - restore_cache: *build-cache
+      - restore_cached_bundle_js
       - setup_environment
       - azure-cli/install
       - azure-cli/login-with-service-principal
@@ -130,7 +127,7 @@ jobs:
     working_directory: ~/code
     steps:
       - checkout
-      - restore_cache: *build-cache
+      - restore_cached_bundle_js
       - setup_environment
       - run: bundle install
       - azure-cli/install
