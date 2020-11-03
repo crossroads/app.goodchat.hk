@@ -130,8 +130,8 @@ jobs:
       - restore_repo
       - setup_environment
       - run: bundle install
-      - azure-cli/install
-      - azure-cli/login-with-service-principal
+      - run: brew install azure-cli
+      - run: az login --service-principal --username $AZURE_SP --password $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
       - when:
           condition:
             equal: [ live, << pipeline.git.branch >> ]
