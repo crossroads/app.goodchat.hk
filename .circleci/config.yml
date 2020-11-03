@@ -132,7 +132,7 @@ jobs:
       - run: bundle install
       - run: brew install azure-cli
       - run: brew install node@14
-      - run: npm install --only=dev
+      - run: npm install
       - run: az login --service-principal --username $AZURE_SP --password $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
       - when:
           condition:
