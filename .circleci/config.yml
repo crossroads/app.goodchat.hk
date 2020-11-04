@@ -131,7 +131,7 @@ jobs:
                 command: bundle exec fastlane web release
       - when:
           condition:
-            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+            equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to the staging environment
@@ -159,7 +159,7 @@ jobs:
                 command: bundle exec fastlane ios release
       - when:
           condition:
-            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+            equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to Testflight
@@ -183,11 +183,11 @@ workflows:
             - bundle_js
           filters:
             branches:
-              only: /^(circleci-project-setup|main|live)$/
+              only: /^(main|live)$/
       - deploy_ios:
           requires:
             - bundle_js
           filters:
             branches:
-              only: /^(circleci-project-setup|main|live)$/
+              only: /^(main|live)$/
 
