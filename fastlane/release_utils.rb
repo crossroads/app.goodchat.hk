@@ -28,6 +28,11 @@ module ReleaseUtils
     "#{Time.now.year} Crossroads Foundation Limited"
   end
 
+  def get_env_var(key)
+    assert_env_vars_exist!([key])
+    ENV[key]
+  end
+
   def assert_env_vars_exist!(required_vars)
     missing_vars = required_vars.select { |key| !ENV[key] }
     
