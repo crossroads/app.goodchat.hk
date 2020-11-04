@@ -178,6 +178,9 @@ workflows:
       - bundle_js:
           requires:
             - test
+          filters:
+            branches:
+              only: /^(main|live)$/
       - deploy_www:
           requires:
             - bundle_js
