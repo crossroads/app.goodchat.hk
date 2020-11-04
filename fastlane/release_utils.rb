@@ -35,7 +35,7 @@ module ReleaseUtils
   
     def sh(cmd)
       Dir.chdir(ReleaseUtils.root_folder) do
-        unless system(cmd)
+        unless system(ENV, cmd)
           info('Shell command failed, exiting')
           exit(1)
         end
@@ -109,7 +109,7 @@ module ReleaseUtils
     def download_provisioning_profiles!
       assert_environment!
       Shell.info("Downloading iOS provisioning profiles")
-      Shell.sh %{ az storage file download-batch  -d #{provisioning_profiles_folder} -s ci-store/goodchat --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} --auth-mode login }
+      Shell.sh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/goodchat --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
     end
 
     def certificate_name
@@ -135,7 +135,7 @@ module ReleaseUtils
     def download_cert!
       assert_environment!
       Shell.info("Downloading iOS cert")
-      Shell.sh %{ az storage file download --dest #{certificate_folder} -s ci-store -p #{certificate_name} --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} --auth-mode login }
+      Shell.sh %{ az storage file download --dest #{certificate_folder} -s ci-store -p #{certificate_name} --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
     end
   end
 end
