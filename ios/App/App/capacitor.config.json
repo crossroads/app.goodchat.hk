@@ -1,5 +1,5 @@
 {
-  "appId": "io.ionic.starter",
+  "appId": "hk.goodcity.chat",
   "appName": "app.goodchat.hk",
   "bundledWebRuntime": false,
   "npmClient": "npm",

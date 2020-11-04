@@ -1,0 +1,196 @@
+version: 2.1
+
+# -----------------------------
+# Configs
+# -----------------------------
+
+aliases:
+  - defaults: &defaults
+      executor:
+        name: node/default
+        tag: '14.15'
+      working_directory: ~/code
+  - npm-cache: &npm-cache
+      key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
+
+# -----------------------------
+# Reusable commands
+# -----------------------------
+
+commands:
+  persist_node_modules:
+    steps:
+      - save_cache:
+          <<: *npm-cache
+          paths:
+            - node_modules
+            - ~/.npm
+
+  restore_node_modules:
+    steps:
+      - restore_cache: *npm-cache
+
+  persist_repo:
+    steps:
+      - persist_to_workspace:
+          root: ~/
+          paths: code
+
+  restore_repo:
+    steps:
+      - attach_workspace:
+          at: ~/
+
+  persist_build_to_repo:
+    steps:
+      - persist_to_workspace:
+          root: ~/
+          paths: code/build
+
+  setup_environment:  
+    steps:
+      - run:
+          name: Setup Environment variables
+          command: |
+            case "$CIRCLE_BRANCH" in
+              live)
+                echo 'export NODE_ENV=production' >> $BASH_ENV
+                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
+                ;;
+              *)
+                echo 'export NODE_ENV=staging' >> $BASH_ENV
+                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
+                ;;
+            esac
+      - run:
+          name: Decode AppStore connect API Key (to preserver line returns)
+          command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $BASH_ENV
+
+# -----------------------------
+# Orbs
+# -----------------------------
+
+orbs:
+  node: circleci/node@4.1.0
+  azure-cli: circleci/azure-cli@1.1.0
+  ruby: circleci/ruby@1.1.2
+
+# -----------------------------
+# Jobs
+# -----------------------------
+
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      - checkout
+      - persist_repo
+
+  package_dependencies:
+    <<: *defaults
+    steps:
+      - restore_repo
+      - run: npm install
+      - persist_node_modules
+
+  test:
+    <<: *defaults
+    steps:
+      - restore_repo
+      - restore_node_modules
+      - run:
+          command: npm test -- --coverage
+          environment:
+            CI: true
+
+  bundle_js:
+    <<: *defaults
+    steps:
+      - restore_repo
+      - restore_node_modules
+      - setup_environment
+      - run: npm run build
+      - persist_build_to_repo
+
+  deploy_www:
+    <<: *defaults
+    steps:
+      - restore_repo
+      - setup_environment
+      - ruby/install:
+          version: '2.7'
+      - ruby/install-deps
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - when:
+          condition:
+            equal: [ live, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and release
+                command: bundle exec fastlane web release
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and push to the staging environment
+                command: bundle exec fastlane web beta
+
+  deploy_ios:
+    macos:
+      xcode: "12.1.0"
+    working_directory: ~/code
+    steps:
+      - restore_repo
+      - setup_environment
+      - run: bundle install
+      - run: brew install azure-cli
+      - run: brew install node@14
+      - run: npm install
+      - run: az login --service-principal --username $AZURE_SP --password $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
+      - run: mkdir -pv ~/Library/MobileDevice/Provisioning\ Profiles/
+      - when:
+          condition:
+            equal: [ live, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and release to app store
+                command: bundle exec fastlane ios release
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and push to Testflight
+                command: bundle exec fastlane ios beta
+
+workflows:
+  test_and_deploy:
+    jobs:
+      - checkout_code
+      - package_dependencies:
+          requires:
+            - checkout_code
+      - test:
+          requires:
+            - package_dependencies
+      - bundle_js:
+          requires:
+            - test
+          filters:
+            branches:
+              only: /^(main|live)$/
+      - deploy_www:
+          requires:
+            - bundle_js
+          filters:
+            branches:
+              only: /^(main|live)$/
+      - deploy_ios:
+          requires:
+            - bundle_js
+          filters:
+            branches:
+              only: /^(main|live)$/
+

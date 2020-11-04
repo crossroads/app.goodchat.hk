@@ -1,0 +1,166 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+require "byebug"
+require "./release_utils"
+
+update_fastlane
+
+default_platform(:ios)
+
+platform :web do
+  before_all do
+    ReleaseUtils::Azure.assert_logged_in!
+    setup_circle_ci
+  end
+
+  desc "Release web staging"
+  lane :beta do
+    ReleaseUtils::Web.upload_staging
+  end
+
+  desc "Release web prod"
+  lane :release do
+    ReleaseUtils::Web.upload_prod
+  end
+end
+
+platform :ios do
+
+  IOS_FOLDER            = "ios/App".freeze
+  XCODEPROJ_PATH        = "ios/App/App.xcodeproj".freeze
+  XCWORKSPACE_PATH      = "ios/App/App.xcworkspace".freeze
+  KEYCHAIN_NAME         = "goodcity_fastlane_keychain".freeze
+  SDK_VERSION           = "14.1" 
+  APPSTORE_API_KEY      = nil
+
+  before_all do
+    ReleaseUtils.prepare_assets!
+    ReleaseUtils::Azure.assert_logged_in!
+    ReleaseUtils::IOS.assert_environment!
+    ReleaseUtils::IOS.download_provisioning_profiles!
+    ReleaseUtils::IOS.download_cert!
+
+    setup_circle_ci
+    install_pods
+
+    APPSTORE_API_KEY = app_store_connect_api_key(ReleaseUtils::IOS::AppStore.api_key_payload)
+  end
+
+  desc "Install pod dependencies"
+  lane :install_pods do
+    cocoapods(
+      clean_install:  true,
+      podfile:        IOS_FOLDER
+    )
+  end
+
+  desc "Installs dependencies required for the build"
+  lane :prepare_build do
+    install_pods
+
+    create_keychain(
+      name: KEYCHAIN_NAME,
+      default_keychain: false,
+      unlock: true,
+      password: ReleaseUtils::IOS.keychain_password
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing:  false,
+      path:                   XCODEPROJ_PATH,
+      bundle_identifier:      'hk.goodcity.chat',
+      profile_name:           'GoodChat',
+      code_sign_identity:     'iPhone Distribution',
+      team_id:                CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+    )
+
+    import_certificate(
+      certificate_path:       ReleaseUtils::IOS.certificate_path,
+      certificate_password:   ReleaseUtils::IOS.certificate_password,
+      keychain_name:          KEYCHAIN_NAME,
+      keychain_password:      ReleaseUtils::IOS.keychain_password
+    )
+
+    increment_version_number(
+      version_number: ReleaseUtils.app_version_number,
+      xcodeproj:      XCODEPROJ_PATH
+    )
+    increment_build_number(
+      build_number:   latest_testflight_build_number(api_key: APPSTORE_API_KEY, version: ReleaseUtils.app_version_number) + 1,
+      xcodeproj:      XCODEPROJ_PATH
+    )
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    prepare_build
+    
+    build_app(
+      workspace:          XCWORKSPACE_PATH,
+      sdk:                "iOS #{SDK_VERSION}",
+      scheme:             "App",
+    )
+    upload_to_testflight(
+      app_identifier: 'hk.goodcity.chat',
+      api_key: APPSTORE_API_KEY
+    )
+  end
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    prepare_build
+
+    build_app(
+      workspace:          XCWORKSPACE_PATH,
+      sdk:                 "iOS #{SDK_VERSION}",
+      scheme:             "App",
+    )
+    upload_to_app_store(
+      username:                           ReleaseUtils::IOS::AppStore.pilot_username,
+      api_key:                            APPSTORE_API_KEY,
+      skip_binary_upload:                 true,
+      skip_screenshots:                   true,
+      app_version:                        ReleaseUtils.app_version_number,
+      copyright:                          ReleaseUtils.copyright,
+      precheck_include_in_app_purchases:  false,
+      force:                              true,
+      app_review_information: {
+        first_name:     ReleaseUtils.get_env_var('APP_REVIEW_INFO_FIRST_NAME'),
+        last_name:      ReleaseUtils.get_env_var('APP_REVIEW_INFO_LAST_NAME'),
+        phone_number:   ReleaseUtils.get_env_var('APP_REVIEW_INFO_PHONE_NUMBER'),
+        email_address:  ReleaseUtils.get_env_var('APP_REVIEW_INFO_EMAIL'),
+        demo_user:      ReleaseUtils.get_env_var('APP_REVIEW_TESTER_MOBILE'),
+        demo_password:  ReleaseUtils.get_env_var('APP_REVIEW_TESTER_PIN'),
+        notes:          ReleaseUtils.get_env_var('APP_REVIEW_NOTES')
+      },
+      submission_information: {
+        add_id_info_limits_tracking: true,
+        add_id_info_serves_ads: false,
+        add_id_info_tracks_action: true,
+        add_id_info_tracks_install: true,
+        add_id_info_uses_idfa: false,
+        content_rights_has_rights: true,
+        content_rights_contains_third_party_content: false,
+        export_compliance_platform: 'ios',
+        export_compliance_compliance_required: false,
+        export_compliance_encryption_updated: false,
+        export_compliance_app_type: nil,
+        export_compliance_uses_encryption: false,
+        export_compliance_is_exempt: true,
+        export_compliance_contains_third_party_cryptography: false,
+        export_compliance_contains_proprietary_cryptography: false,
+        export_compliance_available_on_french_store: false
+      }
+    )
+  end
+end

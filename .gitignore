@@ -4,6 +4,11 @@
 /node_modules
 /.pnp
 .pnp.js
+.envrc 
+
+**/*.p12
+**/*.p8
+
 
 # testing
 /coverage
