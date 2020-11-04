@@ -120,19 +120,19 @@ jobs:
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - when:
-        condition:
-          equal: [ live, << pipeline.git.branch >> ]
-        steps:
-          - run:
-              name: Build and release
-              command: bundle exec fastlane web release
-    - when:
-        condition:
-          equal: [ circleci-project-setup, << pipeline.git.branch >> ]
-        steps:
-          - run:
-              name: Build and push to the staging environment
-              command: bundle exec fastlane web beta
+          condition:
+            equal: [ live, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and release
+                command: bundle exec fastlane web release
+      - when:
+          condition:
+            equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and push to the staging environment
+                command: bundle exec fastlane web beta
 
   deploy_ios:
     macos:
