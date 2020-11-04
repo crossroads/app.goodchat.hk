@@ -56,12 +56,10 @@ commands:
               live)
                 echo 'export NODE_ENV=production' >> $BASH_ENV
                 echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
-                echo 'export AZURE_WEB_STORAGE_NAME=$AZURE_WEB_STORAGE_NAME_PROD' >> $BASH_ENV
                 ;;
               *)
                 echo 'export NODE_ENV=staging' >> $BASH_ENV
                 echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
-                echo 'export AZURE_WEB_STORAGE_NAME=$AZURE_WEB_STORAGE_NAME_STAGING' >> $BASH_ENV
                 ;;
             esac
       - run:
@@ -118,9 +116,23 @@ jobs:
     steps:
       - restore_repo
       - setup_environment
+      - run: bundle install
       - azure-cli/install
       - azure-cli/login-with-service-principal
-      - run: az storage blob upload-batch -s ./build -d '$web' --account-name $AZURE_WEB_STORAGE_NAME
+      - when:
+        condition:
+          equal: [ live, << pipeline.git.branch >> ]
+        steps:
+          - run:
+              name: Build and release
+              command: bundle exec fastlane web release
+    - when:
+        condition:
+          equal: [ circleci-project-setup, << pipeline.git.branch >> ]
+        steps:
+          - run:
+              name: Build and push to the staging environment
+              command: bundle exec fastlane web beta
 
   deploy_ios:
     macos:

@@ -17,6 +17,23 @@ update_fastlane
 
 default_platform(:ios)
 
+platform :web do
+  before_all do
+    ReleaseUtils::Azure.assert_logged_in!
+    setup_circle_ci
+  end
+
+  desc "Release web staging"
+  lane :beta do
+    ReleaseUtils::Web.upload_staging
+  end
+
+  desc "Release web prod"
+  lane :release do
+    ReleaseUtils::Web.upload_prod
+  end
+end
+
 platform :ios do
 
   IOS_FOLDER            = "ios/App".freeze
@@ -28,6 +45,7 @@ platform :ios do
 
   before_all do
     ReleaseUtils.prepare_assets!
+    ReleaseUtils::Azure.assert_logged_in!
     ReleaseUtils::IOS.assert_environment!
     ReleaseUtils::IOS.download_provisioning_profiles!
     ReleaseUtils::IOS.download_cert!

@@ -15,6 +15,20 @@ Install _fastlane_ using
 or alternatively using `brew install fastlane`
 
 # Available Actions
+## web
+### web beta
+```
+fastlane web beta
+```
+Release web staging
+### web release
+```
+fastlane web release
+```
+Release web prod
+
+----
+
 ## iOS
 ### ios install_pods
 ```

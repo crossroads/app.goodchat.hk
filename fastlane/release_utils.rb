@@ -4,11 +4,13 @@ module ReleaseUtils
   module_function
 
   def root_folder
-    File.join [File.dirname(__FILE__), '..']
+    File.expand_path(
+      File.join([File.dirname(__FILE__), '..'])
+    )
   end
 
   def prepare_assets!
-    Shell.sh %{ npm run cap:sync }
+    Shell.xsh %{ npm run cap:sync }
   end
 
   def package_json
@@ -26,6 +28,16 @@ module ReleaseUtils
     "#{Time.now.year} Crossroads Foundation Limited"
   end
 
+  def assert_env_vars_exist!(required_vars)
+    missing_vars = required_vars.select { |key| !ENV[key] }
+    
+    if missing_vars.length > 0
+      Shell.info("Error: Missing Environment variables:")
+      missing_vars.each { |key|  Shell.info("- #{key}") }
+      exit(1)
+    end
+  end
+
   module Shell
     module_function
 
@@ -34,12 +46,45 @@ module ReleaseUtils
     end
   
     def sh(cmd)
-      Dir.chdir(ReleaseUtils.root_folder) do
-        unless system(ENV, cmd)
-          info('Shell command failed, exiting')
-          exit(1)
-        end
+      Dir.chdir(ReleaseUtils.root_folder) { system(ENV, cmd) }
+    end
+
+    def xsh(cmd)
+      unless sh(cmd)
+        info('Shell command failed, exiting')
+        exit(1)
       end
+    end
+  end
+
+  module Azure
+    module_function
+
+    def logged_in?
+      @@logged_in ||= Shell.sh %{ az account show }
+    end
+
+    def assert_logged_in!
+      unless logged_in?
+        Shell.info('Error: You are not logged in to Azure')
+        exit(1)
+      end
+    end
+  end
+
+  module Web
+    module_function
+
+    def upload_staging
+      upload_to_azure('goodchatstaging')
+    end
+
+    def upload_prod
+      upload_to_azure('goodchatprod')
+    end
+
+    def upload_to_azure(storage_name)
+      Shell.xsh %{ az storage blob upload-batch -s ./build -d '$web' --account-name #{storage_name} }
     end
   end
 
@@ -65,17 +110,11 @@ module ReleaseUtils
 
     module_function
 
-    #
-    # Ensures the required env variables are set
-    #
     def assert_environment!
-      required_vars = [
-        # 'FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD',
-        # 'FASTLANE_SESSION',
+      ReleaseUtils.assert_env_vars_exist! [
         'APPSTORE_CONNECT_API_KEY_ID',
         'APPSTORE_CONNECT_API_KEY_ISSUER_ID',
         'APPSTORE_CONNECT_API_KEY',
-        # 'FASTLANE_PASSWORD',
         'APPLE_DEVELOPER_TEAM_ID',
         'APP_STORE_CONNECT_TEAM_ID',
         'APPLE_ID',
@@ -84,14 +123,6 @@ module ReleaseUtils
         'CERTIFICATE_PASSWORD',
         'KEYCHAIN_PWD'
       ]
-      
-      missing_vars = required_vars.select { |key| !ENV[key] }
-      
-      if missing_vars.length > 0
-        Shell.info("Error: Missing Environment variables:")
-        missing_vars.each { |key|  Shell.info("- #{key}") }
-        exit(1)
-      end
     end
 
     def provisioning_profiles_folder
@@ -109,7 +140,7 @@ module ReleaseUtils
     def download_provisioning_profiles!
       assert_environment!
       Shell.info("Downloading iOS provisioning profiles")
-      Shell.sh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/goodchat --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
+      Shell.xsh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/goodchat --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
     end
 
     def certificate_name
@@ -135,7 +166,7 @@ module ReleaseUtils
     def download_cert!
       assert_environment!
       Shell.info("Downloading iOS cert")
-      Shell.sh %{ az storage file download --dest #{certificate_folder} -s ci-store -p #{certificate_name} --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
+      Shell.xsh %{ az storage file download --dest #{certificate_folder} -s ci-store -p #{certificate_name} --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
     end
   end
 end
