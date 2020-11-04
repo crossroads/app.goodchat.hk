@@ -130,7 +130,7 @@ jobs:
       - restore_repo
       - setup_environment
       - run: bundle install
-      - run: brew install azure-cli
+      - run: brew install azure-cli@2.11.1
       - run: brew install node@14
       - run: npm install
       - run: az login --service-principal --username $AZURE_SP --password $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
