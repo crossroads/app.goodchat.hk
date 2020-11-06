@@ -74,6 +74,7 @@ orbs:
   node: circleci/node@4.1.0
   azure-cli: circleci/azure-cli@1.1.0
   ruby: circleci/ruby@1.1.2
+  android: circleci/android@0.2.3
 
 # -----------------------------
 # Jobs
@@ -165,6 +166,37 @@ jobs:
                 name: Build and push to Testflight
                 command: bundle exec fastlane ios beta
 
+  deploy_android:
+    executor:
+      name: android
+      sdk-version: "23"
+    working_directory: ~/code
+    steps:
+      - restore_repo
+      - restore_node_modules
+      - setup_environment
+      - azure-cli/install
+      - azure-cli/login-with-service-principal
+      - ruby/install:
+        version: '2.7'
+      - ruby/install-deps
+      - node/install
+      - run: npm install
+      - when:
+          condition:
+            equal: [ live, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and release to production
+                command: bundle exec fastlane android release
+      - when:
+          condition:
+            equal: [ circle-ci-android, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: Build and push to internal testing
+                command: bundle exec fastlane android staging
+
 workflows:
   test_and_deploy:
     jobs:
@@ -193,4 +225,10 @@ workflows:
           filters:
             branches:
               only: /^(main|live)$/
+      - deploy_android:
+          requires:
+            - bundle_js
+          filters:
+            branches:
+              only: /^(circle-ci-android|main|live)$/
 

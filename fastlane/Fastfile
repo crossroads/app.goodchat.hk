@@ -34,6 +34,91 @@ platform :web do
   end
 end
 
+platform :android do
+  ANDROID_FOLDER            = "android".freeze
+
+  before_all do
+    ReleaseUtils.prepare_assets!
+    ReleaseUtils::Android.assert_environment!
+    ReleaseUtils::Android.download_json_key_file
+    ReleaseUtils::Android.download_keystore_file
+    ReleaseUtils::Android.download_google_services_file
+
+    setup_circle_ci
+    clean
+  end
+
+  lane :clean do
+    gradle(
+      project_dir:  ANDROID_FOLDER,  
+      task: 'clean'
+    )
+  end
+
+  def prepare_build(version_name, version_code)
+    android_set_version_code(
+      version_code: version_code,
+      gradle_file:  ReleaseUtils::Android.gradle_path
+    )
+
+    android_set_version_name(
+      version_name: version_name,
+      gradle_file:  ReleaseUtils::Android.gradle_path
+    )
+
+    gradle(
+      task:         'assemble',
+      build_type:   'Release',
+      project_dir:  ANDROID_FOLDER,
+      properties: {
+        "versionName"                               => version_name,
+        "versionCode"                               => version_code,
+        "android.injected.signing.store.file"       => ReleaseUtils::Android.keystore_file_path,
+        "android.injected.signing.store.password"   => ReleaseUtils::Android.keystore_password,
+        "android.injected.signing.key.alias"        => ReleaseUtils::Android.keystore_alias,
+        "android.injected.signing.key.password"     => ReleaseUtils::Android.keystore_password,
+      }
+    )
+  end
+
+  lane :staging do
+    version_name = "#{ReleaseUtils::Android.version_name}-staging-#{ReleaseUtils::Android.version_code}"
+    version_code = ReleaseUtils::Android.version_code
+
+    prepare_build(version_name, version_code)
+
+    upload_to_play_store(
+      track:                    'internal',
+      version_code:             version_code,
+      version_name:             version_name,
+      json_key:                 ReleaseUtils::Android.json_key_filepath,
+      apk:                      ReleaseUtils::Android.apk_path,
+      release_status:           'completed',
+      skip_upload_images:       true,
+      skip_upload_screenshots:  true
+    )
+  end
+
+  lane :release do
+    version_name = ReleaseUtils::Android.version_name
+    version_code = ReleaseUtils::Android.version_code
+
+    prepare_build(version_name, version_code)
+
+    upload_to_play_store(
+      track:                    'production',
+      version_code:             version_code,
+      version_name:             version_name,
+      json_key:                 ReleaseUtils::Android.json_key_filepath,
+      apk:                      ReleaseUtils::Android.apk_path,
+      release_status:           'inProgress',
+      skip_upload_images:       true,
+      skip_upload_screenshots:  true,
+    )
+  end
+
+end
+
 platform :ios do
 
   IOS_FOLDER            = "ios/App".freeze
@@ -92,11 +177,11 @@ platform :ios do
     )
 
     increment_version_number(
-      version_number: ReleaseUtils.app_version_number,
+      version_number: ReleaseUtils.app_version,
       xcodeproj:      XCODEPROJ_PATH
     )
     increment_build_number(
-      build_number:   latest_testflight_build_number(api_key: APPSTORE_API_KEY, version: ReleaseUtils.app_version_number) + 1,
+      build_number:   latest_testflight_build_number(api_key: APPSTORE_API_KEY, version: ReleaseUtils.app_version) + 1,
       xcodeproj:      XCODEPROJ_PATH
     )
   end
@@ -130,7 +215,7 @@ platform :ios do
       api_key:                            APPSTORE_API_KEY,
       skip_binary_upload:                 true,
       skip_screenshots:                   true,
-      app_version:                        ReleaseUtils.app_version_number,
+      app_version:                        ReleaseUtils.app_version,
       copyright:                          ReleaseUtils.copyright,
       precheck_include_in_app_purchases:  false,
       force:                              true,

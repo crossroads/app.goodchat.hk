@@ -6,9 +6,21 @@
 .pnp.js
 .envrc 
 
+fastlane/.byebug_history
+fastlane/report.xml
+
+# Android
+fastlane/*.json
+**/google-services.json
+google-services.json
+fastlane/*.keystore
+android/.idea
+
+# IOS
+*.dSYM.zip
+*.ipa
 **/*.p12
 **/*.p8
-
 
 # testing
 /coverage
