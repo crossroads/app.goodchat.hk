@@ -212,7 +212,7 @@ workflows:
             - test
           filters:
             branches:
-              only: /^(main|live)$/
+              only: /^(circle-ci-android|main|live)$/
       - deploy_www:
           requires:
             - bundle_js
