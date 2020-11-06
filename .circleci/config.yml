@@ -168,7 +168,7 @@ jobs:
 
   deploy_android:
     executor:
-      name: android
+      name: android/android
       sdk-version: "23"
     working_directory: ~/code
     steps:
