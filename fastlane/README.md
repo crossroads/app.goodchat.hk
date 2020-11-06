@@ -29,6 +29,25 @@ Release web prod
 
 ----
 
+## Android
+### android clean
+```
+fastlane android clean
+```
+
+### android staging
+```
+fastlane android staging
+```
+
+### android release
+```
+fastlane android release
+```
+
+
+----
+
 ## iOS
 ### ios install_pods
 ```

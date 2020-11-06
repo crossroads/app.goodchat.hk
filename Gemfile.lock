@@ -71,6 +71,7 @@ GEM
     cocoapods-try (1.2.0)
     colored (1.2)
     colored2 (3.1.2)
+    colorize (0.8.1)
     commander-fastlane (4.4.6)
       highline (~> 1.7.2)
     concurrent-ruby (1.1.7)
@@ -131,6 +132,7 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
+    fastlane-plugin-versioning_android (0.1.0)
     ffi (1.13.1)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -241,7 +243,9 @@ PLATFORMS
 DEPENDENCIES
   byebug
   cocoapods
+  colorize
   fastlane
+  fastlane-plugin-versioning_android
   json
 
 BUNDLED WITH

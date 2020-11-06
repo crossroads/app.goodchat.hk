@@ -1,4 +1,6 @@
 require 'json'
+require 'colorize'
+require 'fastlane'
 
 module ReleaseUtils
   module_function
@@ -9,8 +11,8 @@ module ReleaseUtils
     )
   end
 
-  def prepare_assets!
-    Shell.xsh %{ npm run cap:sync }
+  def fastlane_folder
+    File.join [root_folder, 'fastlane']
   end
 
   def package_json
@@ -20,7 +22,7 @@ module ReleaseUtils
     end
   end
 
-  def app_version_number
+  def app_version
     package_json['version']
   end
 
@@ -33,11 +35,15 @@ module ReleaseUtils
     ENV[key]
   end
 
+  def ci_build_number
+    ENV['CIRCLE_BUILD_NUM'] || ENV['BUILD_BUILDNUMBER']
+  end
+
   def assert_env_vars_exist!(required_vars)
     missing_vars = required_vars.select { |key| !ENV[key] }
     
     if missing_vars.length > 0
-      Shell.info("Error: Missing Environment variables:")
+      Shell.error("Missing Environment variables:")
       missing_vars.each { |key|  Shell.info("- #{key}") }
       exit(1)
     end
@@ -46,8 +52,16 @@ module ReleaseUtils
   module Shell
     module_function
 
-    def self.info(str)
-      puts("==> #{str}")
+    def log(str)
+      puts "[#{Time.now.strftime("%H:%M:%S")}] >> #{str}"
+    end
+
+    def info(str)
+      log(str.colorize(:light_blue))
+    end
+
+    def error(str)
+      log("Error: #{str}".colorize(:red))
     end
   
     def sh(cmd)
@@ -56,7 +70,7 @@ module ReleaseUtils
 
     def xsh(cmd)
       unless sh(cmd)
-        info('Shell command failed, exiting')
+        error('Shell command failed, exiting')
         exit(1)
       end
     end
@@ -71,9 +85,19 @@ module ReleaseUtils
 
     def assert_logged_in!
       unless logged_in?
-        Shell.info('Error: You are not logged in to Azure')
+        Shell.error('You are not logged in to Azure')
         exit(1)
       end
+    end
+
+    def download_file(filepath, dest: ReleaseUtils.fastlane_folder)
+      Shell.info %{ Downloading file #{filepath} from ci-store }
+      Shell.xsh %{ az storage file download --dest #{dest} -s ci-store -p #{filepath} --account-name goodcitystorage }
+    end
+
+    def download_folder(folder, dest:)
+      Shell.info %{ Downloading folder #{folder} from ci-store }
+      Shell.xsh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/#{folder} --account-name goodcitystorage }
     end
   end
 
@@ -90,6 +114,72 @@ module ReleaseUtils
 
     def upload_to_azure(storage_name)
       Shell.xsh %{ az storage blob upload-batch -s ./build -d '$web' --account-name #{storage_name} }
+    end
+  end
+
+  module Android
+    module_function
+
+    def prepare_assets!
+      Shell.xsh %{ npm run cap:sync -- android }
+    end
+
+    def assert_environment!
+      ReleaseUtils.assert_env_vars_exist! [
+        'GOOGLE_PLAY_KEY_FILE'
+      ]
+    end
+
+    def project_folder
+      File.join [ReleaseUtils.root_folder, 'android']
+    end
+
+    def gradle_path
+      File.join [project_folder, "app/build.gradle"]
+    end
+
+    def apk_path
+      File.join [project_folder, 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk']
+    end
+
+    def keystore_filename
+      'goodchat.keystore'
+    end
+
+    def keystore_file_path
+      File.join [ReleaseUtils.fastlane_folder, keystore_filename]
+    end
+
+    def keystore_password
+      ReleaseUtils.get_env_var('GOODCITY_KEYSTORE_PASSWORD')
+    end
+
+    def keystore_alias
+      ReleaseUtils.get_env_var('GOODCITY_KEYSTORE_ALIAS')
+    end
+
+    def json_key_filepath
+      File.join [ReleaseUtils.fastlane_folder, ReleaseUtils.get_env_var('GOOGLE_PLAY_KEY_FILE')]
+    end
+
+    def download_json_key_file
+      Azure.download_file("google-play/#{ReleaseUtils.get_env_var('GOOGLE_PLAY_KEY_FILE')}")
+    end
+
+    def download_keystore_file
+      Azure.download_file("goodchat/#{keystore_filename}")
+    end
+
+    def download_google_services_file
+      Azure.download_file("goodchat/google-services.json", dest: File.join([project_folder, 'app']))
+    end
+
+    def version_code
+      @@version_code ||= ReleaseUtils.ci_build_number || Fastlane::Actions::PromptAction.run(text: 'Please input the build number:') || 1
+    end
+
+    def version_name
+      ReleaseUtils.app_version
     end
   end
 
@@ -115,6 +205,10 @@ module ReleaseUtils
 
     module_function
 
+    def prepare_assets!
+      Shell.xsh %{ npm run cap:sync -- ios}
+    end
+
     def assert_environment!
       ReleaseUtils.assert_env_vars_exist! [
         'APPSTORE_CONNECT_API_KEY_ID',
@@ -123,7 +217,6 @@ module ReleaseUtils
         'APPLE_DEVELOPER_TEAM_ID',
         'APP_STORE_CONNECT_TEAM_ID',
         'APPLE_ID',
-        'AZURE_GOODCITY_STORAGE_NAME',
         'CERTIFICATE',
         'CERTIFICATE_PASSWORD',
         'KEYCHAIN_PWD'
@@ -145,7 +238,7 @@ module ReleaseUtils
     def download_provisioning_profiles!
       assert_environment!
       Shell.info("Downloading iOS provisioning profiles")
-      Shell.xsh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/goodchat --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
+      Azure.download_folder('goodchat', dest: provisioning_profiles_folder)
     end
 
     def certificate_name
@@ -160,18 +253,14 @@ module ReleaseUtils
       ENV["KEYCHAIN_PWD"]
     end
 
-    def certificate_folder
-      File.join [ReleaseUtils.root_folder, 'fastlane']
-    end
-
     def certificate_path
-      File.join [certificate_folder, ENV['CERTIFICATE']]
+      File.join [ReleaseUtils.fastlane_folder, ENV['CERTIFICATE']]
     end
 
     def download_cert!
       assert_environment!
       Shell.info("Downloading iOS cert")
-      Shell.xsh %{ az storage file download --dest #{certificate_folder} -s ci-store -p #{certificate_name} --account-name #{ENV['AZURE_GOODCITY_STORAGE_NAME']} }
+      Azure.download_file(certificate_name)
     end
   end
 end
