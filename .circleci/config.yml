@@ -81,7 +81,6 @@ jobs:
       - restore_repo
       - node/install-packages:
           with-cache: true
-      - persist_node_modules
 
   test:
     <<: *defaults
