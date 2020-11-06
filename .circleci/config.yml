@@ -178,7 +178,7 @@ jobs:
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - ruby/install:
-        version: '2.7'
+          version: '2.7'
       - ruby/install-deps
       - node/install
       - run: npm install
