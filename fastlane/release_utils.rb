@@ -15,10 +15,6 @@ module ReleaseUtils
     File.join [root_folder, 'fastlane']
   end
 
-  def prepare_assets!
-    Shell.xsh %{ npm run cap:sync }
-  end
-
   def package_json
     @@data_hash ||= begin
       file = File.read File.join(root_folder, './package.json')
@@ -120,6 +116,10 @@ module ReleaseUtils
   module Android
     module_function
 
+    def prepare_assets!
+      Shell.xsh %{ npm run cap:sync -- android }
+    end
+
     def assert_environment!
       ReleaseUtils.assert_env_vars_exist! [
         'GOOGLE_PLAY_KEY_FILE'
@@ -200,6 +200,10 @@ module ReleaseUtils
     end
 
     module_function
+
+    def prepare_assets!
+      Shell.xsh %{ npm run cap:sync -- ios}
+    end
 
     def assert_environment!
       ReleaseUtils.assert_env_vars_exist! [

@@ -38,7 +38,7 @@ platform :android do
   ANDROID_FOLDER            = "android".freeze
 
   before_all do
-    ReleaseUtils.prepare_assets!
+    ReleaseUtils::Android.prepare_assets!
     ReleaseUtils::Android.assert_environment!
     ReleaseUtils::Android.download_json_key_file
     ReleaseUtils::Android.download_keystore_file
@@ -129,8 +129,8 @@ platform :ios do
   APPSTORE_API_KEY      = nil
 
   before_all do
-    ReleaseUtils.prepare_assets!
     ReleaseUtils::Azure.assert_logged_in!
+    ReleaseUtils::IOS.prepare_assets!
     ReleaseUtils::IOS.assert_environment!
     ReleaseUtils::IOS.download_provisioning_profiles!
     ReleaseUtils::IOS.download_cert!
