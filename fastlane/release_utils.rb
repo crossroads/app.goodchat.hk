@@ -35,6 +35,10 @@ module ReleaseUtils
     ENV[key]
   end
 
+  def ci_build_number
+    ENV['CIRCLE_BUILD_NUM'] || ENV['BUILD_BUILDNUMBER']
+  end
+
   def assert_env_vars_exist!(required_vars)
     missing_vars = required_vars.select { |key| !ENV[key] }
     
@@ -171,7 +175,7 @@ module ReleaseUtils
     end
 
     def version_code
-      @@version_code ||= ENV['CIRCLE_BUILD_NUMBER'] || Fastlane::Actions::PromptAction.run(text: 'Please input the build number:') || 1
+      @@version_code ||= ReleaseUtils.ci_build_number || Fastlane::Actions::PromptAction.run(text: 'Please input the build number:') || 1
     end
 
     def version_name

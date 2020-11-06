@@ -200,9 +200,6 @@ workflows:
       - bundle_js:
           requires:
             - test
-          filters:
-            branches:
-              only: /^(circle-ci-android|main|live)$/
       - deploy_www:
           requires:
             - bundle_js
