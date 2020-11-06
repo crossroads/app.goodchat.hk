@@ -86,7 +86,8 @@ jobs:
     <<: *defaults
     steps:
       - restore_repo
-      - restore_node_modules
+      - node/install-packages:
+          with-cache: true
       - run:
           command: npm test -- --coverage
           environment:
@@ -162,7 +163,6 @@ jobs:
     working_directory: ~/code
     steps:
       - restore_repo
-      - restore_node_modules
       - setup_environment
       - azure-cli/install
       - azure-cli/login-with-service-principal
