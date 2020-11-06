@@ -38,6 +38,7 @@ platform :android do
   ANDROID_FOLDER            = "android".freeze
 
   before_all do
+    ReleaseUtils::Ionic.inject_ionic_app_id
     ReleaseUtils::Android.prepare_assets!
     ReleaseUtils::Android.assert_environment!
     ReleaseUtils::Android.download_json_key_file
@@ -55,7 +56,7 @@ platform :android do
     )
   end
 
-  def prepare_build(version_name, version_code)
+  def prepare_android_build(version_name, version_code)
     android_set_version_code(
       version_code: version_code,
       gradle_file:  ReleaseUtils::Android.gradle_path
@@ -82,10 +83,12 @@ platform :android do
   end
 
   lane :staging do
+    ReleaseUtils::Ionic.enable_code_push(channel: 'staging', method: 'auto')
+
     version_name = "#{ReleaseUtils::Android.version_name}-staging-#{ReleaseUtils::Android.version_code}"
     version_code = ReleaseUtils::Android.version_code
 
-    prepare_build(version_name, version_code)
+    prepare_android_build(version_name, version_code)
 
     upload_to_play_store(
       track:                    'internal',
@@ -100,10 +103,12 @@ platform :android do
   end
 
   lane :release do
+    ReleaseUtils::Ionic.enable_code_push(channel: 'production', method: 'auto')
+
     version_name = ReleaseUtils::Android.version_name
     version_code = ReleaseUtils::Android.version_code
 
-    prepare_build(version_name, version_code)
+    prepare_android_build(version_name, version_code)
 
     upload_to_play_store(
       track:                    'production',
@@ -129,6 +134,7 @@ platform :ios do
   APPSTORE_API_KEY      = nil
 
   before_all do
+    ReleaseUtils::Ionic.inject_ionic_app_id
     ReleaseUtils::Azure.assert_logged_in!
     ReleaseUtils::IOS.prepare_assets!
     ReleaseUtils::IOS.assert_environment!
@@ -188,6 +194,8 @@ platform :ios do
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
+    ReleaseUtils::Ionic.enable_code_push(channel: 'staging', method: 'auto')
+
     prepare_build
     
     build_app(
@@ -203,6 +211,8 @@ platform :ios do
 
   desc "Push a new release build to the App Store"
   lane :release do
+    ReleaseUtils::Ionic.enable_code_push(channel: 'production', method: 'auto')
+
     prepare_build
 
     build_app(
