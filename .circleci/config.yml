@@ -181,7 +181,7 @@ jobs:
                 command: bundle exec fastlane android release
       - when:
           condition:
-            equal: [ circle-ci-android, << pipeline.git.branch >> ]
+            equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to internal testing
@@ -217,5 +217,5 @@ workflows:
             - bundle_js
           filters:
             branches:
-              only: /^(circle-ci-android|main|live)$/
+              only: /^(main|live)$/
 
