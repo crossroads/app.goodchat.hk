@@ -2,6 +2,8 @@ require 'json'
 require 'colorize'
 require 'fastlane'
 
+require_relative './file_utils'
+
 module ReleaseUtils
   module_function
 
@@ -49,6 +51,34 @@ module ReleaseUtils
     end
   end
 
+  module Ionic
+    module_function
+
+    def ionic_app_id
+      ReleaseUtils.get_env_var('IONIC_APP_ID')
+    end
+
+    def ionic_config_path
+      File.join(ReleaseUtils.root_folder, 'ionic.config.json')
+    end
+  
+    def inject_ionic_app_id
+      Shell.info("Injecting the Ionic App ID into config files")
+
+      FileUtils.edit_json(ionic_config_path) { |cfg| cfg["id"] = ionic_app_id }
+
+      IOS.plist_set('IonAppId', ionic_app_id)
+      Android.strings_xml_set('ionic_app_id', ionic_app_id)
+    end  
+
+    def enable_code_push(channel:, method:)
+      IOS.plist_set('IonChannelName', channel)
+      IOS.plist_set('IonUpdateMethod', method)
+      Android.strings_xml_set('ionic_channel_name', channel)
+      Android.strings_xml_set('ionic_update_method', method)
+    end
+  end
+
   module Shell
     module_function
 
@@ -57,15 +87,19 @@ module ReleaseUtils
     end
 
     def info(str)
-      log(str.colorize(:light_blue))
+      log(str.colorize('light_blue'))
     end
 
     def error(str)
-      log("Error: #{str}".colorize(:red))
+      log("Error: #{str}".colorize('red'))
     end
   
     def sh(cmd)
       Dir.chdir(ReleaseUtils.root_folder) { system(ENV, cmd) }
+    end
+
+    def read(prompt)
+      Fastlane::Actions::PromptAction.run(text: prompt)
     end
 
     def xsh(cmd)
@@ -97,7 +131,7 @@ module ReleaseUtils
 
     def download_folder(folder, dest:)
       Shell.info %{ Downloading folder #{folder} from ci-store }
-      Shell.xsh %{ az storage file download-batch -d #{provisioning_profiles_folder} -s ci-store/#{folder} --account-name goodcitystorage }
+      Shell.xsh %{ az storage file download-batch -d #{dest} -s ci-store/#{folder} --account-name goodcitystorage }
     end
   end
 
@@ -123,15 +157,25 @@ module ReleaseUtils
     def prepare_assets!
       Shell.xsh %{ npm run cap:sync -- android }
     end
-
+    
     def assert_environment!
       ReleaseUtils.assert_env_vars_exist! [
         'GOOGLE_PLAY_KEY_FILE'
       ]
     end
-
+    
     def project_folder
       File.join [ReleaseUtils.root_folder, 'android']
+    end
+    
+    def strings_xml_set(key, value)
+      FileUtils.edit_xml(Android.strings_xml_path, "string[@name='#{key}']") do |e|
+        e.text = value
+      end
+    end
+
+    def strings_xml_path
+      File.join [project_folder, 'app/src/main/res/values/strings.xml']
     end
 
     def gradle_path
@@ -175,7 +219,7 @@ module ReleaseUtils
     end
 
     def version_code
-      @@version_code ||= ReleaseUtils.ci_build_number || Fastlane::Actions::PromptAction.run(text: 'Please input the build number:') || 1
+      @@version_code ||= ReleaseUtils.ci_build_number || Shell.read('Please input the build number:') || 1
     end
 
     def version_name
@@ -233,6 +277,16 @@ module ReleaseUtils
 
     def prod_profile_path
       File.join [provisioning_profiles_folder, 'GoodChat.mobileprovision']
+    end
+
+    def info_plist_path
+      File.join [ReleaseUtils.root_folder, 'ios/App/App/Info.plist']
+    end
+
+    def plist_set(key, value)
+      FileUtils.edit_xml(info_plist_path, "//key[text()='#{key}']/following::string[1]") do |e|
+        e.text = value
+      end
     end
 
     def download_provisioning_profiles!
