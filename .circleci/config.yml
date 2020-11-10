@@ -45,11 +45,13 @@ commands:
                 echo 'export NODE_ENV=production' >> $BASH_ENV
                 echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
                 ;;
-              *)
+                *)
                 echo 'export NODE_ENV=staging' >> $BASH_ENV
                 echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
                 ;;
             esac
+            echo 'export APP_VERSION=`node -e "console.log(require('./package.json').version)"`' >> $BASH_ENV
+            echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
       - run:
           name: Decode AppStore connect API Key (to preserver line returns)
           command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $BASH_ENV
