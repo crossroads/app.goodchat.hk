@@ -63,7 +63,7 @@ commands:
       - run:
           name: Setup build-specific variables
           command: |
-            echo 'export BUILD_BUILDNUMBER=${CIRCLE_BUILD_NUM}' >> $GC_ENV_FILE
+            echo "export BUILD_BUILDNUMBER=${CIRCLE_BUILD_NUM}" >> $GC_ENV_FILE
             echo 'export APP_VERSION=`node -e "console.log(require(\"./package.json\").version)"`' >> $GC_ENV_FILE
             echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${BUILD_BUILDNUMBER}' >> $GC_ENV_FILE
       - run:
