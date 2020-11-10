@@ -50,7 +50,7 @@ commands:
                 echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
                 ;;
             esac
-            echo 'export APP_VERSION=`node -e "console.log(require('./package.json').version)"`' >> $BASH_ENV
+            echo 'export APP_VERSION=`node -e "console.log(require(\'./package.json\').version)"`' >> $BASH_ENV
             echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
       - run:
           name: Decode AppStore connect API Key (to preserver line returns)
