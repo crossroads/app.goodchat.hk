@@ -38,7 +38,7 @@ module ReleaseUtils
   end
 
   def ci_build_number
-    ENV['CIRCLE_BUILD_NUM'] || ENV['BUILD_BUILDNUMBER']
+    ENV['BUILD_BUILDNUMBER'] || ENV['CIRCLE_BUILD_NUM']
   end
 
   def assert_env_vars_exist!(required_vars)

@@ -13,6 +13,15 @@ aliases:
   - npm-cache: &npm-cache
       key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
 
+parameters:
+  gc_env_filename:
+    type: string
+    default: ".gc_env"
+
+  gc_env_file:
+    type: string
+    default: "/tmp/.gc_env"
+
 # -----------------------------
 # Reusable commands
 # -----------------------------
@@ -37,24 +46,46 @@ commands:
 
   setup_environment:  
     steps:
+      - run: echo 'export GC_ENV_FILE=<< pipeline.parameters.gc_env_file >>' >> $BASH_ENV
       - run:
-          name: Setup Environment variables
+          name: Setup branch dependent variables
           command: |
             case "$CIRCLE_BRANCH" in
               live)
-                echo 'export NODE_ENV=production' >> $BASH_ENV
-                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
-                ;;
-                *)
-                echo 'export NODE_ENV=staging' >> $BASH_ENV
-                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $BASH_ENV
-                ;;
+                echo 'export NODE_ENV=production' >> $GC_ENV_FILE
+                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $GC_ENV_FILE
+              ;;
+              *)
+                echo 'export NODE_ENV=staging' >> $GC_ENV_FILE
+                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $GC_ENV_FILE
+              ;;
             esac
-            echo 'export APP_VERSION=`node -e "console.log(require(\"./package.json\").version)"`' >> $BASH_ENV
-            echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${CIRCLE_BUILD_NUM}' >> $BASH_ENV
       - run:
-          name: Decode AppStore connect API Key (to preserver line returns)
-          command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $BASH_ENV
+          name: Setup build-specific variables
+          command: |
+            echo 'export BUILD_BUILDNUMBER=${CIRCLE_BUILD_NUM}' >> $GC_ENV_FILE
+            echo 'export APP_VERSION=`node -e "console.log(require(\"./package.json\").version)"`' >> $GC_ENV_FILE
+            echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${BUILD_BUILDNUMBER}' >> $GC_ENV_FILE
+      - run:
+          name: Decode AppStore connect API Key (to preserve line returns)
+          command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $GC_ENV_FILE
+      - run:
+          name: Append to bash environment file
+          command: cat $GC_ENV_FILE >> $BASH_ENV
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - << pipeline.parameters.gc_env_filename >>
+  
+  apply_environment:
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run: touch << pipeline.parameters.gc_env_file >>
+      - run:
+          name: Append to bash environment file
+          command: cat << pipeline.parameters.gc_env_file >> >> $BASH_ENV
+      - run: echo 'export GC_ENV_FILE=<< pipeline.parameters.gc_env_file >>' >> $BASH_ENV
 
 # -----------------------------
 # Orbs
@@ -81,6 +112,7 @@ jobs:
     <<: *defaults
     steps:
       - restore_repo
+      - setup_environment
       - node/install-packages:
           with-cache: true
 
@@ -88,6 +120,7 @@ jobs:
     <<: *defaults
     steps:
       - restore_repo
+      - apply_environment
       - node/install-packages:
           with-cache: true
       - run:
@@ -99,7 +132,7 @@ jobs:
     <<: *defaults
     steps:
       - restore_repo
-      - setup_environment
+      - apply_environment
       - node/install-packages:
           with-cache: true
       - run: npm run build
@@ -109,7 +142,7 @@ jobs:
     <<: *defaults
     steps:
       - restore_repo
-      - setup_environment
+      - apply_environment
       - ruby/install:
           version: '2.7'
       - ruby/install-deps
@@ -136,7 +169,7 @@ jobs:
     working_directory: ~/code
     steps:
       - restore_repo
-      - setup_environment
+      - apply_environment
       - run: bundle install
       - run: brew install azure-cli
       - run: brew install node@14
@@ -165,7 +198,7 @@ jobs:
     working_directory: ~/code
     steps:
       - restore_repo
-      - setup_environment
+      - apply_environment
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - ruby/install:
