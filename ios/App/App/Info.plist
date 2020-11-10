@@ -73,7 +73,7 @@
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <true />
     <key>IonAppId</key>
-    <string></string>
+    <string>ed71261c</string>
     <key>IonChannelName</key>
     <string>staging</string>
     <key>IonUpdateMethod</key>

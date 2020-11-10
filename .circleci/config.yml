@@ -145,7 +145,7 @@ jobs:
       - apply_environment
       - ruby/install:
           version: '2.7'
-      - ruby/install-deps
+      - run: (cd fastlane && bundle install)
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - when:
@@ -154,14 +154,14 @@ jobs:
           steps:
             - run:
                 name: Build and release
-                command: bundle exec fastlane web release
+                command: (cd fastlane && bundle exec fastlane web release)
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to the staging environment
-                command: bundle exec fastlane web beta
+                command: (cd fastlane && bundle exec fastlane web beta)
 
   deploy_ios:
     macos:
@@ -170,7 +170,7 @@ jobs:
     steps:
       - restore_repo
       - apply_environment
-      - run: bundle install
+      - run: (cd fastlane && bundle install)
       - run: brew install azure-cli
       - run: brew install node@14
       - run: npm install
@@ -182,14 +182,14 @@ jobs:
           steps:
             - run:
                 name: Build and release to app store
-                command: bundle exec fastlane ios release
+                command: (cd fastlane && bundle exec fastlane ios release)
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to Testflight
-                command: bundle exec fastlane ios beta
+                command: (cd fastlane && bundle exec fastlane ios beta)
 
   deploy_android:
     executor:
@@ -203,7 +203,7 @@ jobs:
       - azure-cli/login-with-service-principal
       - ruby/install:
           version: '2.7'
-      - ruby/install-deps
+      - run: (cd fastlane && bundle install)
       - node/install
       - node/install-packages:
           with-cache: false
@@ -213,14 +213,14 @@ jobs:
           steps:
             - run:
                 name: Build and release to production
-                command: bundle exec fastlane android release
+                command: (cd fastlane && bundle exec fastlane android release)
       - when:
           condition:
             equal: [ main, << pipeline.git.branch >> ]
           steps:
             - run:
                 name: Build and push to internal testing
-                command: bundle exec fastlane android staging
+                command: (cd fastlane && bundle exec fastlane android staging)
 
 workflows:
   test_and_deploy:

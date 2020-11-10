@@ -4,7 +4,7 @@
   <string name='title_activity_main'>app.goodchat.hk</string>
   <string name='package_name'>hk.goodcity.chat</string>
   <string name='custom_url_scheme'>goodchat</string>
-  <string name='ionic_app_id'></string>
+  <string name='ionic_app_id'>ed71261c</string>
   <string name='ionic_channel_name'>staging</string>
   <string name='ionic_update_method'>none</string>
   <string name='ionic_max_versions'>2</string>
