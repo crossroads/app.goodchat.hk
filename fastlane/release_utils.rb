@@ -235,11 +235,14 @@ module ReleaseUtils
       module_function
 
       def api_key_payload
-        {
-          key_id:       ENV['APPSTORE_CONNECT_API_KEY_ID'],
-          issuer_id:    ENV['APPSTORE_CONNECT_API_KEY_ISSUER_ID'],
-          key_content:  ENV['APPSTORE_CONNECT_API_KEY']
-        }
+        @@appstore_api_key_payload ||= begin
+          IOS.download_appstore_api_key_file
+          {
+            key_id:       ENV['APPSTORE_CONNECT_API_KEY_ID'],
+            issuer_id:    ENV['APPSTORE_CONNECT_API_KEY_ISSUER_ID'],
+            key_content:  text = File.read(IOS.appstore_api_key_file_path)
+          }
+        end
       end
 
       def pilot_username
@@ -257,7 +260,6 @@ module ReleaseUtils
       ReleaseUtils.assert_env_vars_exist! [
         'APPSTORE_CONNECT_API_KEY_ID',
         'APPSTORE_CONNECT_API_KEY_ISSUER_ID',
-        'APPSTORE_CONNECT_API_KEY',
         'APPLE_DEVELOPER_TEAM_ID',
         'APP_STORE_CONNECT_TEAM_ID',
         'APPLE_ID',
@@ -287,6 +289,19 @@ module ReleaseUtils
       FileUtils.edit_xml(info_plist_path, "//key[text()='#{key}']/following::string[1]") do |e|
         e.text = value
       end
+    end
+
+    def appstore_api_key_file_name
+      "AuthKey_#{ENV['APPSTORE_CONNECT_API_KEY_ID']}.p8"
+    end
+
+    def appstore_api_key_file_path
+      File.join [ReleaseUtils.root_folder, appstore_api_key_file_name]
+    end
+
+    def download_appstore_api_key_file
+      Shell.info("Downloading AppStore api key")
+      Azure.download_file("ios/#{appstore_api_key_file_name}")
     end
 
     def download_provisioning_profiles!

@@ -67,9 +67,6 @@ commands:
             echo 'export APP_VERSION=`node -e "console.log(require(\"./package.json\").version)"`' >> $GC_ENV_FILE
             echo 'export REACT_APP_VERSION=${NODE_ENV}-${APP_VERSION}-${BUILD_BUILDNUMBER}' >> $GC_ENV_FILE
       - run:
-          name: Decode AppStore connect API Key (to preserve line returns)
-          command: echo 'export APPSTORE_CONNECT_API_KEY=$(echo $APPSTORE_CONNECT_API_KEY_BASE64 | base64 -d)' >> $GC_ENV_FILE
-      - run:
           name: Append to bash environment file
           command: cat $GC_ENV_FILE >> $BASH_ENV
       - persist_to_workspace:
