@@ -296,7 +296,7 @@ module ReleaseUtils
     end
 
     def appstore_api_key_file_path
-      File.join [ReleaseUtils.root_folder, appstore_api_key_file_name]
+      File.join [ReleaseUtils.fastlane_folder, appstore_api_key_file_name]
     end
 
     def download_appstore_api_key_file
