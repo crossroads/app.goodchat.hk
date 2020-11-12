@@ -240,7 +240,7 @@ module ReleaseUtils
           {
             key_id:       ENV['APPSTORE_CONNECT_API_KEY_ID'],
             issuer_id:    ENV['APPSTORE_CONNECT_API_KEY_ISSUER_ID'],
-            key_content:  text = File.read(IOS.appstore_api_key_file_path)
+            key_content:  File.read(IOS.appstore_api_key_file_path)
           }
         end
       end
