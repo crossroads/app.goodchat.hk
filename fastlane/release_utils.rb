@@ -133,21 +133,21 @@ module ReleaseUtils
       Shell.info %{ Downloading folder #{folder} from ci-store }
       Shell.xsh %{ az storage file download-batch -d #{dest} -s ci-store/#{folder} --account-name goodcitystorage }
     end
+
+    def upload(storage:, folder: '$web')
+      Shell.xsh %{ az storage blob upload-batch -s ./build -d '#{folder}' --account-name #{storage} }
+    end
   end
 
   module Web
     module_function
 
     def upload_staging
-      upload_to_azure('goodchatstaging')
+      Azure.upload(storage: 'goodcitystorage', folder: '$web/chat-staging-goodcity')
     end
 
     def upload_prod
-      upload_to_azure('goodchatprod')
-    end
-
-    def upload_to_azure(storage_name)
-      Shell.xsh %{ az storage blob upload-batch -s ./build -d '$web' --account-name #{storage_name} }
+      Azure.upload(storage: 'goodcitystorage', folder: '$web/chat-goodcity')
     end
   end
 
