@@ -242,6 +242,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   byebug
   cocoapods
   colorize

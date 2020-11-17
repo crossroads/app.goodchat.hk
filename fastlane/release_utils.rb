@@ -1,6 +1,7 @@
 require 'json'
 require 'colorize'
 require 'fastlane'
+require 'active_support/core_ext/numeric/time.rb'
 
 require_relative './file_utils'
 
@@ -137,6 +138,11 @@ module ReleaseUtils
     def upload(storage:, folder: '$web')
       Shell.xsh %{ az storage blob upload-batch -s ./build -d '#{folder}' --account-name #{storage} }
     end
+
+    def clean_folder(storage:, folder:, container: '$web')
+      cutoff_date = (Time.now - 1.hour).utc.strftime("%Y-%m-%dT%H:%MZ")
+      Shell.xsh %{ az storage blob delete-batch -s '#{container}'  --account-name #{storage} --pattern '#{folder}/*' --if-unmodified-since '#{cutoff_date}' }
+    end
   end
 
   module Web
@@ -144,10 +150,12 @@ module ReleaseUtils
 
     def upload_staging
       Azure.upload(storage: 'goodcitystorage', folder: '$web/chat-staging-goodcity')
+      Azure.clean_folder(storage: 'goodcitystorage', container: '$web', folder: 'chat-staging-goodcity')
     end
 
     def upload_prod
       Azure.upload(storage: 'goodcitystorage', folder: '$web/chat-goodcity')
+      Azure.clean_folder(storage: 'goodcitystorage', container: '$web', folder: 'chat-goodcity')
     end
   end
 
