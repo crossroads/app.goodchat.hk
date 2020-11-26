@@ -32,7 +32,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "cap:sync": "cap sync"
+    "cap:sync": "cap sync",
+    "format": "prettier --ignore-path .gitignore --write ."
   },
   "eslintConfig": {
     "extends": "react-app"
