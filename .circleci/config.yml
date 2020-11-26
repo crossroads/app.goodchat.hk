@@ -8,7 +8,7 @@ aliases:
   - defaults: &defaults
       executor:
         name: node/default
-        tag: '14.15'
+        tag: "14.15"
       working_directory: ~/code
   - npm-cache: &npm-cache
       key: v1-app-goodchat-dependencies-{{ checksum "package-lock.json" }}
@@ -44,7 +44,7 @@ commands:
           root: ~/
           paths: code/build
 
-  setup_environment:  
+  setup_environment:
     steps:
       - run: echo 'export GC_ENV_FILE=<< pipeline.parameters.gc_env_file >>' >> $BASH_ENV
       - run:
@@ -73,7 +73,7 @@ commands:
           root: /tmp
           paths:
             - << pipeline.parameters.gc_env_filename >>
-  
+
   apply_environment:
     steps:
       - attach_workspace:
@@ -141,20 +141,20 @@ jobs:
       - restore_repo
       - apply_environment
       - ruby/install:
-          version: '2.7'
+          version: "2.7"
       - run: (cd fastlane && bundle install)
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - when:
           condition:
-            equal: [ live, << pipeline.git.branch >> ]
+            equal: [live, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and release
                 command: (cd fastlane && bundle exec fastlane web release)
       - when:
           condition:
-            equal: [ main, << pipeline.git.branch >> ]
+            equal: [main, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and push to the staging environment
@@ -175,14 +175,14 @@ jobs:
       - run: mkdir -pv ~/Library/MobileDevice/Provisioning\ Profiles/
       - when:
           condition:
-            equal: [ live, << pipeline.git.branch >> ]
+            equal: [live, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and release to app store
                 command: (cd fastlane && bundle exec fastlane ios release)
       - when:
           condition:
-            equal: [ main, << pipeline.git.branch >> ]
+            equal: [main, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and push to Testflight
@@ -199,21 +199,21 @@ jobs:
       - azure-cli/install
       - azure-cli/login-with-service-principal
       - ruby/install:
-          version: '2.7'
+          version: "2.7"
       - run: (cd fastlane && bundle install)
       - node/install
       - node/install-packages:
           with-cache: false
       - when:
           condition:
-            equal: [ live, << pipeline.git.branch >> ]
+            equal: [live, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and release to production
                 command: (cd fastlane && bundle exec fastlane android release)
       - when:
           condition:
-            equal: [ main, << pipeline.git.branch >> ]
+            equal: [main, << pipeline.git.branch >>]
           steps:
             - run:
                 name: Build and push to internal testing
@@ -250,4 +250,3 @@ workflows:
           filters:
             branches:
               only: /^(main|live)$/
-

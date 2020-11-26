@@ -1,8 +1,7 @@
 {
   "name": "app.goodchat.hk",
   "integrations": {
-    "capacitor": {
-    }
+    "capacitor": {}
   },
   "type": "react",
   "id": "ed71261c"
