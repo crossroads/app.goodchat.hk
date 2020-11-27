@@ -13,4 +13,4 @@ afterEach(() => mockServer.resetHandlers());
 // Clean up after the tests are finished.
 afterAll(() => mockServer.close());
 
-process.env.REACT_APP_API_V2_URL = "https://api.goodcity.hk/api/v2";
+process.env.REACT_APP_API_V2_URL = "https://localhost:3000/api/v2";
