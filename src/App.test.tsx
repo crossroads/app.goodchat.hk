@@ -9,5 +9,5 @@ test("renders without crashing", () => {
 
 test("renders an ion-router-outlet", () => {
   render(<App />);
-  expect(screen.getByTestId("ion-router-outlet")).toBeInTheDocument();
+  expect(screen.getByTestId("main-router-outlet")).toBeInTheDocument();
 });
