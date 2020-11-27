@@ -1,8 +1,8 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import MainRouter from ".";
 import { createMemoryHistory } from "history";
-import { Router } from "react-router";
+import { MemoryRouter, Router } from "react-router";
 
 describe("User visits /home", () => {
   it("should take user to the appropriate URL", () => {
@@ -14,5 +14,15 @@ describe("User visits /home", () => {
     );
 
     expect(history.location.pathname).toEqual("/home");
+  });
+
+  it("should show the Home page", () => {
+    render(
+      <MemoryRouter initialEntries={["/home"]}>
+        <MainRouter />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId(/home/i));
   });
 });
