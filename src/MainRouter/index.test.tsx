@@ -26,3 +26,26 @@ describe("User visits /home", () => {
     expect(screen.getByTestId(/home/i));
   });
 });
+
+describe("User visits /login", () => {
+  it("should take user to the appropriate URL", () => {
+    const history = createMemoryHistory({ initialEntries: ["/login"] });
+    render(
+      <Router history={history}>
+        <MainRouter />
+      </Router>
+    );
+
+    expect(history.location.pathname).toEqual("/login");
+  });
+
+  it("should show the Login page", () => {
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <MainRouter />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId(/login/i));
+  });
+});
