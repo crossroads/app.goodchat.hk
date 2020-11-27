@@ -24,7 +24,7 @@ import "./theme/variables.css";
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet></IonRouterOutlet>
+      <IonRouterOutlet data-testid="ion-router-outlet" />
     </IonReactRouter>
   </IonApp>
 );
