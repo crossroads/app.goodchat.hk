@@ -1,7 +1,7 @@
 import axios from "axios";
 
 function sendPin(mobile: string) {
-  axios.post(
+  return axios.post(
     `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
     { mobile },
     {

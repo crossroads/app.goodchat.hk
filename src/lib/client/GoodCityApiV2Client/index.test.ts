@@ -1,5 +1,6 @@
 import axios from "axios";
 import GoodCityApiV2Client from "./index";
+import sendPinResponse from "./__mocks__/sendPinResponse.js";
 
 describe("sendPin", () => {
   it(`should call axios with the correct URL, headers, params, etc`, () => {
@@ -20,6 +21,15 @@ describe("sendPin", () => {
     spy.mockRestore();
   });
 
-    spy.mockRestore();
+  describe("Successful API response", () => {
+    it("it should return the appropriate response", async () => {
+      const spy = jest.spyOn(axios, "post").mockResolvedValue(sendPinResponse);
+
+      const data = await GoodCityApiV2Client.sendPin("+85262345678");
+
+      expect(data).toEqual(sendPinResponse);
+
+      spy.mockRestore();
+    });
   });
 });
