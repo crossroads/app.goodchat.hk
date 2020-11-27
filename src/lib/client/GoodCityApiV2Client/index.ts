@@ -1,10 +1,7 @@
 import axios from "axios";
 
-interface SendPinBody {
-  mobile: string;
-}
-function sendPin(body: SendPinBody) {
-  axios.post(`${process.env.REACT_APP_API_V2_URL}/auth/send_pin`, body, {
+function sendPin(mobile: string) {
+  axios.post(`${process.env.REACT_APP_API_V2_URL}/auth/send_pin`, mobile, {
     headers: {
       "Content-Type": "application/json",
     },
