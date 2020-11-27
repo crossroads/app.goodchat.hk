@@ -9,9 +9,16 @@ describe("sendPin", () => {
 
     GoodCityApiV2Client.sendPin(mobile);
 
-    expect(spy).toHaveBeenCalledWith(SEND_PIN_URL, mobile, {
-      headers: { "Content-Type": "application/json" },
-    });
+    expect(spy).toHaveBeenCalledWith(
+      SEND_PIN_URL,
+      { mobile },
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    spy.mockRestore();
+  });
 
     spy.mockRestore();
   });
