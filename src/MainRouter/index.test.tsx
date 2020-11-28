@@ -28,5 +28,6 @@ describe("User visits /login", () => {
     );
 
     expect(history.location.pathname).toEqual("/login");
+    expect(screen.getByTestId(/login/i));
   });
 });
