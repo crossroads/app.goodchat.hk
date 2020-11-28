@@ -5,7 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 
 const MainRouter: React.FC = () => (
-  <IonRouterOutlet data-testid="main-router-outlet">
+  <IonRouterOutlet data-testid="ion-router-outlet">
     <Route path="/login">
       <Login />
     </Route>

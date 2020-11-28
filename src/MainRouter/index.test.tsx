@@ -2,7 +2,13 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import MainRouter from ".";
 import { createMemoryHistory } from "history";
-import { Router } from "react-router";
+import { MemoryRouter, Router } from "react-router";
+
+test("should render an IonRouterOutlet", () => {
+  render(<MainRouter />, { wrapper: MemoryRouter });
+
+  expect(screen.getByTestId("ion-router-outlet"));
+});
 
 describe("User visits /home", () => {
   it("should take user to Home page with /home as the URL", () => {
