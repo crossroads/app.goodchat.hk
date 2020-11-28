@@ -7,7 +7,7 @@ import { MemoryRouter, Router } from "react-router";
 test("should render an IonRouterOutlet", () => {
   render(<MainRouter />, { wrapper: MemoryRouter });
 
-  expect(screen.getByTestId("ion-router-outlet"));
+  expect(screen.getByTestId("ion-router-outlet")).toBeInTheDocument();
 });
 
 describe("User visits /home", () => {
@@ -20,7 +20,7 @@ describe("User visits /home", () => {
     );
 
     expect(history.location.pathname).toEqual("/home");
-    expect(screen.getByTestId(/home/i));
+    expect(screen.getByTestId(/home/i)).toBeInTheDocument();
   });
 });
 
@@ -34,6 +34,6 @@ describe("User visits /login", () => {
     );
 
     expect(history.location.pathname).toEqual("/login");
-    expect(screen.getByTestId(/login/i));
+    expect(screen.getByTestId(/login/i)).toBeInTheDocument();
   });
 });
