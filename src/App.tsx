@@ -1,6 +1,7 @@
 import React from "react";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import AuthContext from "./context/AuthContext";
 import MainRouter from "./MainRouter";
 
 /* Core CSS required for Ionic components to work properly */
@@ -24,9 +25,11 @@ import "./theme/variables.css";
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <MainRouter />
-    </IonReactRouter>
+    <AuthContext.Provider value={{ isAuthenticated: false }}>
+      <IonReactRouter>
+        <MainRouter />
+      </IonReactRouter>
+    </AuthContext.Provider>
   </IonApp>
 );
 
