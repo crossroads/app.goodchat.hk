@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import ReactRouter from "react-router";
 import MainRouter from ".";
 import { createMemoryHistory } from "history";
 import { MemoryRouter, Router } from "react-router";
@@ -15,7 +14,6 @@ test("should render an IonRouterOutlet", () => {
 describe("Unauthenticated User", () => {
   describe("visits /home", () => {
     it("should redirect user to Login page with /login as the URL", () => {
-      const spy = jest.spyOn(ReactRouter, "Redirect");
       const history = createMemoryHistory({ initialEntries: ["/home"] });
       render(
         <AuthContext.Provider value={{ isAuthenticated: false }}>
@@ -25,10 +23,8 @@ describe("Unauthenticated User", () => {
         </AuthContext.Provider>
       );
 
-      expect(spy).toHaveBeenCalledWith({ to: "/login" }, {});
-      expect(spy).toHaveBeenCalledTimes(1);
-
-      spy.mockRestore();
+      expect(history.location.pathname).toEqual("/login");
+      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
     });
   });
 
