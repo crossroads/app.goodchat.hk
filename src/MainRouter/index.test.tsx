@@ -43,6 +43,22 @@ describe("Unauthenticated User", () => {
       expect(screen.getByTestId(/login/i)).toBeInTheDocument();
     });
   });
+
+  describe("visits /", () => {
+    it("should take user to Login page with /login as the URL", () => {
+      const history = createMemoryHistory({ initialEntries: ["/"] });
+      render(
+        <AuthContext.Provider value={{ isAuthenticated: false }}>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </AuthContext.Provider>
+      );
+
+      expect(history.location.pathname).toEqual("/login");
+      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+    });
+  });
 });
 
 describe("Authenticated User", () => {
@@ -75,6 +91,22 @@ describe("Authenticated User", () => {
 
       expect(history.location.pathname).toEqual("/login");
       expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+    });
+  });
+
+  describe("visits /", () => {
+    it("should take user to Home page with /home as the URL", () => {
+      const history = createMemoryHistory({ initialEntries: ["/"] });
+      render(
+        <AuthContext.Provider value={{ isAuthenticated: true }}>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </AuthContext.Provider>
+      );
+
+      expect(history.location.pathname).toEqual("/home");
+      expect(screen.getByTestId(/home/i)).toBeInTheDocument();
     });
   });
 });

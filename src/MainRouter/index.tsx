@@ -16,6 +16,9 @@ const MainRouter: React.FC = () => {
       <Route path="/home">
         {isAuthenticated ? <Home /> : <Redirect to="/login" />}
       </Route>
+      <Route exact path="/">
+        <Redirect to={isAuthenticated ? "/home" : "/login"} />
+      </Route>
     </IonRouterOutlet>
   );
 };
