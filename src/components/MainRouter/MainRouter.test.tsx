@@ -24,8 +24,10 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "login");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "login"
+      );
     });
   });
 
@@ -41,8 +43,10 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "login");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "login"
+      );
     });
   });
 
@@ -58,8 +62,10 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "login");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "login"
+      );
     });
   });
 });
@@ -77,8 +83,10 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/home");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "home");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "home"
+      );
     });
   });
 
@@ -94,8 +102,10 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "login");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "login"
+      );
     });
   });
 
@@ -111,8 +121,10 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/home");
-      const ionPageElement = container.getElementsByClassName("ion-page")[0];
-      expect(ionPageElement).toHaveAttribute("title", "home");
+      expect(container.querySelector(".ion-page")).toHaveAttribute(
+        "title",
+        "home"
+      );
     });
   });
 });
