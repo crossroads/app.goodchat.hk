@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import MainRouter from ".";
+import MainRouter from "./MainRouter";
 import { createMemoryHistory } from "history";
 import { MemoryRouter, Router } from "react-router";
 import AuthContext from "../context/AuthContext";
