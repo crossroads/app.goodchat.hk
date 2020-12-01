@@ -3,7 +3,7 @@ import React from "react";
 
 const Login: React.FC = () => {
   return (
-    <IonPage data-testid="login">
+    <IonPage title="login">
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login</IonTitle>

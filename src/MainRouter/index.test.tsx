@@ -15,7 +15,7 @@ describe("Unauthenticated User", () => {
   describe("visits /home", () => {
     it("should redirect user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: false }}>
           <Router history={history}>
             <MainRouter />
@@ -24,14 +24,15 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "login");
     });
   });
 
   describe("visits /login", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: false }}>
           <Router history={history}>
             <MainRouter />
@@ -40,14 +41,15 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "login");
     });
   });
 
   describe("visits /", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: false }}>
           <Router history={history}>
             <MainRouter />
@@ -56,7 +58,8 @@ describe("Unauthenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "login");
     });
   });
 });
@@ -65,7 +68,7 @@ describe("Authenticated User", () => {
   describe("visits /home", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: true }}>
           <Router history={history}>
             <MainRouter />
@@ -74,14 +77,15 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/home");
-      expect(screen.getByTestId(/home/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "home");
     });
   });
 
   describe("visits /login", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: true }}>
           <Router history={history}>
             <MainRouter />
@@ -90,14 +94,15 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/login");
-      expect(screen.getByTestId(/login/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "login");
     });
   });
 
   describe("visits /", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
-      render(
+      const { container } = render(
         <AuthContext.Provider value={{ isAuthenticated: true }}>
           <Router history={history}>
             <MainRouter />
@@ -106,7 +111,8 @@ describe("Authenticated User", () => {
       );
 
       expect(history.location.pathname).toEqual("/home");
-      expect(screen.getByTestId(/home/i)).toBeInTheDocument();
+      const ionPageElement = container.getElementsByClassName("ion-page")[0];
+      expect(ionPageElement).toHaveAttribute("title", "home");
     });
   });
 });
