@@ -1,14 +1,14 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import MainRouter from "./MainRouter";
 import { createMemoryHistory } from "history";
 import { MemoryRouter, Router } from "react-router";
 import AuthContext from "../../context/AuthContext";
 
 test("should render an IonRouterOutlet", () => {
-  render(<MainRouter />, { wrapper: MemoryRouter });
+  const { container } = render(<MainRouter />, { wrapper: MemoryRouter });
 
-  expect(screen.getByTestId("ion-router-outlet")).toBeInTheDocument();
+  expect(container.querySelector("ion-router-outlet")).toBeInTheDocument();
 });
 
 describe("Unauthenticated User", () => {

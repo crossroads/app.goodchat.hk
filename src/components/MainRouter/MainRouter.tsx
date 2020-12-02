@@ -9,7 +9,7 @@ const MainRouter: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext);
 
   return (
-    <IonRouterOutlet data-testid="ion-router-outlet">
+    <IonRouterOutlet>
       <Route path="/login">
         <Login />
       </Route>
