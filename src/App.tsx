@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import AuthContext from "./context/AuthContext";
@@ -23,14 +23,18 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-const App: React.FC = () => (
-  <IonApp>
-    <AuthContext.Provider value={{ isAuthenticated: false }}>
-      <IonReactRouter>
-        <MainRouter />
-      </IonReactRouter>
-    </AuthContext.Provider>
-  </IonApp>
-);
+const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  return (
+    <IonApp>
+      <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+        <IonReactRouter>
+          <MainRouter />
+        </IonReactRouter>
+      </AuthContext.Provider>
+    </IonApp>
+  );
+};
 
 export default App;
