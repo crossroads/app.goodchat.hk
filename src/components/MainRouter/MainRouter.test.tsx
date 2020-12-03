@@ -3,7 +3,7 @@ import { render } from "@testing-library/react";
 import MainRouter from "./MainRouter";
 import { createMemoryHistory } from "history";
 import { MemoryRouter, Router } from "react-router";
-import AuthContext from "../../context/AuthContext";
+import AuthProvider from "../../components/AuthProvider";
 
 test("should render an IonRouterOutlet", () => {
   const { container } = render(<MainRouter />, { wrapper: MemoryRouter });
@@ -16,11 +16,11 @@ describe("Unauthenticated User", () => {
     it("should redirect user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: false }}>
+        <AuthProvider>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/login");
@@ -35,11 +35,11 @@ describe("Unauthenticated User", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: false }}>
+        <AuthProvider>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/login");
@@ -54,11 +54,11 @@ describe("Unauthenticated User", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: false }}>
+        <AuthProvider>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/login");
@@ -75,11 +75,11 @@ describe("Authenticated User", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: true }}>
+        <AuthProvider initialAuthState={true}>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/home");
@@ -94,11 +94,11 @@ describe("Authenticated User", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: true }}>
+        <AuthProvider initialAuthState={true}>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/login");
@@ -113,11 +113,11 @@ describe("Authenticated User", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
       const { container } = render(
-        <AuthContext.Provider value={{ isAuthenticated: true }}>
+        <AuthProvider initialAuthState={true}>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </AuthContext.Provider>
+        </AuthProvider>
       );
 
       expect(history.location.pathname).toEqual("/home");
