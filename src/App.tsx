@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import AuthContext from "./context/AuthContext";
 import MainRouter from "./components/MainRouter/MainRouter";
+import AuthProvider from "./components/AuthProvider";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -24,15 +24,13 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
     <IonApp>
-      <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <AuthProvider>
         <IonReactRouter>
           <MainRouter />
         </IonReactRouter>
-      </AuthContext.Provider>
+      </AuthProvider>
     </IonApp>
   );
 };
