@@ -1,12 +1,12 @@
 import { IonRouterOutlet } from "@ionic/react";
-import React, { useContext } from "react";
+import React from "react";
 import { Redirect, Route } from "react-router";
-import AuthContext from "../../context/AuthContext";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login/Login";
+import useAuth from "../../hooks/useAuth";
 
 const MainRouter: React.FC = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
 
   return (
     <IonRouterOutlet>

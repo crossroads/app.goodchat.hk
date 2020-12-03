@@ -6,11 +6,11 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import React, { useContext } from "react";
-import AuthContext from "../../context/AuthContext";
+import React from "react";
+import useAuth from "../../hooks/useAuth";
 
 const Login: React.FC = () => {
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated } = useAuth();
 
   const handleLogin = () => {
     setIsAuthenticated(true);
