@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Login from "./Login";
-import userEvent from "@testing-library/user-event";
+import userEvent, { TargetElement } from "@testing-library/user-event";
 import AuthContext from "../../context/AuthContext";
 
 test("renders a login title", () => {
@@ -29,7 +29,7 @@ test("clicking the login button logs user in", () => {
     </AuthContext.Provider>
   );
 
-  userEvent.click(container.querySelector("ion-button"));
+  userEvent.click(container.querySelector("ion-button") as TargetElement);
 
   expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
   expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
