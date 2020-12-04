@@ -42,6 +42,7 @@ describe("Unauthenticated User", () => {
     { initialPath: "/home", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/", expectedPage: "login" },
+    { initialPath: "/bad-route", expectedPage: "login" },
   ].map(({ initialPath, expectedPage }) => {
     // TODO message to distinguish between normal routing and redirection
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
