@@ -38,24 +38,17 @@ const expectToBeOnPage = (
 describe("Unauthenticated User", () => {
   const renderUnauthenticatedComponent = renderComponent(false);
 
-  describe("visits /home", () => {
-    it("should redirect user to Login page with /login as the URL", () => {
-      const { container, history } = renderUnauthenticatedComponent("/home");
-      expectToBeOnPage(container, history.location.pathname, "login");
-    });
-  });
-
-  describe("visits /login", () => {
-    it("should take user to Login page with /login as the URL", () => {
-      const { container, history } = renderUnauthenticatedComponent("/login");
-      expectToBeOnPage(container, history.location.pathname, "login");
-    });
-  });
-
-  describe("visits /", () => {
-    it("should take user to Login page with /login as the URL", () => {
-      const { container, history } = renderUnauthenticatedComponent("/");
-      expectToBeOnPage(container, history.location.pathname, "login");
+  [
+    { initialPath: "/home", expectedPage: "login" },
+    { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/", expectedPage: "login" },
+  ].map(({ initialPath, expectedPage }) => {
+    // TODO message to distinguish between normal routing and redirection
+    it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
+      const { container, history } = renderUnauthenticatedComponent(
+        initialPath
+      );
+      expectToBeOnPage(container, history.location.pathname, expectedPage);
     });
   });
 });
@@ -63,24 +56,14 @@ describe("Unauthenticated User", () => {
 describe("Authenticated User", () => {
   const renderAuthenticatedComponent = renderComponent(true);
 
-  describe("visits /home", () => {
-    it("should take user to Home page with /home as the URL", () => {
-      const { container, history } = renderAuthenticatedComponent("/home");
-      expectToBeOnPage(container, history.location.pathname, "home");
-    });
-  });
-
-  describe("visits /login", () => {
-    it("should take user to Login page with /login as the URL", () => {
-      const { container, history } = renderAuthenticatedComponent("/login");
-      expectToBeOnPage(container, history.location.pathname, "login");
-    });
-  });
-
-  describe("visits /", () => {
-    it("should take user to Home page with /home as the URL", () => {
-      const { container, history } = renderAuthenticatedComponent("/");
-      expectToBeOnPage(container, history.location.pathname, "home");
+  [
+    { initialPath: "/home", expectedPage: "home" },
+    { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/", expectedPage: "home" },
+  ].map(({ initialPath, expectedPage }) => {
+    it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
+      const { container, history } = renderAuthenticatedComponent(initialPath);
+      expectToBeOnPage(container, history.location.pathname, expectedPage);
     });
   });
 });
