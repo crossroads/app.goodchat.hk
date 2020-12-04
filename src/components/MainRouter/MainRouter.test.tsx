@@ -1,27 +1,25 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import MainRouter from "./MainRouter";
-import { createMemoryHistory } from "history";
-import { MemoryRouter, Router } from "react-router";
+import { createMemoryHistory, MemoryHistory } from "history";
+import { Router } from "react-router";
 import AuthProvider from "../../components/AuthProvider";
 
-test("should render an IonRouterOutlet", () => {
-  const { container } = render(<MainRouter />, { wrapper: MemoryRouter });
-
-  expect(container.querySelector("ion-router-outlet")).toBeInTheDocument();
-});
+const renderComponent = (initialAuthState: boolean, history: MemoryHistory) => {
+  return render(
+    <AuthProvider initialAuthState={initialAuthState}>
+      <Router history={history}>
+        <MainRouter />
+      </Router>
+    </AuthProvider>
+  );
+};
 
 describe("Unauthenticated User", () => {
   describe("visits /home", () => {
     it("should redirect user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
-      const { container } = render(
-        <AuthProvider>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(false, history);
 
       expect(history.location.pathname).toEqual("/login");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
@@ -34,13 +32,7 @@ describe("Unauthenticated User", () => {
   describe("visits /login", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
-      const { container } = render(
-        <AuthProvider>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(false, history);
 
       expect(history.location.pathname).toEqual("/login");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
@@ -53,13 +45,7 @@ describe("Unauthenticated User", () => {
   describe("visits /", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
-      const { container } = render(
-        <AuthProvider>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(false, history);
 
       expect(history.location.pathname).toEqual("/login");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
@@ -74,13 +60,7 @@ describe("Authenticated User", () => {
   describe("visits /home", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
-      const { container } = render(
-        <AuthProvider initialAuthState={true}>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(true, history);
 
       expect(history.location.pathname).toEqual("/home");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
@@ -93,13 +73,7 @@ describe("Authenticated User", () => {
   describe("visits /login", () => {
     it("should take user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
-      const { container } = render(
-        <AuthProvider initialAuthState={true}>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(true, history);
 
       expect(history.location.pathname).toEqual("/login");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
@@ -112,13 +86,7 @@ describe("Authenticated User", () => {
   describe("visits /", () => {
     it("should take user to Home page with /home as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
-      const { container } = render(
-        <AuthProvider initialAuthState={true}>
-          <Router history={history}>
-            <MainRouter />
-          </Router>
-        </AuthProvider>
-      );
+      const { container } = renderComponent(true, history);
 
       expect(history.location.pathname).toEqual("/home");
       expect(container.querySelector(".ion-page")).toHaveAttribute(
