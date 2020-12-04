@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton onClick={handleLogin}>Log in</IonButton>
+        <IonButton onClick={handleLogin}>Login</IonButton>
       </IonContent>
     </IonPage>
   );

@@ -6,14 +6,12 @@ import AuthContext from "../../context/AuthContext";
 
 test("renders a login title", () => {
   const { container } = render(<Login />);
-  const title = container.getElementsByTagName("ion-title")[0];
-  expect(title).toHaveTextContent(/login/i);
+  expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
 });
 
 test("renders a login button", () => {
   const { container } = render(<Login />);
-
-  expect(container.querySelector("ion-button")).toHaveTextContent("Log in");
+  expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
 });
 
 test("clicking the login button logs user in", () => {
