@@ -12,7 +12,7 @@ const MainRouter: React.FC = () => {
       <Route exact path="/login">
         <Login />
       </Route>
-      <Route path="/home">
+      <Route exact path="/home">
         {isAuthenticated ? <Home /> : <Redirect to="/login" />}
       </Route>
       <Redirect to={isAuthenticated ? "/home" : "/login"} />

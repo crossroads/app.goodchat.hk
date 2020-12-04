@@ -40,6 +40,7 @@ describe("Unauthenticated User", () => {
 
   [
     { initialPath: "/home", expectedPage: "login" },
+    { initialPath: "/home/1234", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/login/1234", expectedPage: "login" },
     { initialPath: "/", expectedPage: "login" },
@@ -60,6 +61,7 @@ describe("Authenticated User", () => {
 
   [
     { initialPath: "/home", expectedPage: "home" },
+    { initialPath: "/home/1234", expectedPage: "home" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/login/1234", expectedPage: "home" },
     { initialPath: "/", expectedPage: "home" },
