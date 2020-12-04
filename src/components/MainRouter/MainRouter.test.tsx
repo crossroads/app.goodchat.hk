@@ -61,6 +61,7 @@ describe("Authenticated User", () => {
     { initialPath: "/home", expectedPage: "home" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/", expectedPage: "home" },
+    { initialPath: "/bad-route", expectedPage: "home" },
   ].map(({ initialPath, expectedPage }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderAuthenticatedComponent(initialPath);
