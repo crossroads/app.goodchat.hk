@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from "react-router";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login/Login";
 import useAuth from "../../hooks/useAuth";
+import PrivateRoute from "../../components/PrivateRoute";
 
 const MainRouter: React.FC = () => {
   const { isAuthenticated } = useAuth();
@@ -12,9 +13,9 @@ const MainRouter: React.FC = () => {
       <Route exact path="/login">
         <Login />
       </Route>
-      <Route exact path="/home">
-        {isAuthenticated ? <Home /> : <Redirect to="/login" />}
-      </Route>
+      <PrivateRoute exact path="/home">
+        <Home />
+      </PrivateRoute>
       <Redirect to={isAuthenticated ? "/home" : "/login"} />
     </Switch>
   );
