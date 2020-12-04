@@ -41,6 +41,7 @@ describe("Unauthenticated User", () => {
   [
     { initialPath: "/home", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/login/1234", expectedPage: "login" },
     { initialPath: "/", expectedPage: "login" },
     { initialPath: "/bad-route", expectedPage: "login" },
   ].map(({ initialPath, expectedPage }) => {
@@ -60,6 +61,7 @@ describe("Authenticated User", () => {
   [
     { initialPath: "/home", expectedPage: "home" },
     { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/login/1234", expectedPage: "home" },
     { initialPath: "/", expectedPage: "home" },
     { initialPath: "/bad-route", expectedPage: "home" },
   ].map(({ initialPath, expectedPage }) => {
