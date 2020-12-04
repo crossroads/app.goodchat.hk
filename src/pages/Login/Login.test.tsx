@@ -3,6 +3,8 @@ import { render } from "@testing-library/react";
 import Login from "./Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import AuthContext from "../../context/AuthContext";
+import AuthProvider from "../../components/AuthProvider";
+import ReactRouter, { MemoryRouter } from "react-router";
 
 test("renders a login title", () => {
   const { container } = render(<Login />);
@@ -23,7 +25,9 @@ test("clicking the login button logs user in", () => {
         setIsAuthenticated: mockSetIsAuthenticated,
       }}
     >
-      <Login />
+      <MemoryRouter initialEntries={["/login"]}>
+        <Login />
+      </MemoryRouter>
     </AuthContext.Provider>
   );
 
@@ -31,4 +35,24 @@ test("clicking the login button logs user in", () => {
 
   expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
   expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
+});
+
+test("user is redirected to home page on login", () => {
+  const mockHistory = { replace: jest.fn() };
+  const mockUseHistory = jest
+    .spyOn(ReactRouter, "useHistory")
+    .mockReturnValue(mockHistory as any);
+
+  const { container } = render(
+    <AuthProvider>
+      <MemoryRouter initialEntries={["/login"]}>
+        <Login />
+      </MemoryRouter>
+    </AuthProvider>
+  );
+  userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+  expect(mockHistory.replace).toHaveBeenCalledWith("/home");
+
+  mockUseHistory.mockRestore();
 });
