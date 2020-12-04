@@ -15,17 +15,27 @@ const renderComponent = (initialAuthState: boolean, history: MemoryHistory) => {
   );
 };
 
+// TODO extend jest matchers instead
+const expectToBeOnPage = (
+  container: HTMLElement,
+  myPath: string,
+  expectedPage: string
+) => {
+  const expectedPath = `/${expectedPage}`;
+  expect(myPath).toEqual(expectedPath);
+  expect(container.querySelector(".ion-page")).toHaveAttribute(
+    "title",
+    expectedPage
+  );
+};
+
 describe("Unauthenticated User", () => {
   describe("visits /home", () => {
     it("should redirect user to Login page with /login as the URL", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
       const { container } = renderComponent(false, history);
 
-      expect(history.location.pathname).toEqual("/login");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "login"
-      );
+      expectToBeOnPage(container, history.location.pathname, "login");
     });
   });
 
@@ -34,11 +44,7 @@ describe("Unauthenticated User", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
       const { container } = renderComponent(false, history);
 
-      expect(history.location.pathname).toEqual("/login");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "login"
-      );
+      expectToBeOnPage(container, history.location.pathname, "login");
     });
   });
 
@@ -47,11 +53,7 @@ describe("Unauthenticated User", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
       const { container } = renderComponent(false, history);
 
-      expect(history.location.pathname).toEqual("/login");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "login"
-      );
+      expectToBeOnPage(container, history.location.pathname, "login");
     });
   });
 });
@@ -62,11 +64,7 @@ describe("Authenticated User", () => {
       const history = createMemoryHistory({ initialEntries: ["/home"] });
       const { container } = renderComponent(true, history);
 
-      expect(history.location.pathname).toEqual("/home");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "home"
-      );
+      expectToBeOnPage(container, history.location.pathname, "home");
     });
   });
 
@@ -75,11 +73,7 @@ describe("Authenticated User", () => {
       const history = createMemoryHistory({ initialEntries: ["/login"] });
       const { container } = renderComponent(true, history);
 
-      expect(history.location.pathname).toEqual("/login");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "login"
-      );
+      expectToBeOnPage(container, history.location.pathname, "login");
     });
   });
 
@@ -88,11 +82,7 @@ describe("Authenticated User", () => {
       const history = createMemoryHistory({ initialEntries: ["/"] });
       const { container } = renderComponent(true, history);
 
-      expect(history.location.pathname).toEqual("/home");
-      expect(container.querySelector(".ion-page")).toHaveAttribute(
-        "title",
-        "home"
-      );
+      expectToBeOnPage(container, history.location.pathname, "home");
     });
   });
 });
