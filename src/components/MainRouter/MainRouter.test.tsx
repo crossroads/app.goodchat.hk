@@ -40,11 +40,11 @@ describe("Unauthenticated User", () => {
 
   [
     { initialPath: "/home", expectedPage: "login" },
-    { initialPath: "/home/1234", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
-    { initialPath: "/login/1234", expectedPage: "login" },
     { initialPath: "/", expectedPage: "login" },
     { initialPath: "/bad-route", expectedPage: "login" },
+    { initialPath: "/home/bad-route", expectedPage: "login" },
+    { initialPath: "/login/bad-route", expectedPage: "login" },
   ].map(({ initialPath, expectedPage }) => {
     // TODO message to distinguish between normal routing and redirection
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
@@ -61,11 +61,11 @@ describe("Authenticated User", () => {
 
   [
     { initialPath: "/home", expectedPage: "home" },
-    { initialPath: "/home/1234", expectedPage: "home" },
     { initialPath: "/login", expectedPage: "login" },
-    { initialPath: "/login/1234", expectedPage: "home" },
     { initialPath: "/", expectedPage: "home" },
     { initialPath: "/bad-route", expectedPage: "home" },
+    { initialPath: "/home/bad-route", expectedPage: "home" },
+    { initialPath: "/login/bad-route", expectedPage: "home" },
   ].map(({ initialPath, expectedPage }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderAuthenticatedComponent(initialPath);
