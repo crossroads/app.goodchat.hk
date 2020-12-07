@@ -1,5 +1,6 @@
 import {
-  IonContent,
+  IonButton,
+  IonButtons,
   IonHeader,
   IonPage,
   IonTitle,
@@ -13,6 +14,9 @@ const Home: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Home</IonTitle>
+          <IonButtons slot="end">
+            <IonButton>Log out</IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
     </IonPage>
