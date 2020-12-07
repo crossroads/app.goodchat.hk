@@ -4,6 +4,7 @@ import MainRouter from "./MainRouter";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import AuthProvider from "../../components/AuthProvider";
+import { expectToBeOnPage } from "../../test-utils/matchers";
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string
@@ -21,20 +22,6 @@ const renderComponent = (initialAuthState: boolean) => (
   };
 };
 
-// TODO extend jest matchers instead
-const expectToBeOnPage = (
-  container: HTMLElement,
-  myPath: string,
-  expectedPage: string
-) => {
-  const expectedPath = `/${expectedPage}`;
-  expect(myPath).toEqual(expectedPath);
-  expect(container.querySelector(".ion-page")).toHaveAttribute(
-    "title",
-    expectedPage
-  );
-};
-
 describe("Unauthenticated User", () => {
   const renderUnauthenticatedComponent = renderComponent(false);
 
@@ -46,7 +33,6 @@ describe("Unauthenticated User", () => {
     { initialPath: "/home/bad-route", expectedPage: "login" },
     { initialPath: "/login/bad-route", expectedPage: "login" },
   ].map(({ initialPath, expectedPage }) => {
-    // TODO message to distinguish between normal routing and redirection
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderUnauthenticatedComponent(
         initialPath
