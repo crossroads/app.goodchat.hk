@@ -30,7 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "tsc && react-scripts test",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
     "format": "prettier --ignore-path .gitignore --write ."
@@ -56,5 +56,10 @@
     "husky": "^4.3.5",
     "prettier": "2.2.0",
     "typescript": "^3.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsc"
+    }
   }
 }
