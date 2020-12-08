@@ -53,6 +53,7 @@
   "description": "An Ionic project",
   "devDependencies": {
     "@capacitor/cli": "2.4.2",
+    "husky": "^4.3.5",
     "prettier": "2.2.0",
     "typescript": "^3.8.3"
   }
