@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import Home from "./Home";
 import AuthContext from "../../context/AuthContext";
+import userEvent, { TargetElement } from "@testing-library/user-event";
 
 test("renders a home title", () => {
   const { container } = render(<Home />);
@@ -29,9 +30,8 @@ test("clicking log out button logs user out", () => {
   );
 
   const logoutButton = screen.getByText(/log out/i);
-  logoutButton.click();
+  userEvent.click(logoutButton as TargetElement);
 
   expect(mockSetIsAuthenticated).toHaveBeenCalledWith(false);
   expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
 });
-
