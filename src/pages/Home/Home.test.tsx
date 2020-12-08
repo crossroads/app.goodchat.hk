@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import Home from "./Home";
-import AuthContext from "../../context/AuthContext";
+import Home from "pages/Home/Home";
+import AuthContext from "context/AuthContext";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 
 test("renders a home title", () => {
