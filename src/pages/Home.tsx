@@ -9,7 +9,7 @@ import React from "react";
 
 const Home: React.FC = () => {
   return (
-    <IonPage>
+    <IonPage title="home">
       <IonHeader>
         <IonToolbar>
           <IonTitle>Home</IonTitle>

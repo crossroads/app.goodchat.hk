@@ -19,18 +19,18 @@
     "@types/react-router-dom": "^5.1.3",
     "cordova-plugin-ionic": "5.4.7",
     "cordova-plugin-whitelist": "^1.3.4",
+    "history": "^4.10.1",
     "ionicons": "^5.0.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0",
-    "typescript": "3.8.3"
+    "react-scripts": "3.4.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "tsc && react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
     "format": "prettier --ignore-path .gitignore --write ."
@@ -53,6 +53,7 @@
   "description": "An Ionic project",
   "devDependencies": {
     "@capacitor/cli": "2.4.2",
-    "prettier": "2.2.0"
+    "prettier": "2.2.0",
+    "typescript": "^3.8.3"
   }
 }
