@@ -53,6 +53,7 @@ test("user is redirected to home page on login", () => {
   userEvent.click(container.querySelector("ion-button") as TargetElement);
 
   expect(mockHistory.replace).toHaveBeenCalledWith("/home");
+  expect(mockHistory.replace).toHaveBeenCalledTimes(1);
 
   mockUseHistory.mockRestore();
 });
