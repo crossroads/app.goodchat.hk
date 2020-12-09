@@ -2,7 +2,7 @@ import React from "react";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import MainRouter from "components/MainRouter/MainRouter";
-import AuthProvider from "components/AuthProvider";
+import AuthProvider from "components/AuthProvider/AuthProvider";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
