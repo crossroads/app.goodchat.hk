@@ -17,6 +17,7 @@ const Login: React.FC = () => {
   const handleLogin = () => {
     setIsAuthenticated(true);
     history.replace("/home");
+    window.localStorage.setItem("authenticated", "true");
   };
 
   return (
