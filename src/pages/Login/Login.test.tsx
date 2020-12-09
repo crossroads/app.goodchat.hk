@@ -15,56 +15,58 @@ test("renders a login button", () => {
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
 });
 
-test("clicking the login button logs user in", () => {
-  const mockSetIsAuthenticated = jest.fn();
-  const { container } = render(
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: false,
-        setIsAuthenticated: mockSetIsAuthenticated,
-      }}
-    >
+describe("Clicking login button", () => {
+  it("should set authentication state to true", () => {
+    const mockSetIsAuthenticated = jest.fn();
+    const { container } = render(
+      <AuthContext.Provider
+        value={{
+          isAuthenticated: false,
+          setIsAuthenticated: mockSetIsAuthenticated,
+        }}
+      >
+        <MemoryRouter initialEntries={["/login"]}>
+          <Login />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    );
+
+    userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+    expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
+    expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
+  });
+
+  it("should redirect user to home", () => {
+    const mockHistory = { replace: jest.fn() };
+    const mockUseHistory = jest
+      .spyOn(ReactRouter, "useHistory")
+      .mockReturnValue(mockHistory as any);
+
+    const { container } = render(
       <MemoryRouter initialEntries={["/login"]}>
         <Login />
       </MemoryRouter>
-    </AuthContext.Provider>
-  );
+    );
+    userEvent.click(container.querySelector("ion-button") as TargetElement);
 
-  userEvent.click(container.querySelector("ion-button") as TargetElement);
+    expect(mockHistory.replace).toHaveBeenCalledWith("/home");
+    expect(mockHistory.replace).toHaveBeenCalledTimes(1);
 
-  expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
-  expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
-});
+    mockUseHistory.mockRestore();
+  });
 
-test("user is redirected to home page on login", () => {
-  const mockHistory = { replace: jest.fn() };
-  const mockUseHistory = jest
-    .spyOn(ReactRouter, "useHistory")
-    .mockReturnValue(mockHistory as any);
+  it("should set auth state in localStorage", () => {
+    window.localStorage.clear();
 
-  const { container } = render(
-    <MemoryRouter initialEntries={["/login"]}>
-      <Login />
-    </MemoryRouter>
-  );
-  userEvent.click(container.querySelector("ion-button") as TargetElement);
+    const { container } = render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <Login />
+      </MemoryRouter>
+    );
 
-  expect(mockHistory.replace).toHaveBeenCalledWith("/home");
-  expect(mockHistory.replace).toHaveBeenCalledTimes(1);
+    userEvent.click(container.querySelector("ion-button") as TargetElement);
 
-  mockUseHistory.mockRestore();
-});
-
-test("clicking login button stores auth state in localStorage", () => {
-  window.localStorage.clear();
-
-  const { container } = render(
-    <MemoryRouter initialEntries={["/login"]}>
-      <Login />
-    </MemoryRouter>
-  );
-
-  userEvent.click(container.querySelector("ion-button") as TargetElement);
-
-  expect(window.localStorage.getItem("authenticated")).toBeTruthy();
+    expect(window.localStorage.getItem("authenticated")).toBeTruthy();
+  });
 });
