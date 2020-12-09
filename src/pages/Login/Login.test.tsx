@@ -3,7 +3,6 @@ import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import AuthContext from "context/AuthContext";
-import AuthProvider from "components/AuthProvider";
 import ReactRouter, { MemoryRouter } from "react-router";
 
 test("renders a login title", () => {
@@ -44,11 +43,9 @@ test("user is redirected to home page on login", () => {
     .mockReturnValue(mockHistory as any);
 
   const { container } = render(
-    <AuthProvider>
-      <MemoryRouter initialEntries={["/login"]}>
-        <Login />
-      </MemoryRouter>
-    </AuthProvider>
+    <MemoryRouter initialEntries={["/login"]}>
+      <Login />
+    </MemoryRouter>
   );
   userEvent.click(container.querySelector("ion-button") as TargetElement);
 
