@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import Login from "./Login";
+import Login from "pages/Login/Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import AuthContext from "../../context/AuthContext";
-import AuthProvider from "../../components/AuthProvider";
+import AuthContext from "context/AuthContext";
+import AuthProvider from "components/AuthProvider";
 import ReactRouter, { MemoryRouter } from "react-router";
 
 test("renders a login title", () => {

@@ -1,10 +1,10 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import MainRouter from "./MainRouter";
+import MainRouter from "components/MainRouter/MainRouter";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
-import AuthProvider from "../../components/AuthProvider";
-import { expectToBeOnPage } from "../../test-utils/matchers";
+import AuthProvider from "components/AuthProvider";
+import { expectToBeOnPage } from "test-utils/matchers";
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string

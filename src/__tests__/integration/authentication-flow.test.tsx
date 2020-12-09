@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import App from "../../App";
-import { expectToBeOnPage } from "../../test-utils/matchers";
+import App from "App";
+import { expectToBeOnPage } from "test-utils/matchers";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 
 test("User is able to login and logout with correct routing", () => {
