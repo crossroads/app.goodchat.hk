@@ -8,13 +8,14 @@ import {
 } from "@ionic/react";
 import React from "react";
 import useAuth from "hooks/useAuth";
+import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Home: React.FC = () => {
   const { setIsAuthenticated } = useAuth();
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem("authenticated");
+    localStorage.removeItem(AUTHENTICATED);
   };
 
   return (
