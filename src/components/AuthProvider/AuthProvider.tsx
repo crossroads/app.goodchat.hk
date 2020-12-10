@@ -3,8 +3,7 @@ import AuthContext from "context/AuthContext";
 import { AUTHENTICATED } from "config/localStorageKeys";
 
 export const computeAuthState = (initialAuthState: boolean) => {
-  const authState = localStorage.getItem(AUTHENTICATED) ?? initialAuthState;
-  return Boolean(authState);
+  return Boolean(localStorage.getItem(AUTHENTICATED) ?? initialAuthState);
 };
 interface Props {
   initialAuthState?: boolean;
