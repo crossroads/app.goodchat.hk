@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import AuthContext from "context/AuthContext";
+import { AUTHENTICATED } from "config/localStorageKeys";
 
 export interface Auth {
   isAuthenticated: boolean;
@@ -11,10 +12,12 @@ const useAuth = (): Auth => {
 
   const login = () => {
     setIsAuthenticated(true);
+    localStorage.setItem(AUTHENTICATED, "true");
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem(AUTHENTICATED);
   };
 
   return {

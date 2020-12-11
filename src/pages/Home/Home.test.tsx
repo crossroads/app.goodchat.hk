@@ -38,14 +38,3 @@ test("clicking log out button should call logout function", () => {
 
   mockUseAuth.mockRestore();
 });
-
-test("clicking log out button should clear localStorage auth state", () => {
-  const authKey = "authenticated";
-  localStorage.setItem(authKey, "true");
-  render(<Home />);
-
-  const logoutButton = screen.getByText(/log out/i);
-  userEvent.click(logoutButton as TargetElement);
-
-  expect(localStorage.getItem(authKey)).toBeNull();
-});

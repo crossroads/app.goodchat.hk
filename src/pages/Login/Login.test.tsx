@@ -58,18 +58,4 @@ describe("Clicking login button", () => {
 
     mockUseHistory.mockRestore();
   });
-
-  it("should set auth state in localStorage", () => {
-    window.localStorage.clear();
-
-    const { container } = render(
-      <MemoryRouter initialEntries={["/login"]}>
-        <Login />
-      </MemoryRouter>
-    );
-
-    userEvent.click(container.querySelector("ion-button") as TargetElement);
-
-    expect(window.localStorage.getItem("authenticated")).toBeTruthy();
-  });
 });

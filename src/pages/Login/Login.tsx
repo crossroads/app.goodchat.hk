@@ -9,7 +9,6 @@ import {
 import React from "react";
 import { useHistory } from "react-router";
 import useAuth from "hooks/useAuth/useAuth";
-import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Login: React.FC = () => {
   const { login } = useAuth();
@@ -18,7 +17,6 @@ const Login: React.FC = () => {
   const handleLogin = () => {
     login();
     history.replace("/home");
-    window.localStorage.setItem(AUTHENTICATED, "true");
   };
 
   return (

@@ -8,15 +8,9 @@ import {
 } from "@ionic/react";
 import React from "react";
 import useAuth from "hooks/useAuth/useAuth";
-import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Home: React.FC = () => {
   const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    localStorage.removeItem(AUTHENTICATED);
-  };
 
   return (
     <IonPage title="home">
@@ -24,7 +18,7 @@ const Home: React.FC = () => {
         <IonToolbar>
           <IonTitle>Home</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={handleLogout}>Log out</IonButton>
+            <IonButton onClick={logout}>Log out</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
