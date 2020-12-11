@@ -1,12 +1,8 @@
 import React from "react";
-import useAuth from "hooks/useAuth";
+import useAuth, { Auth } from "hooks/useAuth";
 import { render, cleanup } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 
-interface Auth {
-  isAuthenticated: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-}
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | undefined;
   const TestComponent: React.FC = () => {
