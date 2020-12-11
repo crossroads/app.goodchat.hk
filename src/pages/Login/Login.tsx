@@ -12,11 +12,11 @@ import useAuth from "hooks/useAuth/useAuth";
 import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Login: React.FC = () => {
-  const { setIsAuthenticated } = useAuth();
+  const { login } = useAuth();
   const history = useHistory();
 
   const handleLogin = () => {
-    setIsAuthenticated(true);
+    login();
     history.replace("/home");
     window.localStorage.setItem(AUTHENTICATED, "true");
   };

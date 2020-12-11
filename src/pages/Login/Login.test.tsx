@@ -2,8 +2,9 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import AuthContext from "context/AuthContext";
+import AuthProvider from "components/AuthProvider/AuthProvider";
 import ReactRouter, { MemoryRouter } from "react-router";
+import * as UseAuthModule from "hooks/useAuth/useAuth";
 
 test("renders a login title", () => {
   const { container } = render(<Login />);
@@ -16,25 +17,27 @@ test("renders a login button", () => {
 });
 
 describe("Clicking login button", () => {
-  it("should set authentication state to true", () => {
-    const mockSetIsAuthenticated = jest.fn();
+  it("should call the login function", () => {
+    const mockLogin = jest.fn();
+    const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
+      isAuthenticated: false,
+      setIsAuthenticated: jest.fn(),
+      login: mockLogin,
+    });
+
     const { container } = render(
-      <AuthContext.Provider
-        value={{
-          isAuthenticated: false,
-          setIsAuthenticated: mockSetIsAuthenticated,
-        }}
-      >
+      <AuthProvider>
         <MemoryRouter initialEntries={["/login"]}>
           <Login />
         </MemoryRouter>
-      </AuthContext.Provider>
+      </AuthProvider>
     );
 
     userEvent.click(container.querySelector("ion-button") as TargetElement);
 
-    expect(mockSetIsAuthenticated).toHaveBeenCalledWith(true);
-    expect(mockSetIsAuthenticated).toHaveBeenCalledTimes(1);
+    expect(mockLogin).toHaveBeenCalledTimes(1);
+
+    mockUseAuth.mockRestore();
   });
 
   it("should redirect user to home", () => {
