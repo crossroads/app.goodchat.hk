@@ -21,7 +21,6 @@ test("clicking log out button should call logout function", () => {
   const mockLogout = jest.fn();
   const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
     isAuthenticated: true,
-    setIsAuthenticated: jest.fn(),
     login: jest.fn(),
     logout: mockLogout,
   });

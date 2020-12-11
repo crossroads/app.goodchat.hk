@@ -21,7 +21,6 @@ describe("Clicking login button", () => {
     const mockLogin = jest.fn();
     const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
       isAuthenticated: false,
-      setIsAuthenticated: jest.fn(),
       login: mockLogin,
       logout: jest.fn(),
     });

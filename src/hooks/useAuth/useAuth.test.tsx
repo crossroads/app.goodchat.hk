@@ -31,20 +31,6 @@ test("should return the correct authentication state", () => {
   expect(auth.isAuthenticated).toBe(true);
 });
 
-test("returns a state updater function", () => {
-  const mockSetIsAuthenticated = jest.fn();
-  const mockUseContext = jest.spyOn(React, "useContext").mockReturnValue({
-    isAuthenticated: false,
-    setIsAuthenticated: mockSetIsAuthenticated,
-  });
-
-  const auth = setup(AuthProvider);
-
-  expect(auth.setIsAuthenticated).toBe(mockSetIsAuthenticated);
-
-  mockUseContext.mockRestore();
-});
-
 describe("login", () => {
   it("should set auth state to true", () => {
     const auth = setup(AuthProvider);
