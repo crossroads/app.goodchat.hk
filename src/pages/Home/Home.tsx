@@ -11,10 +11,10 @@ import useAuth from "hooks/useAuth/useAuth";
 import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Home: React.FC = () => {
-  const { setIsAuthenticated } = useAuth();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    logout();
     localStorage.removeItem(AUTHENTICATED);
   };
 
