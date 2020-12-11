@@ -1,6 +1,6 @@
 import React from "react";
 import useAuth, { Auth } from "hooks/useAuth";
-import { render, cleanup } from "@testing-library/react";
+import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 
 const setup = (Wrapper: React.FC) => {
@@ -42,4 +42,14 @@ test("returns a state updater function", () => {
   expect(auth.setIsAuthenticated).toBe(mockSetIsAuthenticated);
 
   mockUseContext.mockRestore();
+});
+
+describe("login", () => {
+  it("should set auth state to true", () => {
+    const auth = setup(AuthProvider);
+
+    act(() => auth.login());
+
+    expect(auth.isAuthenticated).toBe(true);
+  });
 });
