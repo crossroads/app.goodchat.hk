@@ -7,7 +7,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
-import useAuth from "hooks/useAuth";
+import useAuth from "hooks/useAuth/useAuth";
 import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Home: React.FC = () => {

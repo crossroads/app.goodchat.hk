@@ -1,5 +1,5 @@
 import React from "react";
-import useAuth, { Auth } from "hooks/useAuth";
+import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 

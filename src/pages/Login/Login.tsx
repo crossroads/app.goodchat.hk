@@ -8,7 +8,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 import { useHistory } from "react-router";
-import useAuth from "hooks/useAuth";
+import useAuth from "hooks/useAuth/useAuth";
 import { AUTHENTICATED } from "config/localStorageKeys";
 
 const Login: React.FC = () => {

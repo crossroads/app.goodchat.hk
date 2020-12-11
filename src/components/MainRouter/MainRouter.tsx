@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router";
 import Home from "pages/Home/Home";
 import Login from "pages/Login/Login";
-import useAuth from "hooks/useAuth";
+import useAuth from "hooks/useAuth/useAuth";
 import PrivateRoute from "components/PrivateRoute";
 
 const MainRouter: React.FC = () => {
