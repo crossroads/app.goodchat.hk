@@ -4,9 +4,9 @@ import { render, cleanup } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 
 const setup = (Wrapper: React.FC) => {
-  let auth: Auth | undefined;
+  let auth: Auth | {} = {};
   const TestComponent: React.FC = () => {
-    auth = useAuth();
+    Object.assign(auth, useAuth());
     return null;
   };
 
