@@ -15,6 +15,10 @@ const setup = (Wrapper: React.FC) => {
   return auth as Auth;
 };
 
+const AuthenticatedAuthProvider: React.FC = ({ children }) => (
+  <AuthProvider initialAuthState={true}>{children}</AuthProvider>
+);
+
 test("should return the correct authentication state", () => {
   let auth = setup(AuthProvider);
 
@@ -22,9 +26,6 @@ test("should return the correct authentication state", () => {
 
   cleanup();
 
-  const AuthenticatedAuthProvider: React.FC = ({ children }) => (
-    <AuthProvider initialAuthState={true}>{children}</AuthProvider>
-  );
   auth = setup(AuthenticatedAuthProvider);
 
   expect(auth.isAuthenticated).toBe(true);
@@ -51,5 +52,15 @@ describe("login", () => {
     act(() => auth.login());
 
     expect(auth.isAuthenticated).toBe(true);
+  });
+});
+
+describe("logout", () => {
+  it("should set auth state to false", () => {
+    const auth = setup(AuthenticatedAuthProvider);
+
+    act(() => auth.logout());
+
+    expect(auth.isAuthenticated).toBe(false);
   });
 });

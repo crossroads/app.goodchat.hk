@@ -23,6 +23,7 @@ describe("Clicking login button", () => {
       isAuthenticated: false,
       setIsAuthenticated: jest.fn(),
       login: mockLogin,
+      logout: jest.fn(),
     });
 
     const { container } = render(

@@ -5,6 +5,7 @@ export interface Auth {
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   login: () => void;
+  logout: () => void;
 }
 const useAuth = (): Auth => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -13,10 +14,15 @@ const useAuth = (): Auth => {
     setIsAuthenticated(true);
   };
 
+  const logout = () => {
+    setIsAuthenticated(false);
+  };
+
   return {
     isAuthenticated,
     setIsAuthenticated,
     login,
+    logout,
   };
 };
 
