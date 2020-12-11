@@ -3,7 +3,7 @@ import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 
-const AUTHENTICATED = "authenticated";
+const GC_API_TOKEN = "gc_api_token";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};
@@ -34,7 +34,7 @@ test("should return the correct authentication state", () => {
 });
 
 describe("login", () => {
-  afterEach(() => window.localStorage.removeItem(AUTHENTICATED));
+  afterEach(() => window.localStorage.removeItem(GC_API_TOKEN));
 
   it("should set auth state to true", () => {
     const auth = setup(AuthProvider);
@@ -49,12 +49,12 @@ describe("login", () => {
 
     act(() => auth.login());
 
-    expect(window.localStorage.getItem(AUTHENTICATED)).toBeTruthy();
+    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeTruthy();
   });
 });
 
 describe("logout", () => {
-  afterEach(() => window.localStorage.removeItem(AUTHENTICATED));
+  afterEach(() => window.localStorage.removeItem(GC_API_TOKEN));
 
   it("should set auth state to false", () => {
     const auth = setup(AuthenticatedAuthProvider);
@@ -69,10 +69,10 @@ describe("logout", () => {
 
     act(() => auth.login());
 
-    expect(window.localStorage.getItem(AUTHENTICATED)).toBeTruthy();
+    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeTruthy();
 
     act(() => auth.logout());
 
-    expect(window.localStorage.getItem(AUTHENTICATED)).toBeNull();
+    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeNull();
   });
 });

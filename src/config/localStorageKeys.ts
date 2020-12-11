@@ -1,3 +1,3 @@
-const AUTHENTICATED = "authenticated";
+const GC_API_TOKEN = "gc_api_token";
 
-export { AUTHENTICATED };
+export { GC_API_TOKEN };

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import AuthContext from "context/AuthContext";
-import { AUTHENTICATED } from "config/localStorageKeys";
+import { GC_API_TOKEN } from "config/localStorageKeys";
 
 export interface Auth {
   isAuthenticated: boolean;
@@ -12,12 +12,12 @@ const useAuth = (): Auth => {
 
   const login = () => {
     setIsAuthenticated(true);
-    localStorage.setItem(AUTHENTICATED, "true");
+    localStorage.setItem(GC_API_TOKEN, "true");
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem(AUTHENTICATED);
+    localStorage.removeItem(GC_API_TOKEN);
   };
 
   return {
