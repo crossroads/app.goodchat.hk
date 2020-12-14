@@ -13,7 +13,7 @@ const Home: React.FC = () => {
   const { logout } = useAuth();
 
   return (
-    <IonPage title="home">
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Home</IonTitle>
