@@ -10,11 +10,16 @@ test("renders an offers title", () => {
   expect(container.querySelector("ion-title")).toHaveTextContent(/offers/i);
 });
 
-test("renders a log out button in the header", () => {
+test("renders a log out button within a header", () => {
   const { container } = render(<Offers />);
   expect(container.querySelector("ion-header ion-button")).toHaveTextContent(
     /log out/i
   );
+});
+
+test("renders a log out button at the end of the header", () => {
+  const { container } = render(<Offers />);
+  expect(container.querySelector("ion-buttons")).toMatchSnapshot();
 });
 
 test("clicking log out button should call the logout function", () => {

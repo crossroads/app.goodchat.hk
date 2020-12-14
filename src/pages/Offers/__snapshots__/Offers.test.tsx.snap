@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a log out button at the end of the header 1`] = `
+<ion-buttons
+  slot="end"
+>
+  <ion-button>
+    Log out
+  </ion-button>
+</ion-buttons>
+`;

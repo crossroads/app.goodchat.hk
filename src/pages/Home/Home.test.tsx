@@ -17,6 +17,11 @@ test("renders a log out button within a header", () => {
   );
 });
 
+test("renders a log out button at the end of the header", () => {
+  const { container } = render(<Home />);
+  expect(container.querySelector("ion-buttons")).toMatchSnapshot();
+});
+
 test("clicking log out button should call logout function", () => {
   const mockLogout = jest.fn();
   const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
