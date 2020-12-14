@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <IonPage title="login">
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Login</IonTitle>
