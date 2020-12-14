@@ -5,9 +5,8 @@ const expectToBeOnPage = (
 ) => {
   const expectedPath = `/${expectedPage}`;
   expect(myPath).toEqual(expectedPath);
-  expect(container.querySelector(".ion-page")).toHaveAttribute(
-    "title",
-    expectedPage
+  expect(container.querySelector("ion-title")).toHaveTextContent(
+    new RegExp(expectedPage, "i")
   );
 };
 
