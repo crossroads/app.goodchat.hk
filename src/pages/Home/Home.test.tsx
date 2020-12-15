@@ -5,21 +5,9 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 
-test("renders a home title", () => {
+test("renders correctly", () => {
   const { container } = render(<Home />);
-  expect(container.querySelector("ion-title")).toHaveTextContent(/home/i);
-});
-
-test("renders a log out button within a header", () => {
-  const { container } = render(<Home />);
-  expect(container.querySelector("ion-header ion-button")).toHaveTextContent(
-    /log out/i
-  );
-});
-
-test("renders a log out button at the end of the header", () => {
-  const { container } = render(<Home />);
-  expect(container.querySelector("ion-buttons")).toMatchSnapshot();
+  expect(container).toMatchSnapshot();
 });
 
 test("clicking log out button should call logout function", () => {
