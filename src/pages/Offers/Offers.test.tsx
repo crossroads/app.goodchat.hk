@@ -1,16 +1,16 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import Home from "pages/Home/Home";
+import Offers from "pages/Offers/Offers";
+import userEvent from "@testing-library/user-event";
 import AuthProvider from "components/AuthProvider/AuthProvider";
-import userEvent, { TargetElement } from "@testing-library/user-event";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 
 test("renders correctly", () => {
-  const { container } = render(<Home />);
+  const { container } = render(<Offers />);
   expect(container).toMatchSnapshot();
 });
 
-test("clicking log out button should call logout function", () => {
+test("clicking log out button should call the logout function", () => {
   const mockLogout = jest.fn();
   const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
     isAuthenticated: true,
@@ -20,12 +20,12 @@ test("clicking log out button should call logout function", () => {
 
   render(
     <AuthProvider initialAuthState={true}>
-      <Home />
+      <Offers />
     </AuthProvider>
   );
 
   const logoutButton = screen.getByText(/log out/i);
-  userEvent.click(logoutButton as TargetElement);
+  userEvent.click(logoutButton);
 
   expect(mockLogout).toHaveBeenCalledTimes(1);
 
