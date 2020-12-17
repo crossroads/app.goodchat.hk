@@ -5,34 +5,29 @@ import { IonReactRouter } from "@ionic/react-router";
 import { expectToBeOnPage } from "test-utils/matchers";
 import { createMemoryHistory } from "history";
 
+const renderComponent = (initialPath: string) => {
+  const history = createMemoryHistory({ initialEntries: [initialPath] });
+  return {
+    history,
+    ...render(
+      <IonReactRouter history={history}>
+        <MainTabs />
+      </IonReactRouter>
+    ),
+  };
+};
+
 test("renders without crashing", () => {
-  const history = createMemoryHistory({ initialEntries: ["/home"] });
-  const { container } = render(
-    <IonReactRouter history={history}>
-      <MainTabs />
-    </IonReactRouter>
-  );
+  const { container } = renderComponent("/home");
   expect(container).toBeInTheDocument();
 });
 
 test("visiting /home takes user to Home", () => {
-  const history = createMemoryHistory({ initialEntries: ["/home"] });
-  const { container } = render(
-    <IonReactRouter history={history}>
-      <MainTabs />
-    </IonReactRouter>
-  );
+  const { container, history } = renderComponent("/home");
   expectToBeOnPage(container, history.location.pathname, "home");
 });
 
 test("visiting /offers takes user to Offers", () => {
-  const history = createMemoryHistory({ initialEntries: ["/offers"] });
-  const { container } = render(
-    <IonReactRouter
-      history={createMemoryHistory({ initialEntries: ["/offers"] })}
-    >
-      <MainTabs />
-    </IonReactRouter>
-  );
+  const { container, history } = renderComponent("/offers");
   expectToBeOnPage(container, history.location.pathname, "offers");
 });
