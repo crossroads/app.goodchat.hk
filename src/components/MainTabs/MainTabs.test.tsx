@@ -22,6 +22,11 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
+test("renders correctly", () => {
+  const { container } = renderComponent("/home");
+  expect(container).toMatchSnapshot();
+});
+
 test("renders home tab correctly", () => {
   const { container } = renderComponent("/home");
 
