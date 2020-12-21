@@ -10,16 +10,24 @@ jest.mock("react-router", () => ({
   Redirect: jest.fn(() => null),
 }));
 
+const renderComponent = (initialPath: string, initialAuthState = false) => {
+  const history = createMemoryHistory({ initialEntries: [initialPath] });
+  return {
+    history,
+    ...render(
+      <AuthProvider initialAuthState={initialAuthState}>
+        <Router history={history}>
+          <PrivateRoute path={["/home", "/offers"]} />
+        </Router>
+      </AuthProvider>
+    ),
+  };
+};
+
 afterEach(() => jest.clearAllMocks());
 
 test("redirects unauthenticated user to /login", () => {
-  render(
-    <AuthProvider>
-      <Router history={createMemoryHistory({ initialEntries: ["/home"] })}>
-        <PrivateRoute path={["/home"]} />
-      </Router>
-    </AuthProvider>
-  );
+  renderComponent("/home");
 
   expect(MockRedirect).toHaveBeenCalledWith(
     { to: expect.objectContaining({ pathname: "/login" }) },
@@ -29,13 +37,8 @@ test("redirects unauthenticated user to /login", () => {
 });
 
 test("passes origin of redirection in location state on redirection", () => {
-  render(
-    <AuthProvider>
-      <Router history={createMemoryHistory({ initialEntries: ["/home"] })}>
-        <PrivateRoute path={["/home"]} />
-      </Router>
-    </AuthProvider>
-  );
+  renderComponent("/home");
+
   expect(MockRedirect).toHaveBeenCalledWith(
     { to: expect.objectContaining({ state: { from: "/home" } }) },
     {}
@@ -44,13 +47,8 @@ test("passes origin of redirection in location state on redirection", () => {
   cleanup();
   jest.clearAllMocks();
 
-  render(
-    <AuthProvider>
-      <Router history={createMemoryHistory({ initialEntries: ["/offers"] })}>
-        <PrivateRoute path={["/offers"]} />
-      </Router>
-    </AuthProvider>
-  );
+  renderComponent("/offers");
+
   expect(MockRedirect).toHaveBeenCalledWith(
     { to: expect.objectContaining({ state: { from: "/offers" } }) },
     {}
@@ -59,14 +57,6 @@ test("passes origin of redirection in location state on redirection", () => {
 });
 
 test("allows authenticated user to proceed to page", () => {
-  const history = createMemoryHistory({ initialEntries: ["/home"] });
-  render(
-    <AuthProvider initialAuthState={true}>
-      <Router history={history}>
-        <PrivateRoute path={["/home"]} />
-      </Router>
-    </AuthProvider>
-  );
-
+  const { history } = renderComponent("/home", true);
   expect(history.location.pathname).toBe("/home");
 });
