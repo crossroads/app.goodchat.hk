@@ -1,18 +1,18 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import MainTabs from "components/MainTabs/MainTabs";
-import { IonReactRouter } from "@ionic/react-router";
 import { expectToBeOnPage } from "test-utils/matchers";
 import { createMemoryHistory } from "history";
+import { Router } from "react-router";
 
 const renderComponent = (initialPath: string) => {
   const history = createMemoryHistory({ initialEntries: [initialPath] });
   return {
     history,
     ...render(
-      <IonReactRouter history={history}>
+      <Router history={history}>
         <MainTabs />
-      </IonReactRouter>
+      </Router>
     ),
   };
 };
