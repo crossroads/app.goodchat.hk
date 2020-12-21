@@ -21,6 +21,7 @@ test("redirects unauthenticated user to /login", () => {
   );
 
   expect(MockRedirect).toHaveBeenCalledWith({ to: { pathname: "/login" } }, {});
+  expect(MockRedirect).toHaveBeenCalledTimes(1);
 });
 
 test("allows authenticated user to proceed to page", () => {
