@@ -10,7 +10,7 @@ jest.mock("react-router", () => ({
   Redirect: jest.fn(() => null),
 }));
 
-afterEach(() => jest.clearAllMocks);
+afterEach(() => jest.clearAllMocks());
 
 test("redirects unauthenticated user to /login", () => {
   render(
