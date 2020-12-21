@@ -6,9 +6,18 @@ const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Route {...rest}>
-      {isAuthenticated ? children : <Redirect to={{ pathname: "/login" }} />}
-    </Route>
+    <Route
+      {...rest}
+      render={({ location }) => {
+        return isAuthenticated ? (
+          children
+        ) : (
+          <Redirect
+            to={{ pathname: "/login", state: { from: location.pathname } }}
+          />
+        );
+      }}
+    />
   );
 };
 
