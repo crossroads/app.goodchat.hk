@@ -11,10 +11,9 @@ jest.mock("react-router", () => ({
 }));
 
 test("redirects unauthenticated user to /login", () => {
-  const history = createMemoryHistory({ initialEntries: ["/home"] });
   render(
     <AuthProvider>
-      <Router history={history}>
+      <Router history={createMemoryHistory({ initialEntries: ["/home"] })}>
         <PrivateRoute path={["/home"]} />
       </Router>
     </AuthProvider>
