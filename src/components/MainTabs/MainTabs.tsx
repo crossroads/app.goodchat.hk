@@ -21,7 +21,7 @@ const MainTabs = () => (
       </Route>
     </IonRouterOutlet>
     <IonTabBar slot="bottom">
-      <IonTabButton>
+      <IonTabButton tab="home" href="/home">
         <IonLabel>Home</IonLabel>
       </IonTabButton>
     </IonTabBar>

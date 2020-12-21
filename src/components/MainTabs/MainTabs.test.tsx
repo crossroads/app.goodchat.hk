@@ -22,10 +22,21 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
-test("renders a home tab", () => {
+test("renders home tab correctly", () => {
   const { container } = renderComponent("/home");
-  const label = container.querySelector("ion-tab-bar ion-label");
-  expect(label).toHaveTextContent(/home/i);
+
+  const homeTab = container.querySelector('ion-tab-button[tab="home"]');
+
+  expect(homeTab).toMatchInlineSnapshot(`
+    <ion-tab-button
+      href="/home"
+      tab="home"
+    >
+      <ion-label>
+        Home
+      </ion-label>
+    </ion-tab-button>
+  `);
 });
 
 test("visiting /home takes user to Home", () => {
