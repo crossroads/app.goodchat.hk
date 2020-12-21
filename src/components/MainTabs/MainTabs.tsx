@@ -24,6 +24,9 @@ const MainTabs = () => (
       <IonTabButton tab="home" href="/home">
         <IonLabel>Home</IonLabel>
       </IonTabButton>
+      <IonTabButton tab="offers" href="/offers">
+        <IonLabel>Offers</IonLabel>
+      </IonTabButton>
     </IonTabBar>
   </IonTabs>
 );

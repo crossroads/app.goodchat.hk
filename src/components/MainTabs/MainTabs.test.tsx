@@ -27,23 +27,6 @@ test("renders correctly", () => {
   expect(container).toMatchSnapshot();
 });
 
-test("renders home tab correctly", () => {
-  const { container } = renderComponent("/home");
-
-  const homeTab = container.querySelector('ion-tab-button[tab="home"]');
-
-  expect(homeTab).toMatchInlineSnapshot(`
-    <ion-tab-button
-      href="/home"
-      tab="home"
-    >
-      <ion-label>
-        Home
-      </ion-label>
-    </ion-tab-button>
-  `);
-});
-
 test("visiting /home takes user to Home", () => {
   const { container, history } = renderComponent("/home");
   expectToBeOnPage(container, history.location.pathname, "home");
