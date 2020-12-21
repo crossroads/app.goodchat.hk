@@ -13,10 +13,10 @@ import {
 const MainTabs = () => (
   <IonTabs>
     <IonRouterOutlet>
-      <Route exact path="/offers">
+      <Route exact path="/:tab(offers)">
         <Offers />
       </Route>
-      <Route exact path="/home">
+      <Route exact path="/:tab(home)">
         <Home />
       </Route>
     </IonRouterOutlet>
