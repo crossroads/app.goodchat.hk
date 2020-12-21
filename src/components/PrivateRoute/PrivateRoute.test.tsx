@@ -2,10 +2,15 @@ import React from "react";
 import { render } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import PrivateRoute from "components/PrivateRoute/PrivateRoute";
-import { Router } from "react-router";
+import { Router, Redirect as MockRedirect } from "react-router";
 import { createMemoryHistory } from "history";
 
-test("redirects unauthenticated user to login", () => {
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  Redirect: jest.fn(() => null),
+}));
+
+test("redirects unauthenticated user to /login", () => {
   const history = createMemoryHistory({ initialEntries: ["/home"] });
   render(
     <AuthProvider>
@@ -15,7 +20,7 @@ test("redirects unauthenticated user to login", () => {
     </AuthProvider>
   );
 
-  expect(history.location.pathname).toBe("/login");
+  expect(MockRedirect).toHaveBeenCalledWith({ to: "/login" }, {});
 });
 
 test("allows authenticated user to proceed to page", () => {
