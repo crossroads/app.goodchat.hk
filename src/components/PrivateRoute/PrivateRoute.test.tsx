@@ -20,7 +20,7 @@ test("redirects unauthenticated user to /login", () => {
     </AuthProvider>
   );
 
-  expect(MockRedirect).toHaveBeenCalledWith({ to: "/login" }, {});
+  expect(MockRedirect).toHaveBeenCalledWith({ to: { pathname: "/login" } }, {});
 });
 
 test("allows authenticated user to proceed to page", () => {

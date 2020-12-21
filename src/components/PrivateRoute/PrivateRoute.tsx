@@ -7,7 +7,7 @@ const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
 
   return (
     <Route {...rest}>
-      {isAuthenticated ? children : <Redirect to="/login" />}
+      {isAuthenticated ? children : <Redirect to={{ pathname: "/login" }} />}
     </Route>
   );
 };
