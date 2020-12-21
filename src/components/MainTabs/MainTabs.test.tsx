@@ -22,6 +22,12 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
+test("renders a home tab", () => {
+  const { container } = renderComponent("/home");
+  const label = container.querySelector("ion-tab-bar ion-label");
+  expect(label).toHaveTextContent(/home/i);
+});
+
 test("visiting /home takes user to Home", () => {
   const { container, history } = renderComponent("/home");
   expectToBeOnPage(container, history.location.pathname, "home");

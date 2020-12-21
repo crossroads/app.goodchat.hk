@@ -2,8 +2,13 @@ import React from "react";
 import Home from "pages/Home/Home";
 import Offers from "pages/Offers/Offers";
 import { Route } from "react-router";
-
-import { IonRouterOutlet, IonTabBar, IonTabs } from "@ionic/react";
+import {
+  IonLabel,
+  IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+} from "@ionic/react";
 
 const MainTabs = () => (
   <IonTabs>
@@ -15,7 +20,11 @@ const MainTabs = () => (
         <Home />
       </Route>
     </IonRouterOutlet>
-    <IonTabBar slot="bottom"></IonTabBar>
+    <IonTabBar slot="bottom">
+      <IonTabButton>
+        <IonLabel>Home</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
   </IonTabs>
 );
 
