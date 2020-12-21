@@ -42,6 +42,14 @@ exports[`renders correctly 1`] = `
           Home
         </ion-label>
       </ion-tab-button>
+      <ion-tab-button
+        href="/offers"
+        tab="offers"
+      >
+        <ion-label>
+          Offers
+        </ion-label>
+      </ion-tab-button>
     </ion-tab-bar>
   </div>
 </div>
