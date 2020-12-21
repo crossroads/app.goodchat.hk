@@ -15,7 +15,7 @@ const MainTabs = () => (
         <Home />
       </Route>
     </IonRouterOutlet>
-    <IonTabBar></IonTabBar>
+    <IonTabBar slot="bottom"></IonTabBar>
   </IonTabs>
 );
 
