@@ -1,17 +1,18 @@
 import React from "react";
 import Home from "pages/Home/Home";
 import Offers from "pages/Offers/Offers";
-import { Route, Switch } from "react-router";
+import { Route } from "react-router";
+import { IonRouterOutlet } from "@ionic/react";
 
 const MainTabs = () => (
-  <Switch>
+  <IonRouterOutlet>
     <Route exact path="/offers">
       <Offers />
     </Route>
     <Route exact path="/home">
       <Home />
     </Route>
-  </Switch>
+  </IonRouterOutlet>
 );
 
 export default MainTabs;
