@@ -2,17 +2,16 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import AuthProvider from "components/AuthProvider/AuthProvider";
 import ReactRouter, { MemoryRouter } from "react-router";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 
 test("renders a login title", () => {
-  const { container } = render(<Login />);
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
 });
 
 test("renders a login button", () => {
-  const { container } = render(<Login />);
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
 });
 
@@ -25,13 +24,7 @@ describe("Clicking login button", () => {
       logout: jest.fn(),
     });
 
-    const { container } = render(
-      <AuthProvider>
-        <MemoryRouter initialEntries={["/login"]}>
-          <Login />
-        </MemoryRouter>
-      </AuthProvider>
-    );
+    const { container } = render(<Login />, { wrapper: MemoryRouter });
 
     userEvent.click(container.querySelector("ion-button") as TargetElement);
 
@@ -40,22 +33,56 @@ describe("Clicking login button", () => {
     mockUseAuth.mockRestore();
   });
 
-  it("should redirect user to home", () => {
-    const mockHistory = { replace: jest.fn() };
-    const mockUseHistory = jest
-      .spyOn(ReactRouter, "useHistory")
-      .mockReturnValue(mockHistory as any);
+  describe("Redirection", () => {
+    let mockHistory: { replace: jest.Mock };
+    let mockUseHistory: jest.SpyInstance;
 
-    const { container } = render(
-      <MemoryRouter initialEntries={["/login"]}>
-        <Login />
-      </MemoryRouter>
-    );
-    userEvent.click(container.querySelector("ion-button") as TargetElement);
+    beforeAll(() => {
+      mockHistory = { replace: jest.fn() };
+      mockUseHistory = jest
+        .spyOn(ReactRouter, "useHistory")
+        .mockReturnValue(mockHistory as any);
+    });
 
-    expect(mockHistory.replace).toHaveBeenCalledWith("/home");
-    expect(mockHistory.replace).toHaveBeenCalledTimes(1);
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
 
-    mockUseHistory.mockRestore();
+    afterAll(() => {
+      mockUseHistory.mockRestore();
+    });
+
+    describe("User directly arrived at login page", () => {
+      it("should redirect user to home", () => {
+        const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+        userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+        expect(mockHistory.replace).toHaveBeenCalledWith("/home");
+        expect(mockHistory.replace).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe("User was redirected to login", () => {
+      it("should redirect user back to the origin of redirection", () => {
+        const mockUseLocation = jest
+          .spyOn(ReactRouter, "useLocation")
+          .mockReturnValue({
+            pathname: "/login",
+            search: "",
+            hash: "",
+            state: { from: "/offers" },
+          });
+
+        const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+        userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+        expect(mockHistory.replace).toHaveBeenCalledWith("/offers");
+        expect(mockHistory.replace).toHaveBeenCalledTimes(1);
+
+        mockUseLocation.mockRestore();
+      });
+    });
   });
 });
