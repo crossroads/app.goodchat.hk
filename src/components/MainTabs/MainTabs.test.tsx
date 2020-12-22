@@ -22,9 +22,9 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
-test("renders correctly", () => {
+test("renders footer correctly", () => {
   const { container } = renderComponent("/home");
-  expect(container).toMatchSnapshot();
+  expect(container.querySelector("ion-tab-bar")).toMatchSnapshot();
 });
 
 test("visiting /home takes user to Home", () => {
