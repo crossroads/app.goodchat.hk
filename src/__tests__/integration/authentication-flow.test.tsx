@@ -32,3 +32,23 @@ test("User is able to login and logout with correct routing", () => {
 
   expectToBeOnPage(container, history.location.pathname, "login");
 });
+
+test("Unauthenticated user redirected to login is redirected back to that page after login", () => {
+  const history = createMemoryHistory({ initialEntries: ["/offers"] });
+  const { container } = render(
+    <IonApp>
+      <AuthProvider>
+        <Router history={history}>
+          <MainRouter />
+        </Router>
+      </AuthProvider>
+    </IonApp>
+  );
+
+  expectToBeOnPage(container, history.location.pathname, "login");
+
+  const loginButton = container.querySelector("ion-button");
+  userEvent.click(loginButton as TargetElement);
+
+  expectToBeOnPage(container, history.location.pathname, "offers");
+});
