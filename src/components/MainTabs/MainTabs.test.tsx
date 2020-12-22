@@ -22,6 +22,54 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
+test("renders a navbar", () => {
+  const { container } = renderComponent("/home");
+  expect(container.querySelector("ion-tab-bar")).toBeInTheDocument();
+});
+
+test("renders navbar at the bottom of the page", () => {
+  const { container } = renderComponent("/home");
+  expect(container.querySelector("ion-tab-bar")).toHaveAttribute(
+    "slot",
+    "bottom"
+  );
+});
+
+[
+  { tabName: "home", expectedLink: "/home" },
+  { tabName: "offers", expectedLink: "/offers" },
+].forEach(({ tabName, expectedLink }) => {
+  describe(`${tabName} tab`, () => {
+    test("should be rendered", () => {
+      const { container } = renderComponent("/home");
+      expect(
+        container.querySelector(`ion-tab-button[tab=${tabName}]`)
+      ).toBeInTheDocument();
+    });
+
+    test(`should have the appropriate label`, () => {
+      const { container } = renderComponent("/home");
+      expect(
+        container.querySelector(`ion-tab-button[tab=${tabName}] ion-label`)
+      ).toHaveTextContent(new RegExp(tabName, "i"));
+    });
+
+    test(`should have an icon`, () => {
+      const { container } = renderComponent("/home");
+      expect(
+        container.querySelector(`ion-tab-button[tab=${tabName}] ion-icon`)
+      ).toBeInTheDocument();
+    });
+
+    test(`should contain a link to ${expectedLink}`, () => {
+      const { container } = renderComponent("/home");
+      expect(
+        container.querySelector(`ion-tab-button[tab=${tabName}]`)
+      ).toHaveAttribute("href", expectedLink);
+    });
+  });
+});
+
 test("renders footer correctly", () => {
   const { container } = renderComponent("/home");
   expect(container.querySelector("ion-tab-bar")).toMatchSnapshot();
