@@ -2,7 +2,6 @@ import React from "react";
 import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import AuthProvider from "components/AuthProvider/AuthProvider";
 import ReactRouter, { MemoryRouter } from "react-router";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 
@@ -26,11 +25,9 @@ describe("Clicking login button", () => {
     });
 
     const { container } = render(
-      <AuthProvider>
-        <MemoryRouter initialEntries={["/login"]}>
-          <Login />
-        </MemoryRouter>
-      </AuthProvider>
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
     );
 
     userEvent.click(container.querySelector("ion-button") as TargetElement);
@@ -46,11 +43,7 @@ describe("Clicking login button", () => {
       .spyOn(ReactRouter, "useHistory")
       .mockReturnValue(mockHistory as any);
 
-    const { container } = render(
-      <MemoryRouter initialEntries={["/login"]}>
-        <Login />
-      </MemoryRouter>
-    );
+    const { container } = render(<Login />);
     userEvent.click(container.querySelector("ion-button") as TargetElement);
 
     expect(mockHistory.replace).toHaveBeenCalledWith("/home");
