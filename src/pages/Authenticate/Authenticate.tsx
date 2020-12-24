@@ -8,9 +8,16 @@ import {
 } from "@ionic/react";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
+import { useHistory } from "react-router";
 
 const Authenticate: React.FC = () => {
   const { login } = useAuth();
+  const history = useHistory();
+
+  const handleClick = () => {
+    login();
+    history.replace("/home");
+  };
 
   return (
     <IonPage>
@@ -20,7 +27,7 @@ const Authenticate: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton onClick={login}>Login</IonButton>
+        <IonButton onClick={handleClick}>Login</IonButton>
       </IonContent>
     </IonPage>
   );
