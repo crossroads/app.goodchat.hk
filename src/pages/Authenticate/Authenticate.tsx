@@ -6,9 +6,12 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
 const Authenticate: React.FC = () => {
+  const { login } = useAuth();
+
   return (
     <IonPage>
       <IonHeader>
@@ -17,7 +20,7 @@ const Authenticate: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton>Login</IonButton>
+        <IonButton onClick={login}>Login</IonButton>
       </IonContent>
     </IonPage>
   );
