@@ -1,6 +1,9 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
+import { createMemoryHistory } from "history";
+import { Router } from "react-router";
+import userEvent, { TargetElement } from "@testing-library/user-event";
 
 test("renders a login title", () => {
   const { container } = render(<Login />);
@@ -14,10 +17,22 @@ test("renders a go to authenticate button", () => {
   );
 });
 
-test("go to authenticate button should have a link to /authenticate", () => {
-  const { container } = render(<Login />);
-  expect(container.querySelector("ion-button")).toHaveAttribute(
-    "href",
-    "/authenticate"
-  );
+describe("Clicking go to authenticate button", () => {
+  test("should navigate to /authenticate", () => {
+    const history = createMemoryHistory();
+    const mockHistoryPush = jest.spyOn(history, "push");
+
+    const { container } = render(
+      <Router history={history}>
+        <Login />
+      </Router>
+    );
+
+    userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+    expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
+    expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+
+    mockHistoryPush.mockRestore();
+  });
 });

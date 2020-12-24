@@ -7,8 +7,14 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
+import { useHistory } from "react-router";
 
 const Login: React.FC = () => {
+  const history = useHistory();
+  const handleClick = () => {
+    history.push("/authenticate");
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -17,7 +23,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton routerLink="/authenticate">Go to authenticate</IonButton>
+        <IonButton onClick={handleClick}>Go to authenticate</IonButton>
       </IonContent>
     </IonPage>
   );
