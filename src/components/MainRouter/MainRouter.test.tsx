@@ -29,11 +29,13 @@ describe("Unauthenticated User", () => {
     { initialPath: "/home", expectedPage: "login" },
     { initialPath: "/offers", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/authenticate", expectedPage: "authenticate" },
     { initialPath: "/", expectedPage: "login" },
     { initialPath: "/bad-route", expectedPage: "login" },
     { initialPath: "/home/bad-route", expectedPage: "login" },
     { initialPath: "/offers/bad-route", expectedPage: "login" },
     { initialPath: "/login/bad-route", expectedPage: "login" },
+    { initialPath: "/authenticate/bad-route", expectedPage: "login" },
   ].map(({ initialPath, expectedPage }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderUnauthenticatedComponent(
@@ -51,11 +53,13 @@ describe("Authenticated User", () => {
     { initialPath: "/home", expectedPage: "home" },
     { initialPath: "/offers", expectedPage: "offers" },
     { initialPath: "/login", expectedPage: "login" },
+    { initialPath: "/authenticate", expectedPage: "authenticate" },
     { initialPath: "/", expectedPage: "home" },
     { initialPath: "/bad-route", expectedPage: "home" },
     { initialPath: "/home/bad-route", expectedPage: "home" },
     { initialPath: "/offers/bad-route", expectedPage: "home" },
     { initialPath: "/login/bad-route", expectedPage: "home" },
+    { initialPath: "/authenticate/bad-route", expectedPage: "home" },
   ].map(({ initialPath, expectedPage }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderAuthenticatedComponent(initialPath);
