@@ -7,12 +7,21 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
+
+interface LocationState {
+  from: string;
+}
 
 const Login: React.FC = () => {
   const history = useHistory();
+  const location = useLocation<LocationState | undefined>();
   const handleClick = () => {
-    history.push("/authenticate");
+    if (location.state) {
+      history.push("/authenticate", { from: location.state.from });
+    } else {
+      history.push("/authenticate");
+    }
   };
 
   return (
