@@ -6,6 +6,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 import { useHistory, useLocation } from "react-router";
 
@@ -13,14 +14,17 @@ interface LocationState {
   from: string;
 }
 
-const Login: React.FC = () => {
+const Authenticate: React.FC = () => {
+  const { login } = useAuth();
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
+
   const handleClick = () => {
+    login();
     if (location.state) {
-      history.push("/authenticate", { from: location.state.from });
+      history.replace(location.state.from);
     } else {
-      history.push("/authenticate");
+      history.replace("/home");
     }
   };
 
@@ -28,14 +32,14 @@ const Login: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Login</IonTitle>
+          <IonTitle>Authenticate</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton onClick={handleClick}>Go to authenticate</IonButton>
+        <IonButton onClick={handleClick}>Login</IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Login;
+export default Authenticate;

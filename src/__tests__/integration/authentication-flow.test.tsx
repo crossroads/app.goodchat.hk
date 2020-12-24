@@ -22,6 +22,11 @@ test("User is able to login and logout with correct routing", () => {
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
+  const goToAuthenticateButton = container.querySelector("ion-button");
+  userEvent.click(goToAuthenticateButton as TargetElement);
+
+  expectToBeOnPage(container, history.location.pathname, "authenticate");
+
   const loginButton = container.querySelector("ion-button");
   userEvent.click(loginButton as TargetElement);
 
@@ -46,6 +51,11 @@ test("Unauthenticated user redirected to login is redirected back to that page a
   );
 
   expectToBeOnPage(container, history.location.pathname, "login");
+
+  const goToAuthenticateButton = container.querySelector("ion-button");
+  userEvent.click(goToAuthenticateButton as TargetElement);
+
+  expectToBeOnPage(container, history.location.pathname, "authenticate");
 
   const loginButton = container.querySelector("ion-button");
   userEvent.click(loginButton as TargetElement);
