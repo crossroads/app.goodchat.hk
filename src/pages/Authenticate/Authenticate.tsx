@@ -8,15 +8,24 @@ import {
 } from "@ionic/react";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
+
+interface LocationState {
+  from: string;
+}
 
 const Authenticate: React.FC = () => {
   const { login } = useAuth();
   const history = useHistory();
+  const location = useLocation<LocationState | undefined>();
 
   const handleClick = () => {
     login();
-    history.replace("/home");
+    if (location.state) {
+      history.replace(location.state.from);
+    } else {
+      history.replace("/home");
+    }
   };
 
   return (

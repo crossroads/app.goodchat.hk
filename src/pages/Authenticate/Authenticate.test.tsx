@@ -4,22 +4,22 @@ import Authenticate from "pages/Authenticate/Authenticate";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 import { createMemoryHistory } from "history";
-import { MemoryRouter, Router } from "react-router";
+import ReactRouter, { MemoryRouter, Router } from "react-router";
 
 test("renders without crashing", () => {
-  const { container } = render(<Authenticate />);
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container).toBeInTheDocument();
 });
 
 test("renders an authenticate title", () => {
-  const { container } = render(<Authenticate />);
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-title")).toHaveTextContent(
     /authenticate/i
   );
 });
 
 test("renders a login button", () => {
-  const { container } = render(<Authenticate />);
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
 });
 
@@ -42,22 +42,54 @@ describe("Clicking login button", () => {
     mockUseAuth.mockRestore();
   });
 
-  test("should redirect user to /home", () => {
-    const history = createMemoryHistory();
-    const mockHistoryReplace = jest.spyOn(history, "replace");
+  describe("Redirection origin not present", () => {
+    test("should redirect user to /home", () => {
+      const history = createMemoryHistory();
+      const mockHistoryReplace = jest.spyOn(history, "replace");
 
-    const { container } = render(
-      <Router history={history}>
-        <Authenticate />
-      </Router>
-    );
+      const { container } = render(
+        <Router history={history}>
+          <Authenticate />
+        </Router>
+      );
 
-    const loginButton = container.querySelector("ion-button");
-    userEvent.click(loginButton as TargetElement);
+      const loginButton = container.querySelector("ion-button");
+      userEvent.click(loginButton as TargetElement);
 
-    expect(mockHistoryReplace).toHaveBeenCalledWith("/home");
-    expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
+      expect(mockHistoryReplace).toHaveBeenCalledWith("/home");
+      expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
 
-    mockHistoryReplace.mockRestore();
+      mockHistoryReplace.mockRestore();
+    });
+  });
+
+  describe("Redirection origin is present", () => {
+    test("should redirect user to origin of redirection", () => {
+      const history = createMemoryHistory();
+      const mockHistoryReplace = jest.spyOn(history, "replace");
+      const mockUseLocation = jest
+        .spyOn(ReactRouter, "useLocation")
+        .mockReturnValue({
+          pathname: "/login",
+          search: "",
+          hash: "",
+          state: { from: "/offers" },
+        });
+
+      const { container } = render(
+        <Router history={history}>
+          <Authenticate />
+        </Router>
+      );
+
+      const loginButton = container.querySelector("ion-button");
+      userEvent.click(loginButton as TargetElement);
+
+      expect(mockHistoryReplace).toHaveBeenCalledWith("/offers");
+      expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
+
+      mockHistoryReplace.mockRestore();
+      mockUseLocation.mockRestore();
+    });
   });
 });
