@@ -12,3 +12,8 @@ test("renders an authenticate title", () => {
     /authenticate/i
   );
 });
+
+test("renders a login button", () => {
+  const { container } = render(<Authenticate />);
+  expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
+});
