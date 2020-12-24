@@ -7,7 +7,8 @@ import { createMemoryHistory } from "history";
 import { MemoryRouter, Router } from "react-router";
 
 test("renders without crashing", () => {
-  render(<Authenticate />);
+  const { container } = render(<Authenticate />);
+  expect(container).toBeInTheDocument();
 });
 
 test("renders an authenticate title", () => {
