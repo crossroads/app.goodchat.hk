@@ -17,7 +17,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton>Go to authenticate</IonButton>
+        <IonButton routerLink="/authenticate">Go to authenticate</IonButton>
       </IonContent>
     </IonPage>
   );

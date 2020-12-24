@@ -13,3 +13,11 @@ test("renders a go to authenticate button", () => {
     /go to authenticate/i
   );
 });
+
+test("go to authenticate button should have a link to /authenticate", () => {
+  const { container } = render(<Login />);
+  expect(container.querySelector("ion-button")).toHaveAttribute(
+    "href",
+    "/authenticate"
+  );
+});
