@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Login from "pages/Login/Login";
-import { createMemoryHistory } from "history";
+import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 
@@ -18,10 +18,17 @@ test("renders a go to authenticate button", () => {
 });
 
 describe("Clicking go to authenticate button", () => {
-  test("should navigate to /authenticate", () => {
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
+  let history: MemoryHistory;
+  let mockHistoryPush: jest.SpyInstance;
 
+  beforeEach(() => {
+    history = createMemoryHistory();
+    mockHistoryPush = jest.spyOn(history, "push");
+  });
+
+  afterEach(() => mockHistoryPush.mockRestore());
+
+  test("should navigate to /authenticate", () => {
     const { container } = render(
       <Router history={history}>
         <Login />
@@ -32,13 +39,9 @@ describe("Clicking go to authenticate button", () => {
 
     expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-
-    mockHistoryPush.mockRestore();
   });
 
   test("should pass redirection origin to next page", () => {
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
     const mockUseLocation = jest
       .spyOn(ReactRouter, "useLocation")
       .mockReturnValue({
@@ -61,7 +64,6 @@ describe("Clicking go to authenticate button", () => {
     });
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
 
-    mockHistoryPush.mockRestore();
     mockUseLocation.mockRestore();
   });
 });
