@@ -46,14 +46,12 @@ describe("Clicking login button", () => {
     let history: MemoryHistory;
     let mockHistoryReplace: jest.SpyInstance;
 
-    beforeAll(() => {
+    beforeEach(() => {
       history = createMemoryHistory();
       mockHistoryReplace = jest.spyOn(history, "replace");
     });
 
-    afterEach(() => mockHistoryReplace.mockClear());
-
-    afterAll(() => mockHistoryReplace.mockRestore());
+    afterEach(() => mockHistoryReplace.mockRestore());
 
     describe("Redirection origin not present", () => {
       test("should redirect user to /home", () => {
