@@ -2,6 +2,9 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -32,6 +35,10 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonItem>
+          <IonLabel>+852</IonLabel>
+          <IonInput />
+        </IonItem>
         <IonButton onClick={handleClick}>Get 4-digit SMS code</IonButton>
       </IonContent>
     </IonPage>

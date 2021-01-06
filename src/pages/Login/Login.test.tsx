@@ -10,6 +10,32 @@ test("renders a login title", () => {
   expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
 });
 
+test("renders an ion-item", () => {
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-item")).toBeInTheDocument();
+});
+
+test("renders a +852 label within an ion-item", () => {
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-item > ion-label")).toHaveTextContent(
+    "+852"
+  );
+});
+
+test("renders an input within an ion-item", () => {
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-item > ion-input")).toBeInTheDocument();
+});
+
+test("renders the label on the left of the input", () => {
+  const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+  const labelElement = container.querySelector("ion-item > ion-label");
+  const firstChild = container.querySelector("ion-item")!.children[0];
+
+  expect(firstChild).toBe(labelElement);
+});
+
 test("renders a get sms pin button", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(
