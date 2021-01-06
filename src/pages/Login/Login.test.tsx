@@ -10,14 +10,14 @@ test("renders a login title", () => {
   expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
 });
 
-test("renders a go to authenticate button", () => {
+test("renders a get sms pin button", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(
-    /go to authenticate/i
+    /get 4-digit sms code/i
   );
 });
 
-describe("Clicking go to authenticate button", () => {
+describe("Clicking get sms pin button", () => {
   let history: MemoryHistory;
   let mockHistoryPush: jest.SpyInstance;
 

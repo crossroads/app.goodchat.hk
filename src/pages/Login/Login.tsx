@@ -32,7 +32,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton onClick={handleClick}>Go to authenticate</IonButton>
+        <IonButton onClick={handleClick}>Get 4-digit SMS code</IonButton>
       </IonContent>
     </IonPage>
   );
