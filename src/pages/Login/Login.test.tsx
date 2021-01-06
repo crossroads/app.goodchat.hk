@@ -4,6 +4,7 @@ import Login from "pages/Login/Login";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
+import { act } from "react-dom/test-utils";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -25,6 +26,35 @@ test("renders a +852 label within an ion-item", () => {
 test("renders an input within an ion-item", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-item > ion-input")).toBeInTheDocument();
+});
+
+describe("Phone input", () => {
+  it("should initially be blank", () => {
+    const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+    expect(container.querySelector("ion-item > ion-input")).toHaveAttribute(
+      "value",
+      ""
+    );
+  });
+
+  it("should have its value change accordingly with user input", () => {
+    const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+    const input = container.querySelector("ion-item > ion-input");
+    act(() => {
+      input!.dispatchEvent(
+        new CustomEvent("ionChange", {
+          detail: { value: "12345678" },
+        })
+      );
+    });
+
+    expect(container.querySelector("ion-item > ion-input")).toHaveAttribute(
+      "value",
+      "12345678"
+    );
+  });
 });
 
 test("renders the label on the left of the input", () => {

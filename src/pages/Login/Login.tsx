@@ -9,7 +9,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
 
 interface LocationState {
@@ -19,6 +19,8 @@ interface LocationState {
 const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   const handleClick = () => {
     if (location.state) {
       history.push("/authenticate", { from: location.state.from });
@@ -37,7 +39,10 @@ const Login: React.FC = () => {
       <IonContent>
         <IonItem>
           <IonLabel>+852</IonLabel>
-          <IonInput />
+          <IonInput
+            value={phoneNumber}
+            onIonChange={(e) => setPhoneNumber(e.detail.value ?? "")}
+          />
         </IonItem>
         <IonButton onClick={handleClick}>Get 4-digit SMS code</IonButton>
       </IonContent>
