@@ -5,6 +5,7 @@ import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
+import { IonInput } from "@ionic/react";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -54,6 +55,19 @@ describe("Phone input", () => {
       "value",
       "12345678"
     );
+  });
+
+  it("should not allow more than 8 characters to be input", () => {
+    const mockIonInputRender = jest.spyOn(IonInput as any, "render");
+
+    render(<Login />, { wrapper: MemoryRouter });
+
+    expect(mockIonInputRender).toHaveBeenCalledWith(
+      expect.objectContaining({ maxlength: 8 }),
+      null
+    );
+
+    mockIonInputRender.mockRestore();
   });
 });
 

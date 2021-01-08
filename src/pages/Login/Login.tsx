@@ -42,6 +42,7 @@ const Login: React.FC = () => {
           <IonInput
             value={phoneNumber}
             onIonChange={(e) => setPhoneNumber(e.detail.value ?? "")}
+            maxlength={8}
           />
         </IonItem>
         <IonButton onClick={handleClick}>Get 4-digit SMS code</IonButton>
