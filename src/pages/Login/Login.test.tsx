@@ -123,53 +123,86 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    let history: MemoryHistory;
-    let mockHistoryPush: jest.SpyInstance;
+    it("should call the /send_pin api endpoint appropriately", () => {
+      const mockFetch = jest.spyOn(window, "fetch");
 
-    beforeEach(() => {
-      history = createMemoryHistory();
-      mockHistoryPush = jest.spyOn(history, "push");
-    });
+      const phoneInput = "12345678";
+      const { container } = render(<Login />, { wrapper: MemoryRouter });
 
-    afterEach(() => mockHistoryPush.mockRestore());
-
-    it("should navigate to /authenticate", () => {
-      const { container } = render(
-        <Router history={history}>
-          <Login />
-        </Router>
-      );
-
-      userEvent.click(container.querySelector("ion-button") as TargetElement);
-
-      expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
-      expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-    });
-
-    it("should pass redirection origin to next page", () => {
-      const mockUseLocation = jest
-        .spyOn(ReactRouter, "useLocation")
-        .mockReturnValue({
-          pathname: "/login",
-          search: "",
-          hash: "",
-          state: { from: "/offers" },
-        });
-
-      const { container } = render(
-        <Router history={history}>
-          <Login />
-        </Router>
-      );
-
-      userEvent.click(container.querySelector("ion-button") as TargetElement);
-
-      expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
-        from: "/offers",
+      const button = container.querySelector("ion-button");
+      const input = container.querySelector("ion-item > ion-input");
+      act(() => {
+        input!.dispatchEvent(
+          new CustomEvent("ionChange", {
+            detail: { value: phoneInput },
+          })
+        );
       });
-      expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+      userEvent.click(button as TargetElement);
 
-      mockUseLocation.mockRestore();
+      expect(mockFetch).toHaveBeenCalledWith(
+        `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ mobile: `+852${phoneInput}` }),
+        }
+      );
+
+      mockFetch.mockRestore();
+    });
+
+    describe("navigation", () => {
+      let history: MemoryHistory;
+      let mockHistoryPush: jest.SpyInstance;
+
+      beforeEach(() => {
+        history = createMemoryHistory();
+        mockHistoryPush = jest.spyOn(history, "push");
+      });
+
+      afterEach(() => mockHistoryPush.mockRestore());
+
+      it("should navigate to /authenticate", () => {
+        const { container } = render(
+          <Router history={history}>
+            <Login />
+          </Router>
+        );
+
+        userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+        expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
+        expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+      });
+
+      it("should pass redirection origin to next page", () => {
+        const mockUseLocation = jest
+          .spyOn(ReactRouter, "useLocation")
+          .mockReturnValue({
+            pathname: "/login",
+            search: "",
+            hash: "",
+            state: { from: "/offers" },
+          });
+
+        const { container } = render(
+          <Router history={history}>
+            <Login />
+          </Router>
+        );
+
+        userEvent.click(container.querySelector("ion-button") as TargetElement);
+
+        expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
+          from: "/offers",
+        });
+        expect(mockHistoryPush).toHaveBeenCalledTimes(1);
+
+        mockUseLocation.mockRestore();
+      });
     });
   });
 });

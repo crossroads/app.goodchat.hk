@@ -22,6 +22,16 @@ const Login: React.FC = () => {
   const [phoneInput, setPhoneInput] = useState("");
 
   const handleClick = () => {
+    const mobile = `+852${phoneInput}`;
+    fetch(`${process.env.REACT_APP_API_V2_URL}/auth/send_pin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mobile,
+      }),
+    });
     if (location.state) {
       history.push("/authenticate", { from: location.state.from });
     } else {
