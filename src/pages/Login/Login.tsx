@@ -19,7 +19,7 @@ interface LocationState {
 const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneInput, setPhoneInput] = useState("");
 
   const handleClick = () => {
     if (location.state) {
@@ -40,12 +40,12 @@ const Login: React.FC = () => {
         <IonItem>
           <IonLabel>+852</IonLabel>
           <IonInput
-            value={phoneNumber}
-            onIonChange={(e) => setPhoneNumber(e.detail.value ?? "")}
+            value={phoneInput}
+            onIonChange={(e) => setPhoneInput(e.detail.value ?? "")}
             maxlength={8}
           />
         </IonItem>
-        <IonButton disabled={phoneNumber.length < 8} onClick={handleClick}>
+        <IonButton disabled={phoneInput.length < 8} onClick={handleClick}>
           Get 4-digit SMS code
         </IonButton>
       </IonContent>
