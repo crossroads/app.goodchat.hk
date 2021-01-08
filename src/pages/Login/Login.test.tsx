@@ -5,7 +5,7 @@ import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
-import { IonInput } from "@ionic/react";
+import { IonButton, IonInput } from "@ionic/react";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -88,6 +88,40 @@ test("renders a get sms pin button", () => {
 });
 
 describe("Get SMS PIN button", () => {
+  it("should be disabled when input length < 8", () => {
+    const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
+
+    render(<Login />, { wrapper: MemoryRouter });
+
+    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({ disabled: true }),
+      null
+    );
+
+    mockIonButtonRender.mockRestore();
+  });
+
+  it("should be enabled when input length = 8", () => {
+    const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
+
+    const { container } = render(<Login />, { wrapper: MemoryRouter });
+    const input = container.querySelector("ion-item > ion-input");
+    act(() => {
+      input!.dispatchEvent(
+        new CustomEvent("ionChange", {
+          detail: { value: "12345678" },
+        })
+      );
+    });
+
+    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({ disabled: false }),
+      null
+    );
+
+    mockIonButtonRender.mockRestore();
+  });
+
   describe("on click", () => {
     let history: MemoryHistory;
     let mockHistoryPush: jest.SpyInstance;

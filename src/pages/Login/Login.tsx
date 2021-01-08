@@ -45,7 +45,9 @@ const Login: React.FC = () => {
             maxlength={8}
           />
         </IonItem>
-        <IonButton onClick={handleClick}>Get 4-digit SMS code</IonButton>
+        <IonButton disabled={phoneNumber.length < 8} onClick={handleClick}>
+          Get 4-digit SMS code
+        </IonButton>
       </IonContent>
     </IonPage>
   );
