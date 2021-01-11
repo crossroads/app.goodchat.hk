@@ -1,5 +1,5 @@
 import axios from "axios";
-import GoodCityApiV2Client from "./index";
+import GoodCityApiV2Client from "./GoodCityApiV2Client";
 import sendPinResponse from "./__mocks__/sendPinResponse.js";
 
 describe("sendPin", () => {
