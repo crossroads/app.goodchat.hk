@@ -5,15 +5,19 @@ axios.defaults.headers.common = {
   "Content-Type": "application/json",
 };
 
-function sendPin(mobile: string) {
-  return axios.post("/auth/send_pin", { mobile });
+interface SendPinBody {
+  mobile: string;
+}
+function sendPin(body: SendPinBody) {
+  return axios.post("/auth/send_pin", body);
 }
 
-function verify(pin: string, otpAuthKey: string) {
-  return axios.post("/auth/verify", {
-    pin,
-    otp_auth_key: otpAuthKey,
-  });
+interface VerifyBody {
+  pin: string;
+  otp_auth_key: string;
+}
+function verify(body: VerifyBody) {
+  return axios.post("/auth/verify", body);
 }
 
 const GoodCityApiV2Client = {

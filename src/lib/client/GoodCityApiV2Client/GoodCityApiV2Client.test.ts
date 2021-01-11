@@ -24,7 +24,7 @@ describe("sendPin", () => {
     mockAxiosPost = jest.spyOn(axios, "post");
     const mobile = "+85262345678";
 
-    GoodCityApiV2Client.sendPin(mobile);
+    GoodCityApiV2Client.sendPin({ mobile });
 
     expect(mockAxiosPost).toHaveBeenCalledWith("/auth/send_pin", { mobile });
   });
@@ -34,7 +34,9 @@ describe("sendPin", () => {
       mockAxiosPost = jest
         .spyOn(axios, "post")
         .mockResolvedValue(sendPinResponse);
-      const data = await GoodCityApiV2Client.sendPin("+85262345678");
+      const data = await GoodCityApiV2Client.sendPin({
+        mobile: "+85262345678",
+      });
       expect(data).toEqual(sendPinResponse);
     });
   });
@@ -42,16 +44,15 @@ describe("sendPin", () => {
 
 describe("verify", () => {
   let mockAxiosPost: jest.SpyInstance;
-  const phoneNumber = "+85291111111";
+  const otpAuthKey = "sdfscsd2fdsjklf2fs";
   const pin = "1234";
 
   afterEach(() => mockAxiosPost.mockRestore());
 
   it("should call axios with /auth/verify URL and the correct config", () => {
-    const otpAuthKey = "sdfscsd2fdsjklf2fs";
     mockAxiosPost = jest.spyOn(axios, "post");
 
-    GoodCityApiV2Client.verify(pin, otpAuthKey);
+    GoodCityApiV2Client.verify({ pin, otp_auth_key: otpAuthKey });
 
     expect(mockAxiosPost).toHaveBeenCalledWith("/auth/verify", {
       pin: "1234",
@@ -66,7 +67,10 @@ describe("verify", () => {
       mockAxiosPost = jest
         .spyOn(axios, "post")
         .mockResolvedValue(verifyResponse);
-      const data = await GoodCityApiV2Client.verify(pin, phoneNumber);
+      const data = await GoodCityApiV2Client.verify({
+        pin,
+        otp_auth_key: otpAuthKey,
+      });
       expect(data).toEqual(verifyResponse);
     });
   });
