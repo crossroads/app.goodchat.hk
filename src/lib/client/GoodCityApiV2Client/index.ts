@@ -12,8 +12,24 @@ function sendPin(mobile: string) {
   );
 }
 
+function verify(pin: string, otpAuthKey: string) {
+  return axios.post(
+    `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
+    {
+      pin,
+      otp_auth_key: otpAuthKey,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
+
 const GoodCityApiV2Client = {
   sendPin,
+  verify,
 };
 
 export default GoodCityApiV2Client;
