@@ -53,5 +53,7 @@ describe("verify", () => {
         },
       }
     );
+
+    mockAxiosPost.mockRestore();
   });
 });
