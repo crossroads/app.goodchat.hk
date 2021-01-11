@@ -1,9 +1,11 @@
 import axios from "axios";
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
 import sendPinResponse from "./__mocks__/sendPinResponse.js";
+import verifyResponse from "./__mocks__/verifyResponse.js";
 
 describe("sendPin", () => {
   let mockAxiosPost: jest.SpyInstance;
+
   afterEach(() => mockAxiosPost.mockRestore());
 
   it(`should call axios with /auth/send_pin URL and the correct config`, () => {
@@ -34,10 +36,14 @@ describe("sendPin", () => {
 });
 
 describe("verify", () => {
+  let mockAxiosPost: jest.SpyInstance;
+  const phoneNumber = "+85291111111";
+  const pin = "1234";
+
+  afterEach(() => mockAxiosPost.mockRestore());
+
   it("should call axios with /auth/verify URL and the correct config", () => {
-    const mockAxiosPost = jest.spyOn(axios, "post");
-    const phoneNumber = "+85291111111";
-    const pin = "1234";
+    mockAxiosPost = jest.spyOn(axios, "post");
 
     GoodCityApiV2Client.verify(pin, phoneNumber);
 
@@ -55,5 +61,15 @@ describe("verify", () => {
     );
 
     mockAxiosPost.mockRestore();
+  });
+
+  describe("Successful API response", () => {
+    it("it should return the appropriate response", async () => {
+      mockAxiosPost = jest
+        .spyOn(axios, "post")
+        .mockResolvedValue(verifyResponse);
+      const data = await GoodCityApiV2Client.verify(pin, phoneNumber);
+      expect(data).toEqual(verifyResponse);
+    });
   });
 });
