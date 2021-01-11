@@ -48,13 +48,14 @@ describe("verify", () => {
   afterEach(() => mockAxiosPost.mockRestore());
 
   it("should call axios with /auth/verify URL and the correct config", () => {
+    const otpAuthKey = "sdfscsd2fdsjklf2fs";
     mockAxiosPost = jest.spyOn(axios, "post");
 
-    GoodCityApiV2Client.verify(pin, phoneNumber);
+    GoodCityApiV2Client.verify(pin, otpAuthKey);
 
     expect(mockAxiosPost).toHaveBeenCalledWith("/auth/verify", {
       pin: "1234",
-      otp_auth_key: "+85291111111",
+      otp_auth_key: otpAuthKey,
     });
 
     mockAxiosPost.mockRestore();
