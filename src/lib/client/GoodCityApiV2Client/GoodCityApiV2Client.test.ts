@@ -2,13 +2,14 @@ import GoodCityApiV2Client from "./GoodCityApiV2Client";
 import sendPinResponse from "./__mocks__/sendPinResponse.js";
 import verifyResponse from "./__mocks__/verifyResponse.js";
 
+const mockFetch = jest.spyOn(window, "fetch");
+
+afterEach(() => mockFetch.mockClear());
+
+afterAll(() => mockFetch.mockRestore());
+
 describe("sendPin", () => {
-  let mockFetch: jest.SpyInstance;
-
-  afterEach(() => mockFetch.mockRestore());
-
   it(`should call fetch with /auth/send_pin URL and the correct config`, () => {
-    mockFetch = jest.spyOn(window, "fetch");
     const mobile = "+85262345678";
 
     GoodCityApiV2Client.sendPin({ mobile });
@@ -26,7 +27,7 @@ describe("sendPin", () => {
 
   describe("Successful API response", () => {
     it("it should return the appropriate response", async () => {
-      mockFetch = jest.spyOn(window, "fetch").mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => Promise.resolve(sendPinResponse),
       } as Response);
@@ -41,15 +42,10 @@ describe("sendPin", () => {
 });
 
 describe("verify", () => {
-  let mockFetch: jest.SpyInstance;
   const otpAuthKey = "sdfscsd2fdsjklf2fs";
   const pin = "1234";
 
-  afterEach(() => mockFetch.mockRestore());
-
   it("should call fetch with /auth/verify URL and the correct config", () => {
-    mockFetch = jest.spyOn(window, "fetch");
-
     GoodCityApiV2Client.verify({ pin, otp_auth_key: otpAuthKey });
 
     expect(mockFetch).toHaveBeenCalledTimes(1);
@@ -68,7 +64,7 @@ describe("verify", () => {
 
   describe("Successful API response", () => {
     it("it should return the appropriate response", async () => {
-      mockFetch = jest.spyOn(window, "fetch").mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => Promise.resolve(verifyResponse),
       } as Response);
