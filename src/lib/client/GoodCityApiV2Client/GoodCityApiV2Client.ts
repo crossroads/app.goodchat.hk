@@ -5,15 +5,16 @@ const fetchClient = (url: string, body: object) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
-  }).then((resp) => {
-    return resp.json();
-  });
+  }).then((resp) => resp.json());
 };
 
 interface SendPinBody {
   mobile: string;
 }
-function sendPin(body: SendPinBody) {
+interface SendPinResponse {
+  otp_auth_key: string;
+}
+function sendPin(body: SendPinBody): Promise<SendPinResponse> {
   return fetchClient("auth/send_pin", body);
 }
 
@@ -21,7 +22,10 @@ interface VerifyBody {
   pin: string;
   otp_auth_key: string;
 }
-function verify(body: VerifyBody) {
+interface VerifyResponse {
+  jwt_token: string;
+}
+function verify(body: VerifyBody): Promise<VerifyResponse> {
   return fetchClient("auth/verify", body);
 }
 

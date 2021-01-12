@@ -1,6 +1,4 @@
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
-import sendPinResponse from "./__mocks__/sendPinResponse.js";
-import verifyResponse from "./__mocks__/verifyResponse.js";
 
 const mockFetch = jest.spyOn(window, "fetch");
 
@@ -24,21 +22,6 @@ describe("sendPin", () => {
       }
     );
   });
-
-  describe("Successful API response", () => {
-    it("it should return the appropriate response", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => Promise.resolve(sendPinResponse),
-      } as Response);
-
-      const data = await GoodCityApiV2Client.sendPin({
-        mobile: "+85262345678",
-      });
-
-      expect(data).toEqual(sendPinResponse);
-    });
-  });
 });
 
 describe("verify", () => {
@@ -61,19 +44,5 @@ describe("verify", () => {
       }
     );
   });
-
-  describe("Successful API response", () => {
-    it("it should return the appropriate response", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => Promise.resolve(verifyResponse),
-      } as Response);
-
-      const data = await GoodCityApiV2Client.verify({
-        pin,
-        otp_auth_key: otpAuthKey,
-      });
-      expect(data).toEqual(verifyResponse);
-    });
-  });
 });
+
