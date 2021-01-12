@@ -1,14 +1,20 @@
+const fetchClient = (url: string, body: object) => {
+  return fetch(`${process.env.REACT_APP_API_V2_URL}/${url}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  }).then((resp) => {
+    return resp.json();
+  });
+};
+
 interface SendPinBody {
   mobile: string;
 }
 function sendPin(body: SendPinBody) {
-  return fetch(`${process.env.REACT_APP_API_V2_URL}/auth/send_pin`, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((resp) => resp.json());
+  return fetchClient("auth/send_pin", body);
 }
 
 interface VerifyBody {
@@ -16,13 +22,7 @@ interface VerifyBody {
   otp_auth_key: string;
 }
 function verify(body: VerifyBody) {
-  return fetch(`${process.env.REACT_APP_API_V2_URL}/auth/verify`, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((resp) => resp.json());
+  return fetchClient("auth/verify", body);
 }
 
 const GoodCityApiV2Client = {
