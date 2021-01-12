@@ -1,15 +1,14 @@
-import axios from "axios";
-
-axios.defaults.baseURL = process.env.REACT_APP_API_V2_URL;
-axios.defaults.headers.common = {
-  "Content-Type": "application/json",
-};
-
 interface SendPinBody {
   mobile: string;
 }
 function sendPin(body: SendPinBody) {
-  return axios.post("/auth/send_pin", body);
+  return fetch(`${process.env.REACT_APP_API_V2_URL}/auth/send_pin`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((resp) => resp.json());
 }
 
 interface VerifyBody {
@@ -17,7 +16,13 @@ interface VerifyBody {
   otp_auth_key: string;
 }
 function verify(body: VerifyBody) {
-  return axios.post("/auth/verify", body);
+  return fetch(`${process.env.REACT_APP_API_V2_URL}/auth/verify`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((resp) => resp.json());
 }
 
 const GoodCityApiV2Client = {
