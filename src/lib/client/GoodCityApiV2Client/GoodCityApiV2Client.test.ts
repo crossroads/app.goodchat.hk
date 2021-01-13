@@ -1,48 +1,23 @@
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
 
-const mockFetch = jest.spyOn(window, "fetch");
+test("should call fetch correctly", () => {
+  const mockFetch = jest.spyOn(window, "fetch");
 
-afterEach(() => mockFetch.mockClear());
+  const body = { mobile: "+85291111111" };
 
-afterAll(() => mockFetch.mockRestore());
+  GoodCityApiV2Client("auth/send_pin", body);
 
-describe("sendPin", () => {
-  it(`should call fetch with /auth/send_pin URL and the correct config`, () => {
-    const mobile = "+85262345678";
+  expect(mockFetch).toHaveBeenCalledTimes(1);
+  expect(mockFetch).toHaveBeenCalledWith(
+    `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    }
+  );
 
-    GoodCityApiV2Client.sendPin({ mobile });
-
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile }),
-      }
-    );
-  });
+  mockFetch.mockRestore();
 });
-
-describe("verify", () => {
-  const otpAuthKey = "sdfscsd2fdsjklf2fs";
-  const pin = "1234";
-
-  it("should call fetch with /auth/verify URL and the correct config", () => {
-    GoodCityApiV2Client.verify({ pin, otp_auth_key: otpAuthKey });
-
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pin: "1234",
-          otp_auth_key: otpAuthKey,
-        }),
-      }
-    );
-  });
-});
-
