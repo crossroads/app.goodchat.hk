@@ -11,8 +11,8 @@ const GoodCityApiV2Client = (url: string, body: object) => {
     const data = await response.json();
     if (!response.ok) {
       throw new ApiError({
-        httpStatus: 123,
-        type: "",
+        httpStatus: response.status,
+        type: data.type,
         message: data.error,
       });
     }

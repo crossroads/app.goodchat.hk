@@ -30,13 +30,12 @@ test("should call GoodCity API V2 correctly", () => {
 
 describe("Api client receiving error response from server", () => {
   const body = { mobile: "+85212345678" };
-  const errorMsg = "Mobile is invalid";
+  const errorResponse = {
+    status: 422,
+    type: "ValidationError",
+    error: "Mobile is invalid",
+  };
   beforeEach(() => {
-    const errorResponse = {
-      status: 422,
-      type: "ValidationError",
-      error: errorMsg,
-    };
     mockServer.use(
       rest.post(
         `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
@@ -57,8 +56,16 @@ describe("Api client receiving error response from server", () => {
     it("should have message property equal to the server response error", () => {
       return expect(
         GoodCityApiV2Client("auth/send_pin", body)
-      ).rejects.toThrowError(errorMsg);
+      ).rejects.toThrowError(errorResponse.error);
+    });
+
+    it("should have the appropriate type and httpStatus", () => {
+      return expect(
+        GoodCityApiV2Client("auth/send_pin", body)
+      ).rejects.toMatchObject({
+        httpStatus: 422,
+        type: errorResponse.type,
+      });
     });
   });
 });
-
