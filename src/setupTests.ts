@@ -4,11 +4,11 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom/extend-expect";
 
-import { server } from "mocks/server";
+import { mockServer } from "mockServer";
 
-beforeAll(() => server.listen());
+beforeAll(() => mockServer.listen());
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.
-afterEach(() => server.resetHandlers());
+afterEach(() => mockServer.resetHandlers());
 // Clean up after the tests are finished.
-afterAll(() => server.close());
+afterAll(() => mockServer.close());
