@@ -30,41 +30,43 @@ test("should call GoodCity API V2 correctly", () => {
 
 describe("Api client receiving error response from server", () => {
   const body = { mobile: "+85212345678" };
-  const errorResponse = {
-    status: 422,
-    type: "ValidationError",
-    error: "Mobile is invalid",
-  };
-  beforeEach(() => {
-    mockServer.use(
-      rest.post(
-        `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-        (_, res, ctx) => {
-          return res.once(ctx.status(422), ctx.json(errorResponse));
-        }
-      )
-    );
-  });
-
-  it("should throw an ApiError", () => {
-    return expect(
-      GoodCityApiV2Client("auth/send_pin", body)
-    ).rejects.toBeInstanceOf(ApiError);
-  });
-
-  describe("ApiError", () => {
-    it("should have message property equal to the server response error", () => {
-      return expect(
-        GoodCityApiV2Client("auth/send_pin", body)
-      ).rejects.toThrowError(errorResponse.error);
+  describe("Known error response format", () => {
+    const errorResponse = {
+      status: 422,
+      type: "ValidationError",
+      error: "Mobile is invalid",
+    };
+    beforeEach(() => {
+      mockServer.use(
+        rest.post(
+          `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+          (_, res, ctx) => {
+            return res.once(ctx.status(422), ctx.json(errorResponse));
+          }
+        )
+      );
     });
 
-    it("should have the appropriate type and httpStatus", () => {
-      return expect(
-        GoodCityApiV2Client("auth/send_pin", body)
-      ).rejects.toMatchObject({
-        httpStatus: 422,
-        type: errorResponse.type,
+    it("should throw an ApiError", () => {
+      return expect(GoodCityApiV2Client("auth/send_pin", body)).rejects.toThrow(
+        ApiError
+      );
+    });
+
+    describe("ApiError", () => {
+      it("should have message equal to the server response error", () => {
+        return expect(
+          GoodCityApiV2Client("auth/send_pin", body)
+        ).rejects.toThrowError(errorResponse.error);
+      });
+
+      it("should have the appropriate type and httpStatus", () => {
+        return expect(
+          GoodCityApiV2Client("auth/send_pin", body)
+        ).rejects.toMatchObject({
+          httpStatus: 422,
+          type: errorResponse.type,
+        });
       });
     });
   });
