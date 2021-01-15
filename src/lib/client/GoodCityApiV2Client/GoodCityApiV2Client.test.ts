@@ -1,23 +1,28 @@
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
+import { rest } from "msw";
+import { mockServer } from "mockServer";
 
-test("should call fetch correctly", () => {
-  const mockFetch = jest.spyOn(window, "fetch");
+beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+// Reset any request handlers that we may add during the tests,
+// so they don't affect other tests.
+afterEach(() => mockServer.resetHandlers());
+// Clean up after the tests are finished.
+afterAll(() => mockServer.close());
 
-  const body = { mobile: "+85291111111" };
-
-  GoodCityApiV2Client("auth/send_pin", body);
-
-  expect(mockFetch).toHaveBeenCalledTimes(1);
-  expect(mockFetch).toHaveBeenCalledWith(
-    `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    }
+test("should call GoodCity API V2 correctly", () => {
+  const otpAuthKey = "sfdsfasxfds";
+  mockServer.use(
+    rest.post(
+      `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+      (_, res, ctx) => {
+        return res(ctx.status(200), ctx.json({ otp_auth_key: otpAuthKey }));
+      }
+    )
   );
 
-  mockFetch.mockRestore();
+  return expect(
+    GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+  ).resolves.toEqual({
+    otp_auth_key: otpAuthKey,
+  });
 });
