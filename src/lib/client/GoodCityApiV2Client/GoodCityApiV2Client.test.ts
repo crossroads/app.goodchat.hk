@@ -1,6 +1,7 @@
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
+import { ApiError } from "lib/errors";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 // Reset any request handlers that we may add during the tests,
@@ -26,3 +27,24 @@ test("should call GoodCity API V2 correctly", () => {
     otp_auth_key: otpAuthKey,
   });
 });
+
+test("should throw an ApiError when server responds with error", () => {
+  const errorResponse = {
+    status: 422,
+    type: "ValidationError",
+    error: "Mobile is invalid",
+  };
+  mockServer.use(
+    rest.post(
+      `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+      (_, res, ctx) => {
+        return res.once(ctx.status(422), ctx.json(errorResponse));
+      }
+    )
+  );
+
+  return expect(
+    GoodCityApiV2Client("auth/send_pin", { mobile: "+85212345678" })
+  ).rejects.toBeInstanceOf(ApiError);
+});
+
