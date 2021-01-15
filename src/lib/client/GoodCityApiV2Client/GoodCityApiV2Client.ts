@@ -5,7 +5,7 @@ const GoodCityApiV2Client = (url: string, body: object) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
-  }).then((resp) => resp.json());
+  }).then((response) => response.json());
 };
 
 export default GoodCityApiV2Client;
