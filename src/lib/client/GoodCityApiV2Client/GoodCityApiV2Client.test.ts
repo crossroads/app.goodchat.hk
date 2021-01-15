@@ -70,4 +70,39 @@ describe("Api client receiving error response from server", () => {
       });
     });
   });
+
+  describe("Unrecognised error response format", () => {
+    beforeEach(() => {
+      mockServer.use(
+        rest.post(
+          `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+          (_, res, ctx) => {
+            return res.once(ctx.status(422), ctx.json("fdsfds"));
+          }
+        )
+      );
+    });
+
+    it("should throw an ApiError", () => {
+      return expect(GoodCityApiV2Client("auth/send_pin", body)).rejects.toThrow(
+        ApiError
+      );
+    });
+
+    describe("ApiError", () => {
+      it("should have message saying something went wrong", () => {
+        return expect(
+          GoodCityApiV2Client("auth/send_pin", body)
+        ).rejects.toThrow("Something went wrong");
+      });
+
+      it("should have internal server error as type", () => {
+        return expect(
+          GoodCityApiV2Client("auth/send_pin", body)
+        ).rejects.toMatchObject({
+          type: "InternalServerError",
+        });
+      });
+    });
+  });
 });

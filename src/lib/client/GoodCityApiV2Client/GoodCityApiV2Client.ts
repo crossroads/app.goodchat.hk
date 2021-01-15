@@ -12,8 +12,8 @@ const GoodCityApiV2Client = (url: string, body: object) => {
     if (!response.ok) {
       throw new ApiError({
         httpStatus: response.status,
-        type: data.type,
-        message: data.error,
+        type: data.type ?? "InternalServerError",
+        message: data.error ?? "Something went wrong",
       });
     }
 
