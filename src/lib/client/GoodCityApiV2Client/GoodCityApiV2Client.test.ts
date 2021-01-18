@@ -129,7 +129,7 @@ describe("Server down/unreachable/no internet connection", () => {
     it("should have message saying that network request failed", () => {
       return expect(
         GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`"Network request failed"`);
+      ).rejects.toThrow("Network request failed");
     });
   });
 });
