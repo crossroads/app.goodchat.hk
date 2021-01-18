@@ -9,7 +9,7 @@ beforeEach(
 afterEach(() => mockClient.mockRestore());
 
 describe("sendPin", () => {
-  it(`should receive the appropriate response from client`, async () => {
+  it(`should call client with auth/send_pin and receive the appropriate response`, async () => {
     const otpAuthKey = "fdsfdsaffdsaklfds";
     mockClient.mockResolvedValue({
       otp_auth_key: otpAuthKey,
@@ -28,7 +28,7 @@ describe("sendPin", () => {
 });
 
 describe("verify", () => {
-  it("should receive the appropriate response from client", async () => {
+  it("should call client with auth/verify and receive the appropriate response", async () => {
     const jwtToken = "ejsdfslk3fdsa";
     mockClient.mockResolvedValue({
       jwt_token: jwtToken,
