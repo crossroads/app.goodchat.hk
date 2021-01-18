@@ -18,4 +18,6 @@ class ApiError extends BaseError {
   }
 }
 
-export { ApiError };
+class NetworkError extends BaseError {}
+
+export { ApiError, NetworkError };
