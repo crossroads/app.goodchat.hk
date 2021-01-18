@@ -1,7 +1,7 @@
 import GoodCityApiV2Client from "./GoodCityApiV2Client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
-import { ApiError } from "lib/errors";
+import { ApiError, NetworkError } from "lib/errors";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 // Reset any request handlers that we may add during the tests,
@@ -103,6 +103,33 @@ describe("Api client receiving error response from server", () => {
           type: "InternalServerError",
         });
       });
+    });
+  });
+});
+
+describe("Server down/unreachable/no internet connection", () => {
+  beforeEach(() => {
+    mockServer.use(
+      rest.post(
+        `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+        (_, res) => {
+          res.networkError("");
+        }
+      )
+    );
+  });
+
+  it("throws a NetworkError", async () => {
+    return expect(
+      GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+    ).rejects.toThrow(NetworkError);
+  });
+
+  describe("NetworkError", () => {
+    it("should have message saying that network request failed", () => {
+      return expect(
+        GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`"Network request failed"`);
     });
   });
 });
