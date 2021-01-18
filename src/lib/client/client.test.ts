@@ -1,4 +1,4 @@
-import GoodCityApiV2Client from "./GoodCityApiV2Client";
+import client from "./client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
 import { ApiError, NetworkError } from "lib/errors";
@@ -22,7 +22,7 @@ test("should call GoodCity API V2 correctly", () => {
   );
 
   return expect(
-    GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+    client("auth/send_pin", { mobile: "+85291111111" })
   ).resolves.toEqual({
     otp_auth_key: otpAuthKey,
   });
@@ -48,22 +48,18 @@ describe("Api client receiving error response from server", () => {
     });
 
     it("should throw an ApiError", () => {
-      return expect(GoodCityApiV2Client("auth/send_pin", body)).rejects.toThrow(
-        ApiError
-      );
+      return expect(client("auth/send_pin", body)).rejects.toThrow(ApiError);
     });
 
     describe("ApiError", () => {
       it("should have message equal to the server response error", () => {
-        return expect(
-          GoodCityApiV2Client("auth/send_pin", body)
-        ).rejects.toThrowError(errorResponse.error);
+        return expect(client("auth/send_pin", body)).rejects.toThrowError(
+          errorResponse.error
+        );
       });
 
       it("should have the appropriate type and httpStatus", () => {
-        return expect(
-          GoodCityApiV2Client("auth/send_pin", body)
-        ).rejects.toMatchObject({
+        return expect(client("auth/send_pin", body)).rejects.toMatchObject({
           httpStatus: 422,
           type: errorResponse.type,
         });
@@ -84,22 +80,18 @@ describe("Api client receiving error response from server", () => {
     });
 
     it("should throw an ApiError", () => {
-      return expect(GoodCityApiV2Client("auth/send_pin", body)).rejects.toThrow(
-        ApiError
-      );
+      return expect(client("auth/send_pin", body)).rejects.toThrow(ApiError);
     });
 
     describe("ApiError", () => {
       it("should have message saying something went wrong", () => {
-        return expect(
-          GoodCityApiV2Client("auth/send_pin", body)
-        ).rejects.toThrow("Something went wrong");
+        return expect(client("auth/send_pin", body)).rejects.toThrow(
+          "Something went wrong"
+        );
       });
 
       it("should have internal server error as type", () => {
-        return expect(
-          GoodCityApiV2Client("auth/send_pin", body)
-        ).rejects.toMatchObject({
+        return expect(client("auth/send_pin", body)).rejects.toMatchObject({
           type: "InternalServerError",
         });
       });
@@ -121,14 +113,14 @@ describe("Server down/unreachable/no internet connection", () => {
 
   it("throws a NetworkError", async () => {
     return expect(
-      GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+      client("auth/send_pin", { mobile: "+85291111111" })
     ).rejects.toThrow(NetworkError);
   });
 
   describe("NetworkError", () => {
     it("should have message saying that network request failed", () => {
       return expect(
-        GoodCityApiV2Client("auth/send_pin", { mobile: "+85291111111" })
+        client("auth/send_pin", { mobile: "+85291111111" })
       ).rejects.toThrow("Network request failed");
     });
   });

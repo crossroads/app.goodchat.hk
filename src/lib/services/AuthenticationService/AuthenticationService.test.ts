@@ -1,4 +1,4 @@
-import * as GoodCityApiV2ClientModule from "lib/client/GoodCityApiV2Client/GoodCityApiV2Client";
+import * as GoodCityApiV2ClientModule from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 let mockClient: jest.SpyInstance;

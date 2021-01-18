@@ -1,6 +1,6 @@
 import { ApiError, NetworkError } from "lib/errors";
 
-const GoodCityApiV2Client = (url: string, body: object) => {
+const client = (url: string, body: object) => {
   return fetch(`${process.env.REACT_APP_API_V2_URL}/${url}`, {
     method: "POST",
     headers: {
@@ -28,4 +28,4 @@ const GoodCityApiV2Client = (url: string, body: object) => {
     });
 };
 
-export default GoodCityApiV2Client;
+export default client;
