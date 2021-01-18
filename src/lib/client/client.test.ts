@@ -1,4 +1,4 @@
-import client from "./client";
+import client from "lib/client/client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
 import { ApiError, NetworkError } from "lib/errors";
