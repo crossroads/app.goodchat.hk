@@ -1,10 +1,12 @@
 import { ApiError, NetworkError } from "lib/errors";
 import axios, { AxiosError } from "axios";
 
-axios.defaults.baseURL = process.env.REACT_APP_API_V2_URL;
-axios.defaults.headers.common["Content-Type"] = "application/json";
+const client = axios.create({
+  baseURL: process.env.REACT_APP_API_V2_URL,
+  headers: { "Content-Type": "application/json" },
+});
 
-axios.interceptors.response.use(
+client.interceptors.response.use(
   (response) => response.data,
   (error: AxiosError) => {
     if (error.response) {
@@ -33,7 +35,5 @@ axios.interceptors.response.use(
     }
   }
 );
-
-const client = axios;
 
 export default client;
