@@ -6,6 +6,7 @@ import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import { IonButton, IonInput } from "@ionic/react";
+import client from "lib/client/client";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -123,8 +124,13 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    it("should call the /send_pin api endpoint appropriately", () => {
-      const mockFetch = jest.spyOn(window, "fetch");
+    const mockPost = jest.spyOn(client, "post").mockResolvedValue({
+      otp_auth_key: "fdsafdsafds",
+    });
+
+    afterEach(() => mockPost.mockClear());
+
+    afterAll(() => mockPost.mockRestore());
 
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
