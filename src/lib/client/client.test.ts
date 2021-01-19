@@ -4,10 +4,9 @@ import { mockServer } from "mockServer";
 import { ApiError, NetworkError } from "lib/errors";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
-// Reset any request handlers that we may add during the tests,
-// so they don't affect other tests.
+
 afterEach(() => mockServer.resetHandlers());
-// Clean up after the tests are finished.
+
 afterAll(() => mockServer.close());
 
 test("should call API with the correct HTTP request method", () => {
