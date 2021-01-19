@@ -1,8 +1,8 @@
 import { ApiError, NetworkError } from "lib/errors";
 
-const client = (url: string, body: object) => {
+const request = (method: string) => (url: string, body: object) => {
   return fetch(`${process.env.REACT_APP_API_V2_URL}/${url}`, {
-    method: "POST",
+    method,
     headers: {
       "Content-Type": "application/json",
     },
@@ -28,4 +28,8 @@ const client = (url: string, body: object) => {
     });
 };
 
-export default client;
+const Client = {
+  post: request("POST"),
+};
+
+export default Client;
