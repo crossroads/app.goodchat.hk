@@ -131,6 +131,7 @@ describe("Get SMS PIN button", () => {
 
     afterAll(() => mockPost.mockRestore());
 
+    it("should call client appropriately", () => {
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
@@ -145,18 +146,10 @@ describe("Get SMS PIN button", () => {
       });
       userEvent.click(button as TargetElement);
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ mobile: `+852${phoneInput}` }),
-        }
-      );
-
-      mockFetch.mockRestore();
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
+        mobile: `+852${phoneInput}`,
+      });
     });
 
     describe("navigation", () => {
