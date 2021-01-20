@@ -1,10 +1,9 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import { act } from "react-dom/test-utils";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 
