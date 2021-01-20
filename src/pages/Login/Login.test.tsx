@@ -17,14 +17,14 @@ test("renders an ion-item", () => {
   expect(container.querySelector("ion-item")).toBeInTheDocument();
 });
 
-test("renders a +852 label within an ion-item", () => {
+test("renders a +852 label", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-item > ion-label")).toHaveTextContent(
     "+852"
   );
 });
 
-test("renders an input within an ion-item", () => {
+test("renders an input", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-item > ion-input")).toBeInTheDocument();
 });
