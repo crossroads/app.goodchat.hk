@@ -131,7 +131,7 @@ describe("Get SMS PIN button", () => {
 
     afterAll(() => mockPost.mockRestore());
 
-    it("should call client appropriately", () => {
+    it("should call auth/send_pin API endpoint with the correct mobile", () => {
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
