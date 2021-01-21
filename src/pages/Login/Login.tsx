@@ -24,12 +24,15 @@ const Login: React.FC = () => {
 
   const handleClick = () => {
     const mobile = `+852${phoneInput}`;
-    AuthenticationService.sendPin({ mobile });
-    if (location.state) {
-      history.push("/authenticate", { from: location.state.from });
-    } else {
-      history.push("/authenticate");
-    }
+    AuthenticationService.sendPin({ mobile })
+      .then(() => {
+        if (location.state) {
+          history.push("/authenticate", { from: location.state.from });
+        } else {
+          history.push("/authenticate");
+        }
+      })
+      .catch((e) => console.log(e));
   };
 
   return (

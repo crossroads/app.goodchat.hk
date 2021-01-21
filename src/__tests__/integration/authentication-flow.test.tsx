@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, wait } from "@testing-library/react";
 import { expectToBeOnPage } from "test-utils/matchers";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { IonApp } from "@ionic/react";
@@ -15,6 +15,7 @@ const mockPost = jest
 
 afterAll(() => mockPost.mockRestore());
 
+test("User is able to login and logout with correct routing", async () => {
   const history = createMemoryHistory({ initialEntries: ["/login"] });
   const { container } = render(
     <IonApp>
@@ -31,7 +32,9 @@ afterAll(() => mockPost.mockRestore());
   const goToAuthenticateButton = container.querySelector("ion-button");
   userEvent.click(goToAuthenticateButton as TargetElement);
 
-  expectToBeOnPage(container, history.location.pathname, "authenticate");
+  await wait(() =>
+    expectToBeOnPage(container, history.location.pathname, "authenticate")
+  );
 
   const loginButton = container.querySelector("ion-button");
   userEvent.click(loginButton as TargetElement);
@@ -44,7 +47,7 @@ afterAll(() => mockPost.mockRestore());
   expectToBeOnPage(container, history.location.pathname, "login");
 });
 
-test("Unauthenticated user redirected to login is redirected back to that page after login", () => {
+test("Unauthenticated user redirected to login is redirected back to that page after login", async () => {
   const history = createMemoryHistory({ initialEntries: ["/offers"] });
   const { container } = render(
     <IonApp>
@@ -61,7 +64,9 @@ test("Unauthenticated user redirected to login is redirected back to that page a
   const goToAuthenticateButton = container.querySelector("ion-button");
   userEvent.click(goToAuthenticateButton as TargetElement);
 
-  expectToBeOnPage(container, history.location.pathname, "authenticate");
+  await wait(() =>
+    expectToBeOnPage(container, history.location.pathname, "authenticate")
+  );
 
   const loginButton = container.querySelector("ion-button");
   userEvent.click(loginButton as TargetElement);
