@@ -7,8 +7,14 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
+import client from "lib/client/client";
 
-test("User is able to login and logout with correct routing", () => {
+const mockPost = jest
+  .spyOn(client, "post")
+  .mockResolvedValue({ otp_auth_key: "sdfdsfdsaf" });
+
+afterAll(() => mockPost.mockRestore());
+
   const history = createMemoryHistory({ initialEntries: ["/login"] });
   const { container } = render(
     <IonApp>
