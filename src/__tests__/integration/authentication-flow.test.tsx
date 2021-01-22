@@ -9,10 +9,13 @@ import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
 import client from "lib/client/client";
 
-const mockPost = jest
-  .spyOn(client, "post")
-  .mockResolvedValue({ otp_auth_key: "sdfdsfdsaf" });
-
+let mockPost: jest.SpyInstance;
+beforeAll(
+  () =>
+    (mockPost = jest
+      .spyOn(client, "post")
+      .mockResolvedValue({ otp_auth_key: "sdfdsfdsaf" }))
+);
 afterAll(() => mockPost.mockRestore());
 
 test("User is able to login and logout with correct routing", async () => {
