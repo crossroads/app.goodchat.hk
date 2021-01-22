@@ -1,12 +1,12 @@
 import React from "react";
-import { render, act, wait } from "@testing-library/react";
+import { render, wait } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import { createMemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
-import userEvent, { TargetElement } from "@testing-library/user-event";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
+import { clickButton, fillInput } from "./test_utils";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -33,7 +33,6 @@ test("renders an input", () => {
 describe("Phone input", () => {
   it("should initially be blank", () => {
     const { container } = render(<Login />, { wrapper: MemoryRouter });
-
     expect(container.querySelector("ion-item > ion-input")).toHaveAttribute(
       "value",
       ""
@@ -43,14 +42,7 @@ describe("Phone input", () => {
   it("should have its value change accordingly with user input", () => {
     const { container } = render(<Login />, { wrapper: MemoryRouter });
 
-    const input = container.querySelector("ion-item > ion-input");
-    act(() => {
-      input!.dispatchEvent(
-        new CustomEvent("ionChange", {
-          detail: { value: "12345678" },
-        })
-      );
-    });
+    fillInput(container, "12345678");
 
     expect(container.querySelector("ion-item > ion-input")).toHaveAttribute(
       "value",
@@ -106,14 +98,7 @@ describe("Get SMS PIN button", () => {
     const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
 
     const { container } = render(<Login />, { wrapper: MemoryRouter });
-    const input = container.querySelector("ion-item > ion-input");
-    act(() => {
-      input!.dispatchEvent(
-        new CustomEvent("ionChange", {
-          detail: { value: "12345678" },
-        })
-      );
-    });
+    fillInput(container, "12345678");
 
     expect(mockIonButtonRender).toHaveBeenLastCalledWith(
       expect.objectContaining({ disabled: false }),
@@ -136,16 +121,8 @@ describe("Get SMS PIN button", () => {
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
-      const button = container.querySelector("ion-button");
-      const input = container.querySelector("ion-item > ion-input");
-      act(() => {
-        input!.dispatchEvent(
-          new CustomEvent("ionChange", {
-            detail: { value: phoneInput },
-          })
-        );
-      });
-      userEvent.click(button as TargetElement);
+      fillInput(container, phoneInput);
+      clickButton(container);
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
@@ -170,16 +147,8 @@ describe("On receiving successful API response from send_pin", () => {
     );
 
     const phoneInput = "12345678";
-    const input = container.querySelector("ion-item > ion-input");
-    const button = container.querySelector("ion-button");
-    act(() => {
-      input!.dispatchEvent(
-        new CustomEvent("ionChange", {
-          detail: { value: phoneInput },
-        })
-      );
-    });
-    userEvent.click(button as TargetElement);
+    fillInput(container, phoneInput);
+    clickButton(container);
 
     expect(mockPost).toHaveBeenCalledTimes(1);
     expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
@@ -214,16 +183,8 @@ describe("On receiving error response from send_pin", () => {
     );
 
     const phoneInput = "12345678";
-    const input = container.querySelector("ion-item > ion-input");
-    const button = container.querySelector("ion-button");
-    act(() => {
-      input!.dispatchEvent(
-        new CustomEvent("ionChange", {
-          detail: { value: phoneInput },
-        })
-      );
-    });
-    userEvent.click(button as TargetElement);
+    fillInput(container, phoneInput);
+    clickButton(container);
 
     expect(mockPost).toHaveBeenCalledTimes(1);
     expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
@@ -264,16 +225,8 @@ describe("Upon being navigated to authenticate", () => {
     );
 
     const phoneInput = "12345678";
-    const input = container.querySelector("ion-item > ion-input");
-    const button = container.querySelector("ion-button");
-    act(() => {
-      input!.dispatchEvent(
-        new CustomEvent("ionChange", {
-          detail: { value: phoneInput },
-        })
-      );
-    });
-    userEvent.click(button as TargetElement);
+    fillInput(container, phoneInput);
+    clickButton(container);
 
     await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
     expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
