@@ -7,6 +7,7 @@ import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import { clickButton, fillIonInput } from "./test_utils";
+import { OTP_AUTH_KEY } from "config/localStorageKeys";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -129,11 +130,13 @@ describe("Get SMS PIN button", () => {
 
 describe("On receiving successful API response from send_pin", () => {
   let mockPost: jest.SpyInstance;
+  const otpAuthKey = "fdsfdsfdsfdsffd";
   beforeAll(() => {
     mockPost = jest.spyOn(client, "post").mockResolvedValue({
-      otp_auth_key: "fdsfdsfdsfdsffd",
+      otp_auth_key: otpAuthKey,
     });
   });
+  afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
   afterAll(() => mockPost.mockRestore());
 
   it("should navigate to /authenticate", async () => {
@@ -178,8 +181,7 @@ describe("On receiving successful API response from send_pin", () => {
       </Router>
     );
 
-    const phoneInput = "12345678";
-    fillIonInput(container, phoneInput);
+    fillIonInput(container, "12345678");
     clickButton(container);
 
     await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
@@ -189,6 +191,17 @@ describe("On receiving successful API response from send_pin", () => {
 
     mockHistoryPush.mockRestore();
     mockUseLocation.mockRestore();
+  });
+
+  it("should store token in localStorage", async () => {
+    const { container } = render(<Login />, { wrapper: MemoryRouter });
+
+    fillIonInput(container, "12345678");
+    clickButton(container);
+
+    await wait(() =>
+      expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey)
+    );
   });
 });
 
