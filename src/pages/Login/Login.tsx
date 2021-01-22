@@ -21,6 +21,7 @@ const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [phoneInput, setPhoneInput] = useState("");
+  const [error, setError] = useState(null);
 
   const handleClick = async () => {
     const mobile = `+852${phoneInput}`;
@@ -32,7 +33,7 @@ const Login: React.FC = () => {
         history.push("/authenticate");
       }
     } catch (e) {
-      console.log(e);
+      setError(e);
     }
   };
 
@@ -52,6 +53,11 @@ const Login: React.FC = () => {
             maxlength={8}
           />
         </IonItem>
+        {error && (
+          <div role="alert" style={{ color: "var(--ion-color-danger)" }}>
+            Something went wrong
+          </div>
+        )}
         <IonButton disabled={phoneInput.length < 8} onClick={handleClick}>
           Get 4-digit SMS code
         </IonButton>

@@ -198,24 +198,24 @@ describe("On receiving successful API response from send_pin", () => {
 });
 
 describe("On receiving error response from send_pin", () => {
-  it("should log the error to the console", async () => {
-    const error = new ApiError({
-      httpStatus: 422,
-      type: "ValidationError",
-      message: "Mobile is invalid",
-    });
-    const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error);
+  it("should show an error message", async () => {
+    const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(
+      new ApiError({
+        httpStatus: 422,
+        type: "ValidationError",
+        message: "Mobile is invalid",
+      })
+    );
     const history = createMemoryHistory();
     const mockHistoryPush = jest.spyOn(history, "push");
-    const mockConsoleLog = jest
-      .spyOn(console, "log")
-      .mockImplementation(() => {});
 
     const { container } = render(
       <Router history={history}>
         <Login />
       </Router>
     );
+
+    expect(container.querySelector('[role="alert"]')).not.toBeInTheDocument();
 
     const phoneInput = "12345678";
     fillInput(container, phoneInput);
@@ -225,14 +225,14 @@ describe("On receiving error response from send_pin", () => {
     expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
       mobile: `+852${phoneInput}`,
     });
-    await wait(() => {
-      expect(mockConsoleLog).toHaveBeenCalledTimes(1);
-    });
-    expect(mockConsoleLog).toHaveBeenCalledWith(error);
+    await wait(() =>
+      expect(container.querySelector('[role="alert"]')).toHaveTextContent(
+        /something went wrong/i
+      )
+    );
     expect(mockHistoryPush).not.toHaveBeenCalled();
 
     mockPost.mockRestore();
     mockHistoryPush.mockRestore();
-    mockConsoleLog.mockRestore();
   });
 });
