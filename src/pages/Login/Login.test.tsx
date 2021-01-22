@@ -81,31 +81,33 @@ test("renders a get sms pin button", () => {
 });
 
 describe("Get SMS PIN button", () => {
-  it("should be disabled when input length < 8", () => {
-    const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
-
-    render(<Login />, { wrapper: MemoryRouter });
-
-    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
-      expect.objectContaining({ disabled: true }),
-      null
+  describe("disabled state", () => {
+    let mockIonButtonRender: jest.SpyInstance;
+    beforeAll(
+      () => (mockIonButtonRender = jest.spyOn(IonButton as any, "render"))
     );
+    afterEach(() => mockIonButtonRender.mockClear());
+    afterAll(() => mockIonButtonRender.mockRestore());
 
-    mockIonButtonRender.mockRestore();
-  });
+    it("should be true when input length < 8", () => {
+      render(<Login />, { wrapper: MemoryRouter });
+      expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+        expect.objectContaining({ disabled: true }),
+        null
+      );
+    });
 
-  it("should be enabled when input length = 8", () => {
-    const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
+    it("should be false when input length = 8", () => {
+      const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
 
-    const { container } = render(<Login />, { wrapper: MemoryRouter });
-    fillInput(container, "12345678");
+      const { container } = render(<Login />, { wrapper: MemoryRouter });
+      fillInput(container, "12345678");
 
-    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
-      expect.objectContaining({ disabled: false }),
-      null
-    );
-
-    mockIonButtonRender.mockRestore();
+      expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+        expect.objectContaining({ disabled: false }),
+        null
+      );
+    });
   });
 
   describe("on click", () => {
