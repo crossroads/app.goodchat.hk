@@ -133,12 +133,17 @@ describe("Get SMS PIN button", () => {
 });
 
 describe("On receiving successful API response from send_pin", () => {
+  let mockPost: jest.SpyInstance;
+  beforeAll(() => {
+    mockPost = jest.spyOn(client, "post").mockResolvedValue({
+      otp_auth_key: "fdsfdsfdsfdsffd",
+    });
+  });
+  afterAll(() => mockPost.mockRestore());
+
   it("should navigate to /authenticate", async () => {
     const history = createMemoryHistory();
     const mockHistoryPush = jest.spyOn(history, "push");
-    const mockPost = jest.spyOn(client, "post").mockResolvedValueOnce({
-      otp_auth_key: "fdsfdsfdsfdsffd",
-    });
 
     const { container } = render(
       <Router history={history}>
@@ -158,7 +163,37 @@ describe("On receiving successful API response from send_pin", () => {
     expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
 
     mockHistoryPush.mockRestore();
-    mockPost.mockRestore();
+  });
+
+  it("should pass origin of redirection as history state", async () => {
+    const history = createMemoryHistory();
+    const mockHistoryPush = jest.spyOn(history, "push");
+    const mockUseLocation = jest
+      .spyOn(ReactRouter, "useLocation")
+      .mockReturnValue({
+        pathname: "/login",
+        search: "",
+        hash: "",
+        state: { from: "/offers" },
+      });
+
+    const { container } = render(
+      <Router history={history}>
+        <Login />
+      </Router>
+    );
+
+    const phoneInput = "12345678";
+    fillInput(container, phoneInput);
+    clickButton(container);
+
+    await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
+    expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
+      from: "/offers",
+    });
+
+    mockHistoryPush.mockRestore();
+    mockUseLocation.mockRestore();
   });
 });
 
@@ -199,42 +234,5 @@ describe("On receiving error response from send_pin", () => {
     mockPost.mockRestore();
     mockHistoryPush.mockRestore();
     mockConsoleLog.mockRestore();
-  });
-});
-
-describe("Upon being navigated to authenticate", () => {
-  it("should pass origin of redirection as history state", async () => {
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
-    const mockPost = jest.spyOn(client, "post").mockResolvedValueOnce({
-      otp_auth_key: "fdsfdsfdsfdsffd",
-    });
-    const mockUseLocation = jest
-      .spyOn(ReactRouter, "useLocation")
-      .mockReturnValue({
-        pathname: "/login",
-        search: "",
-        hash: "",
-        state: { from: "/offers" },
-      });
-
-    const { container } = render(
-      <Router history={history}>
-        <Login />
-      </Router>
-    );
-
-    const phoneInput = "12345678";
-    fillInput(container, phoneInput);
-    clickButton(container);
-
-    await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
-    expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
-      from: "/offers",
-    });
-
-    mockHistoryPush.mockRestore();
-    mockPost.mockRestore();
-    mockUseLocation.mockRestore();
   });
 });
