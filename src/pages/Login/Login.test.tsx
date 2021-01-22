@@ -111,15 +111,11 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    const mockPost = jest.spyOn(client, "post").mockResolvedValue({
-      otp_auth_key: "fdsafdsafds",
-    });
-
-    afterEach(() => mockPost.mockClear());
-
-    afterAll(() => mockPost.mockRestore());
-
     it("should call auth/send_pin API endpoint with the correct mobile value", () => {
+      const mockPost = jest.spyOn(client, "post").mockResolvedValue({
+        otp_auth_key: "fdsafdsafds",
+      });
+
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
@@ -130,6 +126,8 @@ describe("Get SMS PIN button", () => {
       expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
         mobile: `+852${phoneInput}`,
       });
+
+      mockPost.mockRestore();
     });
   });
 });
