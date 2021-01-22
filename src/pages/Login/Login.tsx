@@ -22,17 +22,18 @@ const Login: React.FC = () => {
   const location = useLocation<LocationState | undefined>();
   const [phoneInput, setPhoneInput] = useState("");
 
-  const handleClick = () => {
+  const handleClick = async () => {
     const mobile = `+852${phoneInput}`;
-    AuthenticationService.sendPin({ mobile })
-      .then(() => {
-        if (location.state) {
-          history.push("/authenticate", { from: location.state.from });
-        } else {
-          history.push("/authenticate");
-        }
-      })
-      .catch((e) => console.log(e));
+    try {
+      await AuthenticationService.sendPin({ mobile });
+      if (location.state) {
+        history.push("/authenticate", { from: location.state.from });
+      } else {
+        history.push("/authenticate");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
