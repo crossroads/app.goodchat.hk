@@ -1,28 +1,33 @@
 import client from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { OTP_AUTH_KEY } from "config/localStorageKeys";
 
-const mockPost = jest.spyOn(client, "post");
-
-afterEach(() => {
-  mockPost.mockClear();
+let mockPost: jest.SpyInstance;
+beforeAll(() => (mockPost = jest.spyOn(client, "post")));
+afterEach(() => mockPost.mockClear());
+afterAll(() => {
+  mockPost.mockRestore();
 });
 
 describe("sendPin", () => {
-  it(`should call client with auth/send_pin and receive the appropriate response`, async () => {
-    const otpAuthKey = "fdsfdsaffdsaklfds";
+  const otpAuthKey = "fdsfdsaffdsaklfds";
+  const mobile = "+85262345678";
+  beforeAll(() => {
     mockPost.mockResolvedValue({
       otp_auth_key: otpAuthKey,
     });
+  });
+  afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
 
-    const mobile = "+85262345678";
-    const data = await AuthenticationService.sendPin({ mobile });
-
+  it(`should call client with auth/send_pin and the correct data`, () => {
+    AuthenticationService.sendPin({ mobile });
     expect(mockPost).toHaveBeenCalledTimes(1);
     expect(mockPost).toHaveBeenCalledWith("auth/send_pin", { mobile });
+  });
 
-    expect(data).toEqual({
-      otp_auth_key: otpAuthKey,
-    });
+  it("should store received token in localStorage", async () => {
+    await AuthenticationService.sendPin({ mobile });
+    expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey);
   });
 });
 

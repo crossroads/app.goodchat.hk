@@ -1,3 +1,4 @@
+import { OTP_AUTH_KEY } from "config/localStorageKeys";
 import client from "lib/client/client";
 
 interface SendPinBody {
@@ -6,8 +7,9 @@ interface SendPinBody {
 interface SendPinResponse {
   otp_auth_key: string;
 }
-function sendPin(body: SendPinBody): Promise<SendPinResponse> {
-  return client.post("auth/send_pin", body);
+async function sendPin(body: SendPinBody): Promise<void> {
+  const response: SendPinResponse = await client.post("auth/send_pin", body);
+  localStorage.setItem(OTP_AUTH_KEY, response.otp_auth_key);
 }
 
 interface VerifyBody {
