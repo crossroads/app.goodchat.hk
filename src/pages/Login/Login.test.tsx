@@ -13,11 +13,6 @@ test("renders a login title", () => {
   expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
 });
 
-test("renders an ion-item", () => {
-  const { container } = render(<Login />, { wrapper: MemoryRouter });
-  expect(container.querySelector("ion-item")).toBeInTheDocument();
-});
-
 test("renders a +852 label", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-item > ion-label")).toHaveTextContent(
