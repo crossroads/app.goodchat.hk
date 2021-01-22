@@ -204,8 +204,8 @@ describe("On receiving error response from send_pin", () => {
       type: "ValidationError",
       message: "Mobile is invalid",
     });
-    const history = createMemoryHistory();
     const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error);
+    const history = createMemoryHistory();
     const mockHistoryPush = jest.spyOn(history, "push");
     const mockConsoleLog = jest
       .spyOn(console, "log")
