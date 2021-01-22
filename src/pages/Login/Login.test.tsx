@@ -6,7 +6,7 @@ import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
-import { clickButton, fillInput } from "./test_utils";
+import { clickButton, fillIonInput } from "./test_utils";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -37,7 +37,7 @@ describe("Phone input", () => {
   it("should have its value change accordingly with user input", () => {
     const { container } = render(<Login />, { wrapper: MemoryRouter });
 
-    fillInput(container, "12345678");
+    fillIonInput(container, "12345678");
 
     expect(container.querySelector("ion-item > ion-input")).toHaveAttribute(
       "value",
@@ -96,7 +96,7 @@ describe("Get SMS PIN button", () => {
       const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
 
       const { container } = render(<Login />, { wrapper: MemoryRouter });
-      fillInput(container, "12345678");
+      fillIonInput(container, "12345678");
 
       expect(mockIonButtonRender).toHaveBeenLastCalledWith(
         expect.objectContaining({ disabled: false }),
@@ -114,7 +114,7 @@ describe("Get SMS PIN button", () => {
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
-      fillInput(container, phoneInput);
+      fillIonInput(container, phoneInput);
       clickButton(container);
 
       expect(mockPost).toHaveBeenCalledTimes(1);
@@ -147,7 +147,7 @@ describe("On receiving successful API response from send_pin", () => {
     );
 
     const phoneInput = "12345678";
-    fillInput(container, phoneInput);
+    fillIonInput(container, phoneInput);
     clickButton(container);
 
     expect(mockPost).toHaveBeenCalledTimes(1);
@@ -179,7 +179,7 @@ describe("On receiving successful API response from send_pin", () => {
     );
 
     const phoneInput = "12345678";
-    fillInput(container, phoneInput);
+    fillIonInput(container, phoneInput);
     clickButton(container);
 
     await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
@@ -213,7 +213,7 @@ describe("On receiving error response from send_pin", () => {
     expect(container.querySelector('[role="alert"]')).not.toBeInTheDocument();
 
     const phoneInput = "12345678";
-    fillInput(container, phoneInput);
+    fillIonInput(container, phoneInput);
     clickButton(container);
 
     expect(mockPost).toHaveBeenCalledTimes(1);

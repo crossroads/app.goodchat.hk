@@ -1,7 +1,7 @@
 import { act } from "@testing-library/react";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 
-function fillInput(container: HTMLElement, phoneInput: string) {
+function fillIonInput(container: HTMLElement, phoneInput: string) {
   const input = container.querySelector("ion-input");
   act(() => {
     input!.dispatchEvent(
@@ -16,4 +16,4 @@ function clickButton(container: HTMLElement) {
   userEvent.click(button as TargetElement);
 }
 
-export { fillInput, clickButton };
+export { fillIonInput, clickButton };
