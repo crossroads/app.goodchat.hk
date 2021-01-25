@@ -40,7 +40,7 @@ const Authenticate: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonItem>
-          <IonLabel>Please input your 2fa code</IonLabel>
+          <IonLabel position="floating">Please input your 2fa code</IonLabel>
           <IonInput placeholder="XXXX"></IonInput>
         </IonItem>
         <IonButton onClick={handleClick}>Login</IonButton>

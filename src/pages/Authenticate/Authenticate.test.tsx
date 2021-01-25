@@ -25,6 +25,14 @@ test("renders a label opting user to input 2fa code", () => {
   );
 });
 
+test("renders the label on top of the input", () => {
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-label")).toHaveAttribute(
+    "position",
+    "floating"
+  );
+});
+
 test("renders an input", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-input")).toBeInTheDocument();
