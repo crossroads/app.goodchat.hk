@@ -1,6 +1,6 @@
 import client from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { OTP_AUTH_KEY } from "config/localStorageKeys";
+import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
 let mockPost: jest.SpyInstance;
 beforeAll(() => (mockPost = jest.spyOn(client, "post")));

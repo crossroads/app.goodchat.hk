@@ -2,8 +2,7 @@ import React from "react";
 import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
-
-const GC_API_TOKEN = "gc_api_token";
+import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};

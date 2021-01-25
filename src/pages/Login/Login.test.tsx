@@ -7,7 +7,7 @@ import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import { clickButton, fillIonInput } from "./test_utils";
-import { OTP_AUTH_KEY } from "config/localStorageKeys";
+import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
