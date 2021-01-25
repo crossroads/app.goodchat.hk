@@ -18,6 +18,11 @@ test("renders an authenticate title", () => {
   );
 });
 
+test("renders an input", () => {
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-input")).toBeInTheDocument();
+});
+
 test("renders a login button", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);

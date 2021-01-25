@@ -2,6 +2,8 @@ import {
   IonButton,
   IonContent,
   IonHeader,
+  IonInput,
+  IonItem,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -36,6 +38,9 @@ const Authenticate: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonItem>
+          <IonInput></IonInput>
+        </IonItem>
         <IonButton onClick={handleClick}>Login</IonButton>
       </IonContent>
     </IonPage>
