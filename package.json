@@ -53,6 +53,7 @@
   "description": "An Ionic project",
   "devDependencies": {
     "@capacitor/cli": "2.4.2",
+    "@ionic/react-test-utils": "0.0.3",
     "axios": "^0.21.1",
     "husky": "^4.3.5",
     "msw": "^0.25.0",
