@@ -21,7 +21,7 @@ const Authenticate: React.FC = () => {
   const { login } = useAuth();
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
-  const [twoFaCode, setTwoFaCode] = useState("");
+  const [twoFaInput, setTwoFaInput] = useState("");
 
   const handleClick = () => {
     login();
@@ -44,12 +44,12 @@ const Authenticate: React.FC = () => {
           <IonLabel position="floating">Please input your 2fa code</IonLabel>
           <IonInput
             placeholder="XXXX"
-            value={twoFaCode}
+            value={twoFaInput}
             maxlength={4}
-            onIonChange={(e) => setTwoFaCode(e.detail.value ?? "")}
+            onIonChange={(e) => setTwoFaInput(e.detail.value ?? "")}
           />
         </IonItem>
-        <IonButton disabled={twoFaCode.length < 4} onClick={handleClick}>
+        <IonButton disabled={twoFaInput.length < 4} onClick={handleClick}>
           Login
         </IonButton>
       </IonContent>
