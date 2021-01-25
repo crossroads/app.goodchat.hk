@@ -6,7 +6,7 @@ import * as UseAuthModule from "hooks/useAuth/useAuth";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
-import { IonInput } from "@ionic/react";
+import { IonButton, IonInput } from "@ionic/react";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -82,6 +82,37 @@ describe("input", () => {
 test("renders a login button", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
+});
+
+describe("login button", () => {
+  let mockIonButtonRender: jest.SpyInstance;
+  beforeAll(
+    () => (mockIonButtonRender = jest.spyOn(IonButton, "render" as never))
+  );
+  afterEach(() => mockIonButtonRender.mockClear());
+  afterAll(() => mockIonButtonRender.mockRestore());
+
+  it("should be disabled when 2fa input length < 4", () => {
+    render(<Authenticate />, { wrapper: MemoryRouter });
+    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        disabled: true,
+      }),
+      null
+    );
+  });
+
+  it("should be enabled when 2fa input length = 4", () => {
+    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+
+    const input = container.querySelector("ion-input");
+    ionFireEvent.ionChange(input!, "1234");
+
+    expect(mockIonButtonRender).toHaveBeenLastCalledWith(
+      expect.objectContaining({ disabled: false }),
+      null
+    );
+  });
 });
 
 describe("Clicking login button", () => {

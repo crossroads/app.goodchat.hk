@@ -49,7 +49,9 @@ const Authenticate: React.FC = () => {
             onIonChange={(e) => setTwoFaCode(e.detail.value ?? "")}
           />
         </IonItem>
-        <IonButton onClick={handleClick}>Login</IonButton>
+        <IonButton disabled={twoFaCode.length < 4} onClick={handleClick}>
+          Login
+        </IonButton>
       </IonContent>
     </IonPage>
   );
