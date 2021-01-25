@@ -45,6 +45,7 @@ const Authenticate: React.FC = () => {
           <IonInput
             placeholder="XXXX"
             value={twoFaCode}
+            maxlength={4}
             onIonChange={(e) => setTwoFaCode(e.detail.value ?? "")}
           />
         </IonItem>

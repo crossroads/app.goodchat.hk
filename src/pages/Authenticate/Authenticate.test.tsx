@@ -6,6 +6,7 @@ import * as UseAuthModule from "hooks/useAuth/useAuth";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
+import { IonInput } from "@ionic/react";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -46,6 +47,19 @@ describe("input", () => {
       "placeholder",
       "XXXX"
     );
+  });
+
+  it("should not allow more than 4 characters to be input", () => {
+    const mockIonInputRender = jest.spyOn(IonInput, "render" as never);
+
+    render(<Authenticate />, { wrapper: MemoryRouter });
+
+    expect(mockIonInputRender).toHaveBeenCalledWith(
+      expect.objectContaining({ maxlength: 4 }),
+      null
+    );
+
+    mockIonInputRender.mockRestore();
   });
 
   it("should have its value change accordingly with user input", () => {
