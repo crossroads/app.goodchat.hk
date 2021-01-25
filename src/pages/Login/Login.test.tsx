@@ -107,6 +107,8 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
+    afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
+
     it("should call auth/send_pin API endpoint with the correct mobile value", () => {
       const mockPost = jest.spyOn(client, "post").mockResolvedValue({
         otp_auth_key: "fdsafdsafds",
