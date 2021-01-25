@@ -39,7 +39,7 @@ const Authenticate: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonItem>
-          <IonInput></IonInput>
+          <IonInput placeholder="XXXX"></IonInput>
         </IonItem>
         <IonButton onClick={handleClick}>Login</IonButton>
       </IonContent>

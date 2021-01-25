@@ -23,6 +23,16 @@ test("renders an input", () => {
   expect(container.querySelector("ion-input")).toBeInTheDocument();
 });
 
+describe("input", () => {
+  it("should have a placeholder XXXX", () => {
+    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+    expect(container.querySelector("ion-input")).toHaveAttribute(
+      "placeholder",
+      "XXXX"
+    );
+  });
+});
+
 test("renders a login button", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
