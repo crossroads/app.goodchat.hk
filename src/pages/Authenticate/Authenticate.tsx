@@ -10,7 +10,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import useAuth from "hooks/useAuth/useAuth";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
 
 interface LocationState {
@@ -21,6 +21,7 @@ const Authenticate: React.FC = () => {
   const { login } = useAuth();
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
+  const [twoFaCode, setTwoFaCode] = useState("");
 
   const handleClick = () => {
     login();
@@ -41,7 +42,11 @@ const Authenticate: React.FC = () => {
       <IonContent>
         <IonItem>
           <IonLabel position="floating">Please input your 2fa code</IonLabel>
-          <IonInput placeholder="XXXX"></IonInput>
+          <IonInput
+            placeholder="XXXX"
+            value={twoFaCode}
+            onIonChange={(e) => setTwoFaCode(e.detail.value ?? "")}
+          />
         </IonItem>
         <IonButton onClick={handleClick}>Login</IonButton>
       </IonContent>

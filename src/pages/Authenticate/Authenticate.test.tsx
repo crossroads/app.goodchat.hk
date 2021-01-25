@@ -5,6 +5,7 @@ import userEvent, { TargetElement } from "@testing-library/user-event";
 import * as UseAuthModule from "hooks/useAuth/useAuth";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
+import { ionFireEvent } from "@ionic/react-test-utils";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -44,6 +45,22 @@ describe("input", () => {
     expect(container.querySelector("ion-input")).toHaveAttribute(
       "placeholder",
       "XXXX"
+    );
+  });
+
+  it("should have its value change accordingly with user input", () => {
+    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+
+    const input = container.querySelector("ion-input");
+
+    expect(container.querySelector("ion-input")).toHaveAttribute("value", "");
+
+    const inputVal = "1234";
+    ionFireEvent.ionChange(input!, inputVal);
+
+    expect(container.querySelector("ion-input")).toHaveAttribute(
+      "value",
+      inputVal
     );
   });
 });
