@@ -18,6 +18,13 @@ test("renders an authenticate title", () => {
   );
 });
 
+test("renders a label opting user to input 2fa code", () => {
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-label")).toHaveTextContent(
+    /please input your 2fa code/i
+  );
+});
+
 test("renders an input", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-input")).toBeInTheDocument();
