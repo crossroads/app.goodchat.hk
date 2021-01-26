@@ -26,6 +26,7 @@ describe("sendPin", () => {
   });
 
   it("should store received token in localStorage", async () => {
+    expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
     await AuthenticationService.sendPin({ mobile });
     expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey);
   });

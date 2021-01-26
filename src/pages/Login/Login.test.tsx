@@ -198,6 +198,8 @@ describe("On receiving successful API response from send_pin", () => {
   it("should store token in localStorage", async () => {
     const { container } = render(<Login />, { wrapper: MemoryRouter });
 
+    expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
+
     fillIonInput(container, "12345678");
     clickButton(container);
 
