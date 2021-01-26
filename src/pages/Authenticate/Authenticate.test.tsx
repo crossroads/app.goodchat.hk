@@ -20,6 +20,21 @@ test("renders an authenticate title", () => {
   );
 });
 
+test("renders a back button in the header", () => {
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  expect(
+    container.querySelector("ion-header ion-back-button")
+  ).toBeInTheDocument();
+});
+
+test("back button defaults to navigate to /login", async () => {
+  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  expect(container.querySelector("ion-back-button")).toHaveAttribute(
+    "default-href",
+    "/login"
+  );
+});
+
 test("renders a label opting user to input 2fa code", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container.querySelector("ion-label")).toHaveTextContent(
