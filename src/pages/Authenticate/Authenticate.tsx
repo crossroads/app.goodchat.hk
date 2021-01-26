@@ -1,13 +1,18 @@
 import {
+  IonBackButton,
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
+  IonInput,
+  IonItem,
+  IonLabel,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import useAuth from "hooks/useAuth/useAuth";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
 
 interface LocationState {
@@ -18,6 +23,7 @@ const Authenticate: React.FC = () => {
   const { login } = useAuth();
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
+  const [twoFaInput, setTwoFaInput] = useState("");
 
   const handleClick = () => {
     login();
@@ -32,11 +38,25 @@ const Authenticate: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/login" />
+          </IonButtons>
           <IonTitle>Authenticate</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonButton onClick={handleClick}>Login</IonButton>
+        <IonItem>
+          <IonLabel position="floating">Please input your 2fa code</IonLabel>
+          <IonInput
+            placeholder="XXXX"
+            value={twoFaInput}
+            maxlength={4}
+            onIonChange={(e) => setTwoFaInput(e.detail.value ?? "")}
+          />
+        </IonItem>
+        <IonButton disabled={twoFaInput.length < 4} onClick={handleClick}>
+          Login
+        </IonButton>
       </IonContent>
     </IonPage>
   );
