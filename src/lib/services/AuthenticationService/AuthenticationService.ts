@@ -1,22 +1,17 @@
+import { OTP_AUTH_KEY } from "config/localStorageKeys";
 import client from "lib/client/client";
+import {
+  SendPinBody,
+  SendPinResponse,
+  VerifyBody,
+  VerifyResponse,
+} from "lib/services/AuthenticationService/types";
 
-interface SendPinBody {
-  mobile: string;
-}
-interface SendPinResponse {
-  otp_auth_key: string;
-}
-function sendPin(body: SendPinBody): Promise<SendPinResponse> {
-  return client.post("auth/send_pin", body);
+async function sendPin(body: SendPinBody): Promise<void> {
+  const response: SendPinResponse = await client.post("auth/send_pin", body);
+  localStorage.setItem(OTP_AUTH_KEY, response.otp_auth_key);
 }
 
-interface VerifyBody {
-  pin: string;
-  otp_auth_key: string;
-}
-interface VerifyResponse {
-  jwt_token: string;
-}
 function verify(body: VerifyBody): Promise<VerifyResponse> {
   return client.post("auth/verify", body);
 }

@@ -1,5 +1,5 @@
 import { computeAuthState } from "components/AuthProvider/AuthProvider";
-import { GC_API_TOKEN } from "config/localStorageKeys";
+import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
 
 afterEach(() => localStorage.removeItem(GC_API_TOKEN));
 

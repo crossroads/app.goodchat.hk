@@ -8,6 +8,7 @@ import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
 import client from "lib/client/client";
+import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
 let mockPost: jest.SpyInstance;
 beforeAll(
@@ -16,6 +17,7 @@ beforeAll(
       .spyOn(client, "post")
       .mockResolvedValue({ otp_auth_key: "sdfdsfdsaf" }))
 );
+afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
 afterAll(() => mockPost.mockRestore());
 
 test("User is able to login and logout with correct routing", async () => {
