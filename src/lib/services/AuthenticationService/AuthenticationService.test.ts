@@ -1,13 +1,12 @@
+import { wait } from "@testing-library/react";
 import client from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
+import { GC_API_TOKEN, OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
 let mockPost: jest.SpyInstance;
 beforeAll(() => (mockPost = jest.spyOn(client, "post")));
 afterEach(() => mockPost.mockClear());
-afterAll(() => {
-  mockPost.mockRestore();
-});
+afterAll(() => mockPost.mockRestore());
 
 describe("sendPin", () => {
   const otpAuthKey = "fdsfdsaffdsaklfds";
@@ -33,16 +32,19 @@ describe("sendPin", () => {
 });
 
 describe("verify", () => {
-  it("should call client with auth/verify and receive the appropriate response", async () => {
-    const jwtToken = "ejsdfslk3fdsa";
-    const otpAuthKey = "sdfscsd2fdsjklf2fs";
-    const pin = "1234";
-
+  const jwtToken = "ejsdfslk3fdsa";
+  const otpAuthKey = "sdfscsd2fdsjklf2fs";
+  const pin = "1234";
+  beforeAll(() =>
     mockPost.mockResolvedValue({
       jwt_token: jwtToken,
-    });
+    })
+  );
+  afterEach(() => localStorage.removeItem(GC_API_TOKEN));
+  afterAll(() => mockPost.mockRestore());
 
-    const data = await AuthenticationService.verify({
+  it("should call client with auth/verify and the correct data", async () => {
+    AuthenticationService.verify({
       pin,
       otp_auth_key: otpAuthKey,
     });
@@ -52,7 +54,17 @@ describe("verify", () => {
       pin,
       otp_auth_key: otpAuthKey,
     });
+  });
 
-    expect(data).toEqual({ jwt_token: jwtToken });
+  it(`should store received jwt_token in localStorage`, async () => {
+    expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
+    AuthenticationService.verify({ otp_auth_key: otpAuthKey, pin });
+    await wait(() => expect(localStorage.getItem(GC_API_TOKEN)).toBe(jwtToken));
+  });
+
+  it(`should clear ${OTP_AUTH_KEY} from localStorage`, async () => {
+    localStorage.setItem(OTP_AUTH_KEY, otpAuthKey);
+    AuthenticationService.verify({ otp_auth_key: otpAuthKey, pin });
+    await wait(() => expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull());
   });
 });

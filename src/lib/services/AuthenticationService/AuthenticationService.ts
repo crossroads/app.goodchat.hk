@@ -1,4 +1,4 @@
-import { OTP_AUTH_KEY } from "config/localStorageKeys";
+import { GC_API_TOKEN, OTP_AUTH_KEY } from "config/localStorageKeys";
 import client from "lib/client/client";
 import {
   SendPinBody,
@@ -12,8 +12,10 @@ async function sendPin(body: SendPinBody): Promise<void> {
   localStorage.setItem(OTP_AUTH_KEY, response.otp_auth_key);
 }
 
-function verify(body: VerifyBody): Promise<VerifyResponse> {
-  return client.post("auth/verify", body);
+async function verify(body: VerifyBody): Promise<void> {
+  const response: VerifyResponse = await client.post("auth/verify", body);
+  localStorage.setItem(GC_API_TOKEN, response.jwt_token);
+  localStorage.removeItem(OTP_AUTH_KEY);
 }
 
 const AuthenticationService = {
