@@ -26,7 +26,7 @@ const Authenticate: React.FC = () => {
   const [twoFaInput, setTwoFaInput] = useState("");
 
   const handleClick = () => {
-    login();
+    login(twoFaInput);
     if (location.state) {
       history.replace(location.state.from);
     } else {

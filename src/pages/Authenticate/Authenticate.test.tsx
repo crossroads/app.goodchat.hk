@@ -2,11 +2,11 @@ import { render } from "@testing-library/react";
 import React from "react";
 import Authenticate from "pages/Authenticate/Authenticate";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import * as UseAuthModule from "hooks/useAuth/useAuth";
 import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -131,22 +131,23 @@ describe("login button", () => {
 });
 
 describe("Clicking login button", () => {
-  test("should call the useAuth login function", () => {
-    const mockLogin = jest.fn();
-    const mockUseAuth = jest.spyOn(UseAuthModule, "default").mockReturnValue({
-      isAuthenticated: false,
-      login: mockLogin,
-      logout: jest.fn(),
-    });
+  test("should call AuthenticationService authenticate correctly", () => {
+    const mockAuthenticate = jest
+      .spyOn(AuthenticationService, "authenticate")
+      .mockImplementation();
 
     const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
 
+    const inputVal = "1234";
+    const input = container.querySelector("ion-input");
     const loginButton = container.querySelector("ion-button");
+    ionFireEvent.ionChange(input!, inputVal);
     userEvent.click(loginButton as TargetElement);
 
-    expect(mockLogin).toHaveBeenCalledTimes(1);
+    expect(mockAuthenticate).toHaveBeenCalledTimes(1);
+    expect(mockAuthenticate).toHaveBeenCalledWith(inputVal);
 
-    mockUseAuth.mockRestore();
+    mockAuthenticate.mockRestore();
   });
 
   describe("Redirection", () => {
