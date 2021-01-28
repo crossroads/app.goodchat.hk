@@ -2,7 +2,6 @@ import React from "react";
 import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
-import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 const setup = (Wrapper: React.FC) => {
@@ -87,22 +86,24 @@ describe("login", () => {
 });
 
 describe("logout", () => {
+  it("should call AuthService logout correctly", () => {
+    const mockLogout = jest
+      .spyOn(AuthenticationService, "logout")
+      .mockImplementation(jest.fn());
+    const auth = setup(AuthenticatedAuthProvider);
+
+    act(() => auth.logout());
+
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+
+    mockLogout.mockRestore();
+  });
+
   it("should set auth state to false", () => {
     const auth = setup(AuthenticatedAuthProvider);
 
     act(() => auth.logout());
 
     expect(auth.isAuthenticated).toBe(false);
-  });
-
-  it("should remove auth key from localStorage", () => {
-    localStorage.setItem(GC_API_TOKEN, "fsdaf");
-    const auth = setup(AuthProvider);
-
-    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeTruthy();
-
-    act(() => auth.logout());
-
-    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeNull();
   });
 });

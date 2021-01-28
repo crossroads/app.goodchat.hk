@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import AuthContext from "context/AuthContext";
-import { GC_API_TOKEN } from "config/localStorageKeys";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 export interface Auth {
@@ -17,8 +16,8 @@ const useAuth = (): Auth => {
   };
 
   const logout = () => {
+    AuthenticationService.logout();
     setIsAuthenticated(false);
-    localStorage.removeItem(GC_API_TOKEN);
   };
 
   return {
