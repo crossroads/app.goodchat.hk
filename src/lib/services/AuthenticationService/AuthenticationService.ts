@@ -12,7 +12,7 @@ async function sendPin(body: SendPinBody): Promise<void> {
   localStorage.setItem(OTP_AUTH_KEY, response.otp_auth_key);
 }
 
-async function verify(pin: string): Promise<void> {
+async function authenticate(pin: string): Promise<void> {
   const body: VerifyBody = {
     otp_auth_key: localStorage.getItem(OTP_AUTH_KEY) ?? "",
     pin,
@@ -24,7 +24,7 @@ async function verify(pin: string): Promise<void> {
 
 const AuthenticationService = {
   sendPin,
-  verify,
+  authenticate,
 };
 
 export default AuthenticationService;
