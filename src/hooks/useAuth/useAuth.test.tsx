@@ -65,7 +65,7 @@ describe("login", () => {
     beforeAll(() => {
       mockAuthenticate.mockRejectedValue(error);
     });
-    afterAll(() => mockAuthenticate.mockRestore());
+    afterAll(() => mockAuthenticate.mockReset());
 
     it("should just throw the error", async () => {
       const auth = setup(AuthProvider);
