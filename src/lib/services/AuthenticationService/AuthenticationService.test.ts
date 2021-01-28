@@ -40,14 +40,12 @@ describe("verify", () => {
       jwt_token: jwtToken,
     })
   );
+  beforeEach(() => localStorage.setItem(OTP_AUTH_KEY, otpAuthKey));
   afterEach(() => localStorage.removeItem(GC_API_TOKEN));
   afterAll(() => mockPost.mockRestore());
 
   it("should call client with auth/verify and the correct data", async () => {
-    AuthenticationService.verify({
-      pin,
-      otp_auth_key: otpAuthKey,
-    });
+    AuthenticationService.verify(pin);
 
     expect(mockPost).toHaveBeenCalledTimes(1);
     expect(mockPost).toHaveBeenCalledWith("auth/verify", {
@@ -58,13 +56,13 @@ describe("verify", () => {
 
   it(`should store received jwt_token in localStorage`, async () => {
     expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
-    AuthenticationService.verify({ otp_auth_key: otpAuthKey, pin });
+    AuthenticationService.verify(pin);
     await wait(() => expect(localStorage.getItem(GC_API_TOKEN)).toBe(jwtToken));
   });
 
   it(`should clear ${OTP_AUTH_KEY} from localStorage`, async () => {
     localStorage.setItem(OTP_AUTH_KEY, otpAuthKey);
-    AuthenticationService.verify({ otp_auth_key: otpAuthKey, pin });
+    AuthenticationService.verify(pin);
     await wait(() => expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull());
   });
 });
