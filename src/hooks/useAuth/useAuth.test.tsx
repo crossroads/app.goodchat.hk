@@ -3,6 +3,7 @@ import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};
@@ -33,28 +34,59 @@ test("should return the correct authentication state", () => {
 });
 
 describe("login", () => {
-  afterEach(() => window.localStorage.removeItem(GC_API_TOKEN));
+  let mockAuthenticate: jest.SpyInstance;
+  beforeAll(() => {
+    mockAuthenticate = jest
+      .spyOn(AuthenticationService, "authenticate")
+      .mockImplementation(async () => Promise.resolve());
+  });
+  afterAll(() => mockAuthenticate.mockRestore());
 
-  it("should set auth state to true", () => {
+  it("should call AuthenticationService authenticate correctly", async () => {
     const auth = setup(AuthProvider);
 
-    act(() => auth.login());
+    const pin = "1234";
+    await act(() => auth.login(pin));
 
-    expect(auth.isAuthenticated).toBe(true);
+    expect(mockAuthenticate).toHaveBeenCalledTimes(1);
+    expect(mockAuthenticate).toHaveBeenCalledWith(pin);
   });
 
-  it("should set auth state in localStorage", () => {
-    const auth = setup(AuthProvider);
+  describe("on successful response", () => {
+    it("should set auth state to true", async () => {
+      const auth = setup(AuthProvider);
+      await act(() => auth.login("1234"));
+      expect(auth.isAuthenticated).toBe(true);
+    });
+  });
 
-    act(() => auth.login());
+  describe("on unsuccessful response", () => {
+    const error = new Error();
+    beforeAll(() => {
+      mockAuthenticate.mockRejectedValue(error);
+    });
+    afterAll(() => mockAuthenticate.mockRestore());
 
-    expect(window.localStorage.getItem(GC_API_TOKEN)).toBeTruthy();
+    it("should just throw the error", async () => {
+      const auth = setup(AuthProvider);
+      return expect(auth.login("1234")).rejects.toThrow(error);
+    });
+
+    it("should NOT set auth state to true", async () => {
+      const auth = setup(AuthProvider);
+
+      expect.assertions(2);
+      expect(auth.isAuthenticated).toBe(false);
+      try {
+        await act(() => auth.login("1234"));
+      } catch (e) {
+        expect(auth.isAuthenticated).toBe(false);
+      }
+    });
   });
 });
 
 describe("logout", () => {
-  afterEach(() => window.localStorage.removeItem(GC_API_TOKEN));
-
   it("should set auth state to false", () => {
     const auth = setup(AuthenticatedAuthProvider);
 
@@ -64,9 +96,8 @@ describe("logout", () => {
   });
 
   it("should remove auth key from localStorage", () => {
+    localStorage.setItem(GC_API_TOKEN, "fsdaf");
     const auth = setup(AuthProvider);
-
-    act(() => auth.login());
 
     expect(window.localStorage.getItem(GC_API_TOKEN)).toBeTruthy();
 
