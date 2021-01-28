@@ -31,7 +31,7 @@ describe("sendPin", () => {
   });
 });
 
-describe("verify", () => {
+describe("authenticate", () => {
   const jwtToken = "ejsdfslk3fdsa";
   const otpAuthKey = "sdfscsd2fdsjklf2fs";
   const pin = "1234";
