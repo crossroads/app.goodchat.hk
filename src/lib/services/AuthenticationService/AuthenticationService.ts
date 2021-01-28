@@ -22,9 +22,14 @@ async function authenticate(pin: string): Promise<void> {
   localStorage.removeItem(OTP_AUTH_KEY);
 }
 
+function logout() {
+  localStorage.removeItem(GC_API_TOKEN);
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
+  logout,
 };
 
 export default AuthenticationService;
