@@ -18,16 +18,40 @@ describe("sendPin", () => {
   });
   afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
 
-  it(`should call client with auth/send_pin and the correct data`, () => {
-    AuthenticationService.sendPin({ mobile });
-    expect(mockPost).toHaveBeenCalledTimes(1);
-    expect(mockPost).toHaveBeenCalledWith("auth/send_pin", { mobile });
+  describe("on successful response", () => {
+    it(`should call client with auth/send_pin and the correct data`, () => {
+      AuthenticationService.sendPin({ mobile });
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith("auth/send_pin", { mobile });
+    });
+
+    it("should store received token in localStorage", async () => {
+      expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
+      await AuthenticationService.sendPin({ mobile });
+      expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey);
+    });
   });
 
-  it("should store received token in localStorage", async () => {
-    expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
-    await AuthenticationService.sendPin({ mobile });
-    expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey);
+  describe("on unsuccessful response", () => {
+    const error = new Error();
+    beforeAll(() => mockPost.mockRejectedValue(error));
+    afterAll(() => mockPost.mockReset());
+
+    it("should just throw the error", () => {
+      return expect(AuthenticationService.sendPin({ mobile })).rejects.toThrow(
+        error
+      );
+    });
+
+    it("should NOT set otp_auth_key", async () => {
+      expect.assertions(2);
+      expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
+      try {
+        await AuthenticationService.sendPin({ mobile });
+      } catch (e) {
+        expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
+      }
+    });
   });
 });
 
