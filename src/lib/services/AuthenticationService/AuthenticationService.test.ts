@@ -43,7 +43,7 @@ describe("sendPin", () => {
       );
     });
 
-    it("should NOT set otp_auth_key", async () => {
+    it(`should NOT set ${OTP_AUTH_KEY}`, async () => {
       expect.assertions(2);
       expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
       try {
@@ -68,25 +68,61 @@ describe("authenticate", () => {
   afterEach(() => localStorage.removeItem(GC_API_TOKEN));
   afterAll(() => mockPost.mockRestore());
 
-  it("should call client with auth/verify and the correct data", async () => {
-    AuthenticationService.authenticate(pin);
+  describe("On successful response", () => {
+    it("should call client with auth/verify and the correct data", async () => {
+      AuthenticationService.authenticate(pin);
 
-    expect(mockPost).toHaveBeenCalledTimes(1);
-    expect(mockPost).toHaveBeenCalledWith("auth/verify", {
-      pin,
-      otp_auth_key: otpAuthKey,
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith("auth/verify", {
+        pin,
+        otp_auth_key: otpAuthKey,
+      });
+    });
+
+    it(`should set ${GC_API_TOKEN} with the received jwt_token`, async () => {
+      expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
+      AuthenticationService.authenticate(pin);
+      await wait(() =>
+        expect(localStorage.getItem(GC_API_TOKEN)).toBe(jwtToken)
+      );
+    });
+
+    it(`should clear ${OTP_AUTH_KEY} from localStorage`, async () => {
+      localStorage.setItem(OTP_AUTH_KEY, otpAuthKey);
+      AuthenticationService.authenticate(pin);
+      await wait(() => expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull());
     });
   });
 
-  it(`should store received jwt_token in localStorage`, async () => {
-    expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
-    AuthenticationService.authenticate(pin);
-    await wait(() => expect(localStorage.getItem(GC_API_TOKEN)).toBe(jwtToken));
-  });
+  describe("On unsuccessful response", () => {
+    const error = new Error();
+    beforeAll(() => mockPost.mockRejectedValue(error));
+    afterAll(() => mockPost.mockReset());
 
-  it(`should clear ${OTP_AUTH_KEY} from localStorage`, async () => {
-    localStorage.setItem(OTP_AUTH_KEY, otpAuthKey);
-    AuthenticationService.authenticate(pin);
-    await wait(() => expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull());
+    it("should just throw the error", () => {
+      return expect(AuthenticationService.authenticate(pin)).rejects.toThrow(
+        error
+      );
+    });
+
+    it(`should NOT set ${GC_API_TOKEN}`, async () => {
+      expect.assertions(2);
+      expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
+      try {
+        await AuthenticationService.authenticate(pin);
+      } catch (e) {
+        expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
+      }
+    });
+
+    it(`should NOT remove ${OTP_AUTH_KEY}`, async () => {
+      expect.assertions(2);
+      expect(localStorage.getItem(OTP_AUTH_KEY)).not.toBeNull();
+      try {
+        await AuthenticationService.authenticate(pin);
+      } catch (e) {
+        expect(localStorage.getItem(OTP_AUTH_KEY)).not.toBeNull();
+      }
+    });
   });
 });
