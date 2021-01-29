@@ -24,13 +24,18 @@ const Authenticate: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [twoFaInput, setTwoFaInput] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleClick = () => {
-    login(twoFaInput);
-    if (location.state) {
-      history.replace(location.state.from);
-    } else {
-      history.replace("/home");
+  const handleClick = async () => {
+    try {
+      await login(twoFaInput);
+      if (location.state) {
+        history.replace(location.state.from);
+      } else {
+        history.replace("/home");
+      }
+    } catch (e) {
+      setError(e);
     }
   };
 
@@ -54,6 +59,11 @@ const Authenticate: React.FC = () => {
             onIonChange={(e) => setTwoFaInput(e.detail.value ?? "")}
           />
         </IonItem>
+        {error && (
+          <div role="alert" style={{ color: "var(--ion-color-danger)" }}>
+            Something went wrong
+          </div>
+        )}
         <IonButton disabled={twoFaInput.length < 4} onClick={handleClick}>
           Login
         </IonButton>
