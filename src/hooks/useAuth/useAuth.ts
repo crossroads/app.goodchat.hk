@@ -1,23 +1,18 @@
 import { useContext } from "react";
 import AuthContext from "context/AuthContext";
-import { GC_API_TOKEN } from "config/localStorageKeys";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
-export interface Auth {
-  isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
-}
-const useAuth = (): Auth => {
+const useAuth = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
-  const login = () => {
+  const login = async (pin: string) => {
+    await AuthenticationService.authenticate(pin);
     setIsAuthenticated(true);
-    localStorage.setItem(GC_API_TOKEN, "true");
   };
 
   const logout = () => {
+    AuthenticationService.logout();
     setIsAuthenticated(false);
-    localStorage.removeItem(GC_API_TOKEN);
   };
 
   return {
@@ -27,4 +22,5 @@ const useAuth = (): Auth => {
   };
 };
 
+export type Auth = ReturnType<typeof useAuth>;
 export default useAuth;
