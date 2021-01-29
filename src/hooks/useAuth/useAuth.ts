@@ -2,12 +2,7 @@ import { useContext } from "react";
 import AuthContext from "context/AuthContext";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
-export interface Auth {
-  isAuthenticated: boolean;
-  login: (pin: string) => void;
-  logout: () => void;
-}
-const useAuth = (): Auth => {
+const useAuth = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const login = async (pin: string) => {
@@ -27,4 +22,5 @@ const useAuth = (): Auth => {
   };
 };
 
+export type Auth = ReturnType<typeof useAuth>;
 export default useAuth;
