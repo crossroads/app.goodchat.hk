@@ -7,18 +7,30 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
-import client from "lib/client/client";
-import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
+import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
+import { ionFireEvent } from "@ionic/react-test-utils";
+import { mockServer } from "mockServer";
+import { rest } from "msw";
 
-let mockPost: jest.SpyInstance;
-beforeAll(
-  () =>
-    (mockPost = jest
-      .spyOn(client, "post")
-      .mockResolvedValue({ otp_auth_key: "sdfdsfdsaf" }))
-);
-afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
-afterAll(() => mockPost.mockRestore());
+beforeAll(() => {
+  mockServer.listen({ onUnhandledRequest: "error" });
+  mockServer.use(
+    rest.post(
+      `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
+      (_, res, ctx) => {
+        return res(ctx.status(200), ctx.json({ otp_auth_key: "fdsafasaf" }));
+      }
+    ),
+    rest.post(
+      `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
+      (_, res, ctx) => {
+        return res(ctx.status(200), ctx.json({ jwt_token: "ejhksfdsfafds" }));
+      }
+    )
+  );
+});
+
+afterAll(() => mockServer.close());
 
 test("User is able to login and logout with correct routing", async () => {
   const history = createMemoryHistory({ initialEntries: ["/login"] });
@@ -41,10 +53,15 @@ test("User is able to login and logout with correct routing", async () => {
     expectToBeOnPage(container, history.location.pathname, "authenticate")
   );
 
+  const inputVal = "1234";
+  const input = container.querySelector("ion-input");
   const loginButton = container.querySelector("ion-button");
+  ionFireEvent.ionChange(input!, inputVal);
   userEvent.click(loginButton as TargetElement);
 
-  expectToBeOnPage(container, history.location.pathname, "home");
+  await wait(() =>
+    expectToBeOnPage(container, history.location.pathname, "home")
+  );
 
   const logoutButton = screen.getByText(/log out/i);
   userEvent.click(logoutButton as TargetElement);
@@ -76,5 +93,10 @@ test("Unauthenticated user redirected to login is redirected back to that page a
   const loginButton = container.querySelector("ion-button");
   userEvent.click(loginButton as TargetElement);
 
-  expectToBeOnPage(container, history.location.pathname, "offers");
+  await wait(() =>
+    expectToBeOnPage(container, history.location.pathname, "offers")
+  );
+
+  // cleanup
+  localStorage.removeItem(GC_API_TOKEN);
 });
