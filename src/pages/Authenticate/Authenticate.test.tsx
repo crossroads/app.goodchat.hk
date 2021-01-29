@@ -136,7 +136,7 @@ describe("Clicking login button", () => {
     () =>
       (mockAuthenticate = jest
         .spyOn(AuthenticationService, "authenticate")
-        .mockResolvedValue())
+        .mockImplementation())
   );
   afterAll(() => mockAuthenticate.mockRestore());
 

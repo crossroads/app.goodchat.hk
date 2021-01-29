@@ -37,7 +37,7 @@ describe("login", () => {
   beforeAll(() => {
     mockAuthenticate = jest
       .spyOn(AuthenticationService, "authenticate")
-      .mockImplementation(async () => Promise.resolve());
+      .mockImplementation();
   });
   afterAll(() => mockAuthenticate.mockRestore());
 
