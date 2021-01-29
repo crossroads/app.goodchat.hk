@@ -13,7 +13,6 @@ import { mockServer } from "mockServer";
 import { rest } from "msw";
 
 beforeAll(() => {
-  mockServer.listen({ onUnhandledRequest: "error" });
   mockServer.use(
     rest.post(
       `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
@@ -28,6 +27,7 @@ beforeAll(() => {
       }
     )
   );
+  mockServer.listen({ onUnhandledRequest: "error" });
 });
 
 afterAll(() => mockServer.close());
