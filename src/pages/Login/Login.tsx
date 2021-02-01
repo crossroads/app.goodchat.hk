@@ -55,7 +55,7 @@ const Login: React.FC = () => {
         </IonItem>
         {error && (
           <div role="alert" style={{ color: "var(--ion-color-danger)" }}>
-            Something went wrong
+            {error.message}
           </div>
         )}
         <IonButton disabled={phoneInput.length < 8} onClick={handleClick}>
