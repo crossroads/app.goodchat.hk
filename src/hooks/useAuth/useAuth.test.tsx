@@ -3,6 +3,7 @@ import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { ApiError } from "lib/errors";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};
@@ -60,7 +61,11 @@ describe("login", () => {
   });
 
   describe("on unsuccessful response", () => {
-    const error = new Error();
+    const error = new ApiError({
+      httpStatus: 401,
+      type: "InvalidPinError",
+      message: "Invalid SMS code.",
+    });
     beforeAll(() => {
       mockAuthenticate.mockRejectedValue(error);
     });

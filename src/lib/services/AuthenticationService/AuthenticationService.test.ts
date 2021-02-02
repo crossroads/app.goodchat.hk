@@ -1,5 +1,6 @@
 import { wait } from "@testing-library/react";
 import client from "lib/client/client";
+import { ApiError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import { GC_API_TOKEN, OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
@@ -34,7 +35,11 @@ describe("Methods with API calls", () => {
     });
 
     describe("on unsuccessful response", () => {
-      const error = new Error();
+      const error = new ApiError({
+        httpStatus: 422,
+        type: "ValidationError",
+        message: "Mobile is invalid",
+      });
       beforeAll(() => mockPost.mockRejectedValue(error));
       afterAll(() => mockPost.mockReset());
 
@@ -96,7 +101,11 @@ describe("Methods with API calls", () => {
     });
 
     describe("On unsuccessful response", () => {
-      const error = new Error();
+      const error = new ApiError({
+        httpStatus: 401,
+        type: "InvalidPinError",
+        message: "Invalid SMS code.",
+      });
       beforeAll(() => mockPost.mockRejectedValue(error));
       afterAll(() => mockPost.mockReset());
 
