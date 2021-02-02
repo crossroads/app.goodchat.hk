@@ -9,7 +9,7 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { BaseError } from "lib/errors";
+import { ApiError, BaseError, NetworkError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
@@ -22,7 +22,9 @@ const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [phoneInput, setPhoneInput] = useState("");
-  const [error, setError] = useState<BaseError | null>(null);
+  const [error, setError] = useState<
+    ApiError | NetworkError | BaseError | null
+  >(null);
 
   const handleClick = async () => {
     const mobile = `+852${phoneInput}`;
@@ -34,7 +36,7 @@ const Login: React.FC = () => {
         history.push("/authenticate");
       }
     } catch (e) {
-      setError(e as BaseError);
+      setError(e as ApiError | NetworkError | BaseError);
     }
   };
 
