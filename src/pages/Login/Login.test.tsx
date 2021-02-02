@@ -238,10 +238,11 @@ describe("On receiving error response from send_pin", () => {
       mobile: `+852${phoneInput}`,
     });
     await wait(() =>
-      expect(
-        container.querySelector('[role="alert"]')!.textContent
-      ).toMatchInlineSnapshot(`"Mobile is invalid"`)
+      expect(container.querySelector('[role="alert"]')).toBeInTheDocument()
     );
+    expect(
+      container.querySelector('[role="alert"]')!.textContent
+    ).toMatchInlineSnapshot(`"Mobile is invalid"`);
     expect(mockHistoryPush).not.toHaveBeenCalled();
 
     mockPost.mockRestore();
