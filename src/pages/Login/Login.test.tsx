@@ -211,13 +211,12 @@ describe("On receiving successful API response from send_pin", () => {
 
 describe("On receiving error response from send_pin", () => {
   it("should show an error message", async () => {
-    const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(
-      new ApiError({
-        httpStatus: 422,
-        type: "ValidationError",
-        message: "Mobile is invalid",
-      })
-    );
+    const error = new ApiError({
+      httpStatus: 422,
+      type: "ValidationError",
+      message: "Mobile is invalid",
+    });
+    const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error);
     const history = createMemoryHistory();
     const mockHistoryPush = jest.spyOn(history, "push");
 
@@ -238,11 +237,10 @@ describe("On receiving error response from send_pin", () => {
       mobile: `+852${phoneInput}`,
     });
     await wait(() =>
-      expect(container.querySelector('[role="alert"]')).toBeInTheDocument()
+      expect(container.querySelector('[role="alert"]')).toHaveTextContent(
+        error.message
+      )
     );
-    expect(
-      container.querySelector('[role="alert"]')!.textContent
-    ).toMatchInlineSnapshot(`"Mobile is invalid"`);
     expect(mockHistoryPush).not.toHaveBeenCalled();
 
     mockPost.mockRestore();
