@@ -228,7 +228,7 @@ describe("Clicking login button", () => {
 
       await wait(() =>
         expect(container.querySelector('[role="alert"]')).toHaveTextContent(
-          /something went wrong/i
+          error.message
         )
       );
     });
