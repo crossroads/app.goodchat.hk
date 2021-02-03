@@ -1,4 +1,4 @@
-import { ApiError, NetworkError } from "lib/errors";
+import { ApiError, BaseError, NetworkError } from "lib/errors";
 import axios, { AxiosError } from "axios";
 
 const client = axios.create({
@@ -31,7 +31,7 @@ client.interceptors.response.use(
       throw new NetworkError(error.message);
     } else {
       // Something happened in setting up the request that triggered an Error
-      throw new Error(error.message);
+      throw new BaseError(error.message);
     }
   }
 );

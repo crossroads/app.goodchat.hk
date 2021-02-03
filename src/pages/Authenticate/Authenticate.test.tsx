@@ -7,6 +7,7 @@ import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { ApiError } from "lib/errors";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -209,11 +210,15 @@ describe("Clicking login button", () => {
   });
 
   describe("Unsuccessful response", () => {
-    const error = new Error();
+    const error = new ApiError({
+      httpStatus: 422,
+      type: "ValidationError",
+      message: "Mobile is invalid",
+    });
     beforeAll(() => mockAuthenticate.mockRejectedValue(error));
     afterAll(() => mockAuthenticate.mockReset());
 
-    it("should show a message that something went wrong", async () => {
+    it("should show the error message", async () => {
       const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
 
       expect(container.querySelector('[role="alert"]')).not.toBeInTheDocument();
@@ -223,7 +228,7 @@ describe("Clicking login button", () => {
 
       await wait(() =>
         expect(container.querySelector('[role="alert"]')).toHaveTextContent(
-          /something went wrong/i
+          error.message
         )
       );
     });

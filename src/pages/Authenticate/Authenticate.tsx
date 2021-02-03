@@ -12,6 +12,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import useAuth from "hooks/useAuth/useAuth";
+import { ApiError, BaseError, NetworkError } from "lib/errors";
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
 
@@ -24,7 +25,9 @@ const Authenticate: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [twoFaInput, setTwoFaInput] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<
+    ApiError | NetworkError | BaseError | null
+  >(null);
 
   const handleClick = async () => {
     try {
@@ -35,7 +38,7 @@ const Authenticate: React.FC = () => {
         history.replace("/home");
       }
     } catch (e) {
-      setError(e);
+      setError(e as ApiError | NetworkError | BaseError);
     }
   };
 
@@ -61,7 +64,7 @@ const Authenticate: React.FC = () => {
         </IonItem>
         {error && (
           <div role="alert" style={{ color: "var(--ion-color-danger)" }}>
-            Something went wrong
+            {error.message}
           </div>
         )}
         <IonButton disabled={twoFaInput.length < 4} onClick={handleClick}>
