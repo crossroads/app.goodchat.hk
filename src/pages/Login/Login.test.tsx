@@ -1,5 +1,5 @@
 import React from "react";
-import { render, wait } from "@testing-library/react";
+import { act, render, wait } from "@testing-library/react";
 import Login from "pages/Login/Login";
 import { createMemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
@@ -109,7 +109,7 @@ describe("Get SMS PIN button", () => {
   describe("on click", () => {
     afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
 
-    it("should call auth/send_pin API endpoint with the correct mobile value", () => {
+    it("should call auth/send_pin API endpoint with the correct mobile value", async () => {
       const mockPost = jest.spyOn(client, "post").mockResolvedValue({
         otp_auth_key: "fdsafdsafds",
       });
@@ -118,7 +118,9 @@ describe("Get SMS PIN button", () => {
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
       fillIonInput(container, phoneInput);
-      clickButton(container);
+      await act(async () => {
+        clickButton(container);
+      });
 
       expect(mockPost).toHaveBeenCalledTimes(1);
       expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
