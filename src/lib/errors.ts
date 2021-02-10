@@ -1,3 +1,9 @@
+function normalizeError(e: unknown): BaseError {
+  if (e instanceof BaseError) return e;
+  if (e instanceof Error) return new BaseError(e.message);
+  return new BaseError("Something went wrong");
+}
+
 class BaseError extends Error {
   name = this.constructor.name;
 }
@@ -20,4 +26,4 @@ class ApiError extends BaseError {
 
 class NetworkError extends BaseError {}
 
-export { BaseError, ApiError, NetworkError };
+export { BaseError, ApiError, NetworkError, normalizeError };
