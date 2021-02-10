@@ -1,4 +1,4 @@
-import { render, wait } from "@testing-library/react";
+import { act, render, wait } from "@testing-library/react";
 import React from "react";
 import Authenticate from "pages/Authenticate/Authenticate";
 import userEvent, { TargetElement } from "@testing-library/user-event";
@@ -141,14 +141,14 @@ describe("Clicking login button", () => {
   );
   afterAll(() => mockAuthenticate.mockRestore());
 
-  it("should call AuthenticationService authenticate correctly", () => {
+  it("should call AuthenticationService authenticate correctly", async () => {
     const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
 
     const inputVal = "1234";
     const input = container.querySelector("ion-input");
     const loginButton = container.querySelector("ion-button");
     ionFireEvent.ionChange(input!, inputVal);
-    userEvent.click(loginButton as TargetElement);
+    await act(async () => userEvent.click(loginButton as TargetElement));
 
     expect(mockAuthenticate).toHaveBeenCalledTimes(1);
     expect(mockAuthenticate).toHaveBeenCalledWith(inputVal);
