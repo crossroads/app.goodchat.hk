@@ -19,6 +19,7 @@ const useAsync = <T, A extends unknown[]>(
 
   const execute = (...args: A) => {
     setIsLoading(true);
+    setError(null);
     asyncCallback(...args)
       .then((resp) => setData(resp))
       .catch((e: unknown) => setError(normalizeError(e)))
