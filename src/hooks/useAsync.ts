@@ -4,7 +4,7 @@ import { useSafeSetState } from "./useSafeSetState";
 
 type AsyncCallback<T, A extends unknown[]> = (...args: A) => Promise<T>;
 
-type useAsyncReturnTuple<T, A extends unknown[]> = [
+type UseAsyncReturnTuple<T, A extends unknown[]> = [
   data: T | null,
   error: BaseError | null,
   isLoading: boolean,
@@ -13,7 +13,7 @@ type useAsyncReturnTuple<T, A extends unknown[]> = [
 
 const useAsync = <T, A extends unknown[]>(
   asyncCallback: AsyncCallback<T, A>
-): useAsyncReturnTuple<T, A> => {
+): UseAsyncReturnTuple<T, A> => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<BaseError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
