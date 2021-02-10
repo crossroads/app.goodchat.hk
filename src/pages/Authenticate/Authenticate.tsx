@@ -25,20 +25,14 @@ const Authenticate: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [twoFaInput, setTwoFaInput] = useState("");
-  const [, error, , execute] = useAsync(loginAndNavigate);
-
-  async function loginAndNavigate() {
+  const [, error, , loginAndNavigate] = useAsync(async () => {
     await login(twoFaInput);
     if (location.state) {
       history.replace(location.state.from);
     } else {
       history.replace("/home");
     }
-  }
-
-  const handleClick = async () => {
-    execute();
-  };
+  });
 
   return (
     <IonPage>
@@ -65,7 +59,7 @@ const Authenticate: React.FC = () => {
             {error.message}
           </div>
         )}
-        <IonButton disabled={twoFaInput.length < 4} onClick={handleClick}>
+        <IonButton disabled={twoFaInput.length < 4} onClick={loginAndNavigate}>
           Login
         </IonButton>
       </IonContent>
