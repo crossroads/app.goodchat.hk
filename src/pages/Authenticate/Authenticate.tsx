@@ -11,8 +11,8 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import useAsync from "hooks/useAsync";
 import useAuth from "hooks/useAuth/useAuth";
-import { ApiError, BaseError, NetworkError } from "lib/errors";
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router";
 
@@ -25,21 +25,19 @@ const Authenticate: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [twoFaInput, setTwoFaInput] = useState("");
-  const [error, setError] = useState<
-    ApiError | NetworkError | BaseError | null
-  >(null);
+  const [, error, , execute] = useAsync(loginAndNavigate);
+
+  async function loginAndNavigate() {
+    await login(twoFaInput);
+    if (location.state) {
+      history.replace(location.state.from);
+    } else {
+      history.replace("/home");
+    }
+  }
 
   const handleClick = async () => {
-    try {
-      await login(twoFaInput);
-      if (location.state) {
-        history.replace(location.state.from);
-      } else {
-        history.replace("/home");
-      }
-    } catch (e) {
-      setError(e as ApiError | NetworkError | BaseError);
-    }
+    execute();
   };
 
   return (
