@@ -1,5 +1,5 @@
 import { BaseError, normalizeError } from "lib/errors";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSafeSetState } from "./useSafeSetState";
 
 type AsyncCallback<T, A extends unknown[]> = (...args: A) => Promise<T>;
@@ -19,14 +19,14 @@ const useAsync = <T, A extends unknown[]>(
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const safeSetState = useSafeSetState();
 
-  const execute = useCallback((...args: A) => {
+  const execute = (...args: A) => {
     setIsLoading(true);
     setError(null);
     asyncCallback(...args)
       .then((resp) => safeSetState(() => setData(resp)))
       .catch((e: unknown) => safeSetState(() => setError(normalizeError(e))))
       .finally(() => safeSetState(() => setIsLoading(false)));
-  }, []);
+  };
 
   return [data, error, isLoading, execute];
 };
