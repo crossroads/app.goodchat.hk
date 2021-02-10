@@ -8,7 +8,7 @@ type useAsyncReturnTuple<T, A extends unknown[]> = [
   data: T | null,
   error: BaseError | null,
   isLoading: boolean,
-  execute: (...args: A) => void
+  execute: (...args: A) => Promise<void>
 ];
 
 const useAsync = <T, A extends unknown[]>(
@@ -19,13 +19,17 @@ const useAsync = <T, A extends unknown[]>(
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const safeSetState = useSafeSetState();
 
-  const execute = (...args: A) => {
+  const execute = async (...args: A) => {
     setIsLoading(true);
     setError(null);
-    asyncCallback(...args)
-      .then((resp) => safeSetState(() => setData(resp)))
-      .catch((e: unknown) => safeSetState(() => setError(normalizeError(e))))
-      .finally(() => safeSetState(() => setIsLoading(false)));
+    try {
+      const response = await asyncCallback(...args);
+      safeSetState(() => setData(response));
+    } catch (e) {
+      safeSetState(() => setError(normalizeError(e)));
+    } finally {
+      safeSetState(() => setIsLoading(false));
+    }
   };
 
   return [data, error, isLoading, execute];
