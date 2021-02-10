@@ -9,9 +9,9 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { ApiError, BaseError, NetworkError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import React, { useState } from "react";
+import useAsync from "hooks/useAsync";
 import { useHistory, useLocation } from "react-router";
 
 interface LocationState {
@@ -22,22 +22,20 @@ const Login: React.FC = () => {
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [phoneInput, setPhoneInput] = useState("");
-  const [error, setError] = useState<
-    ApiError | NetworkError | BaseError | null
-  >(null);
+  const [, error, , execute] = useAsync(request2faAndNavigate);
 
-  const handleClick = async () => {
-    const mobile = `+852${phoneInput}`;
-    try {
-      await AuthenticationService.sendPin({ mobile });
-      if (location.state) {
-        history.push("/authenticate", { from: location.state.from });
-      } else {
-        history.push("/authenticate");
-      }
-    } catch (e) {
-      setError(e as ApiError | NetworkError | BaseError);
+  async function request2faAndNavigate(mobile: string) {
+    await AuthenticationService.sendPin({ mobile });
+    if (location.state) {
+      history.push("/authenticate", { from: location.state.from });
+    } else {
+      history.push("/authenticate");
     }
+  }
+
+  const handleClick = () => {
+    const mobile = `+852${phoneInput}`;
+    execute(mobile);
   };
 
   return (
