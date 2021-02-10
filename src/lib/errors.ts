@@ -1,6 +1,7 @@
 function normalizeError(e: unknown): BaseError {
   if (e instanceof BaseError) return e;
   if (e instanceof Error) return new BaseError(e.message);
+  if (typeof e === "string") return new BaseError(e);
   return new BaseError("Something went wrong");
 }
 
