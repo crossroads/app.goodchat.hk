@@ -1,5 +1,5 @@
 import { BaseError, normalizeError } from "lib/errors";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 type AsyncCallback<T, A extends unknown[]> = (...args: A) => Promise<T>;
 
@@ -17,14 +17,14 @@ const useAsync = <T, A extends unknown[]>(
   const [error, setError] = useState<BaseError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const execute = (...args: A) => {
+  const execute = useCallback((...args: A) => {
     setIsLoading(true);
     setError(null);
     asyncCallback(...args)
       .then((resp) => setData(resp))
       .catch((e: unknown) => setError(normalizeError(e)))
       .finally(() => setIsLoading(false));
-  };
+  }, []);
 
   return [data, error, isLoading, execute];
 };
