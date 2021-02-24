@@ -9,6 +9,10 @@ Install dependencies using
 ```
 npm install
 ```
+### Running the application
+```
+npm start
+```
 
 ## Development Guidelines
 ### Code formatting
