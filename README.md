@@ -29,5 +29,8 @@ You can either
 npm run format
 ```
 
+## Wiki
+[GoodChat App Wiki](https://github.com/crossroads/app.goodchat.hk/wiki)
+
 ## Built With
 [Ionic React](https://ionicframework.com/docs/react)
