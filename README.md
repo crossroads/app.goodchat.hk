@@ -12,12 +12,22 @@ Although, it has worked well thus far, it is still an additional step for the do
 
 It would be much more convenient if the donor could instead simply use their messaging platform of choice to donate to us. This is the problem GoodChat aims to solve.
 
+## Getting started
+### Installation
+Install dependencies using
+```
+npm install
+```
 
-### Built With
-[Ionic React](https://ionicframework.com/docs/react)
-
-## Code formatting
+## Development Guidelines
+### Code formatting
+This project uses [Prettier](https://prettier.io) for code formatting. 
+You can either 
+1. download the editor extension for it and configure it to format on save or 
+2. run the command below which formats all files except for the ones specified in `.gitignore`
 ```
 npm run format
 ```
-Formats all files except for the ones in `.gitignore`
+
+## Built With
+[Ionic React](https://ionicframework.com/docs/react)
