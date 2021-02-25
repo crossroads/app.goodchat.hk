@@ -1,9 +1,18 @@
 import { ApiError, BaseError, NetworkError } from "lib/errors";
 import axios, { AxiosError } from "axios";
+import { GC_API_TOKEN } from "config/localStorageKeys";
 
 const client = axios.create({
   baseURL: process.env.REACT_APP_API_V2_URL,
   headers: { "Content-Type": "application/json" },
+});
+
+client.interceptors.request.use((request) => {
+  const gcApiToken = localStorage.getItem(GC_API_TOKEN);
+  if (gcApiToken) {
+    request.headers["Authorization"] = `Bearer ${gcApiToken}`;
+  }
+  return request;
 });
 
 client.interceptors.response.use(

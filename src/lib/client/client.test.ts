@@ -2,6 +2,7 @@ import client from "lib/client/client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
 import { ApiError, NetworkError } from "lib/errors";
+import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 
@@ -25,6 +26,31 @@ test("should call GoodCity API V2 correctly", () => {
   ).resolves.toEqual({
     otp_auth_key: otpAuthKey,
   });
+});
+
+test("should call an endpoint with the appropriate authorization headers", async () => {
+  const hasuraToken = "fdsfdsafjadsfjkdasl";
+  const gcApiToken = "sfds12fdsklfdsja";
+  mockServer.use(
+    rest.post(
+      `${process.env.REACT_APP_API_V2_URL}/auth/hasura`,
+      (req, res, ctx) => {
+        const isAuthenticated =
+          req.headers.get("Authorization") === `Bearer ${gcApiToken}`;
+        if (isAuthenticated) {
+          return res(ctx.status(200), ctx.json({ token: hasuraToken }));
+        } else {
+          return res(ctx.status(401));
+        }
+      }
+    )
+  );
+  localStorage.setItem(GC_API_TOKEN, gcApiToken);
+
+  const response = await client.post("auth/hasura");
+  expect(response).toEqual({ token: hasuraToken });
+
+  localStorage.removeItem(GC_API_TOKEN);
 });
 
 describe("Api client receiving error response from server", () => {
