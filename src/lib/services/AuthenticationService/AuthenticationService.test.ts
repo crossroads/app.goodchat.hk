@@ -74,7 +74,6 @@ describe("Methods with API calls", () => {
     );
     beforeEach(() => localStorage.setItem(OTP_AUTH_KEY, otpAuthKey));
     afterEach(() => localStorage.removeItem(GC_API_TOKEN));
-    afterAll(() => mockClientPost.mockRestore());
 
     describe("On successful response", () => {
       it("should call client with auth/verify and the correct data", async () => {
@@ -136,6 +135,17 @@ describe("Methods with API calls", () => {
           expect(localStorage.getItem(OTP_AUTH_KEY)).not.toBeNull();
         }
       });
+    });
+  });
+
+  describe("connectToHasura", () => {
+    beforeAll(() => mockClientPost.mockResolvedValue({ token: "fdsalkdsfsl" }));
+
+    it("should call client with auth/hasura", () => {
+      AuthenticationService.connectToHasura();
+
+      expect(mockClientPost).toHaveBeenCalledTimes(1);
+      expect(mockClientPost).toHaveBeenCalledWith("auth/hasura");
     });
   });
 });

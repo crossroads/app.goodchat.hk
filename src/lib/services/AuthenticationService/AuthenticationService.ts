@@ -28,10 +28,15 @@ function logout() {
   localStorage.removeItem(GC_API_TOKEN);
 }
 
+async function connectToHasura() {
+  client.post("auth/hasura");
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
   logout,
+  connectToHasura,
 };
 
 export default AuthenticationService;
