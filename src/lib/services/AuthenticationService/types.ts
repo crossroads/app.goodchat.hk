@@ -11,3 +11,7 @@ export interface VerifyBody {
 export interface VerifyResponse {
   jwt_token: string;
 }
+
+export interface GetHasuraTokenResponse {
+  token: string;
+}

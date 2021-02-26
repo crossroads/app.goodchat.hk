@@ -2,7 +2,11 @@ import { wait } from "@testing-library/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { GC_API_TOKEN, OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
+import {
+  GC_API_TOKEN,
+  OTP_AUTH_KEY,
+  HASURA_TOKEN,
+} from "test-utils/config/localStorageKeys";
 
 describe("Methods with API calls", () => {
   let mockClientPost: jest.SpyInstance;
@@ -139,13 +143,22 @@ describe("Methods with API calls", () => {
   });
 
   describe("connectToHasura", () => {
-    beforeAll(() => mockClientPost.mockResolvedValue({ token: "fdsalkdsfsl" }));
+    const hasuraToken = "fdsalkdsfsl";
+    beforeAll(() => mockClientPost.mockResolvedValue({ token: hasuraToken }));
+    afterEach(() => localStorage.removeItem(HASURA_TOKEN));
 
     it("should call client with auth/hasura", () => {
       AuthenticationService.connectToHasura();
 
       expect(mockClientPost).toHaveBeenCalledTimes(1);
       expect(mockClientPost).toHaveBeenCalledWith("auth/hasura");
+    });
+
+    describe("On successful response", () => {
+      it("should store the hasura token in localStorage", async () => {
+        await AuthenticationService.connectToHasura();
+        expect(localStorage.getItem(HASURA_TOKEN)).toBe(hasuraToken);
+      });
     });
   });
 });

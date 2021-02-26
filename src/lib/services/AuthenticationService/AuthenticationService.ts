@@ -1,11 +1,14 @@
 import { GC_API_TOKEN, OTP_AUTH_KEY } from "config/localStorageKeys";
 import client from "lib/client/client";
 import {
+  GetHasuraTokenResponse,
   SendPinBody,
   SendPinResponse,
   VerifyBody,
   VerifyResponse,
 } from "lib/services/AuthenticationService/types";
+
+const HASURA_TOKEN = "hasura_token";
 
 async function sendPin(body: SendPinBody): Promise<SendPinResponse> {
   const response: SendPinResponse = await client.post("auth/send_pin", body);
@@ -28,8 +31,10 @@ function logout() {
   localStorage.removeItem(GC_API_TOKEN);
 }
 
-async function connectToHasura() {
-  client.post("auth/hasura");
+async function connectToHasura(): Promise<GetHasuraTokenResponse> {
+  const response: GetHasuraTokenResponse = await client.post("auth/hasura");
+  localStorage.setItem(HASURA_TOKEN, response.token);
+  return response;
 }
 
 const AuthenticationService = {
