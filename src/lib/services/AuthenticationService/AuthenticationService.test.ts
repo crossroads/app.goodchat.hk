@@ -160,6 +160,19 @@ describe("Methods with API calls", () => {
         expect(localStorage.getItem(HASURA_TOKEN)).toBe(hasuraToken);
       });
     });
+
+    describe("On unsuccessful response", () => {
+      it("should just throw the error", () => {
+        const error = new ApiError({
+          httpStatus: 401,
+          type: "UnauthorizedError",
+          message: "Invalid token",
+        });
+        mockClientPost.mockRejectedValue(error);
+
+        return expect(AuthenticationService.connectToHasura()).rejects.toThrow;
+      });
+    });
   });
 });
 
