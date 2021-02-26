@@ -170,7 +170,9 @@ describe("Methods with API calls", () => {
         });
         mockClientPost.mockRejectedValue(error);
 
-        return expect(AuthenticationService.connectToHasura()).rejects.toThrow;
+        return expect(AuthenticationService.connectToHasura()).rejects.toThrow(
+          error
+        );
       });
     });
   });
