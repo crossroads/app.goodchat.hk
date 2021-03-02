@@ -1,9 +1,11 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import MainTabs from "components/MainTabs/MainTabs";
 import { expectToBeOnPage } from "test-utils/matchers";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { HASURA_TOKEN } from "test-utils/config/localStorageKeys";
 
 const renderComponent = (initialPath = "/home") => {
   const history = createMemoryHistory({ initialEntries: [initialPath] });
@@ -83,4 +85,23 @@ test("visiting /home takes user to Home", () => {
 test("visiting /offers takes user to Offers", () => {
   const { container, history } = renderComponent("/offers");
   expectToBeOnPage(container, history.location.pathname, "offers");
+});
+
+test("should try to connect to Hasura on component mount", async () => {
+  const mockConnectToHasura = jest
+    .spyOn(AuthenticationService, "connectToHasura")
+    .mockImplementationOnce(() =>
+      Promise.resolve({
+        token: "sfddasfdsaf",
+      })
+    );
+
+  await act(async () => {
+    renderComponent();
+  });
+
+  expect(mockConnectToHasura).toHaveBeenCalledTimes(1);
+
+  mockConnectToHasura.mockRestore();
+  localStorage.removeItem(HASURA_TOKEN);
 });
