@@ -145,13 +145,3 @@ describe("logout", () => {
     expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
   });
 });
-
-describe("isAuthenticated", () => {
-  it("should return whether or not the person is authenticated", () => {
-    expect(AuthenticationService.isAuthenticated()).toBe(false);
-    localStorage.setItem(GC_API_TOKEN, "fdsfdsaf");
-    expect(AuthenticationService.isAuthenticated()).toBe(true);
-
-    localStorage.removeItem(GC_API_TOKEN);
-  });
-});

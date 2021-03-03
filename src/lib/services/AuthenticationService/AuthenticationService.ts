@@ -28,15 +28,10 @@ function logout() {
   localStorage.removeItem(GC_API_TOKEN);
 }
 
-function isAuthenticated() {
-  return Boolean(localStorage.getItem(GC_API_TOKEN));
-}
-
 const AuthenticationService = {
   sendPin,
   authenticate,
   logout,
-  isAuthenticated,
 };
 
 export default AuthenticationService;
