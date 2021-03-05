@@ -2,7 +2,8 @@ import { wait } from "@testing-library/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { GC_API_TOKEN, OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
+
+afterEach(() => localStorage.clear());
 
 describe("Methods with API calls", () => {
   let mockPost: jest.SpyInstance;
@@ -18,7 +19,6 @@ describe("Methods with API calls", () => {
         otp_auth_key: otpAuthKey,
       });
     });
-    afterEach(() => localStorage.removeItem(OTP_AUTH_KEY));
 
     describe("on successful response", () => {
       it(`should call client with auth/send_pin and the correct data`, () => {
@@ -71,7 +71,6 @@ describe("Methods with API calls", () => {
       })
     );
     beforeEach(() => localStorage.setItem(OTP_AUTH_KEY, otpAuthKey));
-    afterEach(() => localStorage.removeItem(GC_API_TOKEN));
     afterAll(() => mockPost.mockRestore());
 
     describe("On successful response", () => {
@@ -151,7 +150,5 @@ describe("isAuthenticated", () => {
     expect(AuthenticationService.isAuthenticated()).toBe(false);
     localStorage.setItem(GC_API_TOKEN, "fdsfdsaf");
     expect(AuthenticationService.isAuthenticated()).toBe(true);
-
-    localStorage.removeItem(GC_API_TOKEN);
   });
 });
