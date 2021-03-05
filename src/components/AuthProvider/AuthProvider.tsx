@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import AuthContext from "context/AuthContext";
-import { GC_API_TOKEN } from "config/localStorageKeys";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 export const computeAuthState = (initialAuthState: boolean) => {
-  return Boolean(localStorage.getItem(GC_API_TOKEN) ?? initialAuthState);
+  return Boolean(AuthenticationService.isAuthenticated() ?? initialAuthState);
 };
 interface Props {
   initialAuthState?: boolean;
