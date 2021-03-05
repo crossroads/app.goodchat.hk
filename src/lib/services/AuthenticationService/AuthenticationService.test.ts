@@ -3,6 +3,9 @@ import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
+const GC_API_TOKEN = "gc_api_token";
+const OTP_AUTH_KEY = "otp_auth_key";
+
 afterEach(() => localStorage.clear());
 
 describe("Methods with API calls", () => {
