@@ -6,8 +6,6 @@ import AuthenticationService from "lib/services/AuthenticationService/Authentica
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";
 
-afterEach(() => localStorage.clear());
-
 describe("Methods with API calls", () => {
   let mockPost: jest.SpyInstance;
   beforeAll(() => (mockPost = jest.spyOn(client, "post")));

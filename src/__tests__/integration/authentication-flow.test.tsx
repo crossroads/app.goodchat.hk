@@ -29,8 +29,6 @@ beforeAll(() => {
   mockServer.listen({ onUnhandledRequest: "error" });
 });
 
-afterEach(() => localStorage.clear());
-
 afterAll(() => mockServer.close());
 
 test("User is able to login and logout with correct routing", async () => {

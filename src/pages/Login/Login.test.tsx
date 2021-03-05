@@ -106,8 +106,6 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    afterEach(() => localStorage.clear());
-
     it("should call auth/send_pin API endpoint with the correct mobile value", async () => {
       const mockPost = jest.spyOn(client, "post").mockResolvedValue({
         otp_auth_key: "fdsafdsafds",
@@ -139,7 +137,6 @@ describe("On receiving successful API response from send_pin", () => {
       otp_auth_key: otpAuthKey,
     });
   });
-  afterEach(() => localStorage.clear());
   afterAll(() => mockPost.mockRestore());
 
   it("should navigate to /authenticate", async () => {
