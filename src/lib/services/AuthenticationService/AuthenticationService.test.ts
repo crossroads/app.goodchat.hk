@@ -139,10 +139,10 @@ describe("Methods with API calls", () => {
 });
 
 describe("logout", () => {
-  it(`should remove ${GC_API_TOKEN} from localStorage`, () => {
+  it(`should log user out`, () => {
     localStorage.setItem(GC_API_TOKEN, "fdsfsa");
     AuthenticationService.logout();
-    expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
+    expect(AuthenticationService.isAuthenticated()).toBe(false);
   });
 });
 
