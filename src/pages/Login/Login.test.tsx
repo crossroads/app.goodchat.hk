@@ -7,7 +7,6 @@ import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
 import { clickButton, fillIonInput } from "./test_utils";
-import { OTP_AUTH_KEY } from "test-utils/config/localStorageKeys";
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
@@ -195,19 +194,6 @@ describe("On receiving successful API response from send_pin", () => {
 
     mockHistoryPush.mockRestore();
     mockUseLocation.mockRestore();
-  });
-
-  it("should store token in localStorage", async () => {
-    const { container } = render(<Login />, { wrapper: MemoryRouter });
-
-    expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
-
-    fillIonInput(container, "12345678");
-    clickButton(container);
-
-    await wait(() =>
-      expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey)
-    );
   });
 });
 
