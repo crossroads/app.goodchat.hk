@@ -8,20 +8,20 @@ const OTP_AUTH_KEY = "otp_auth_key";
 
 describe("Methods with API calls", () => {
   let mockPost: jest.SpyInstance;
-  beforeAll(() => (mockPost = jest.spyOn(client, "post")));
-  afterEach(() => mockPost.mockClear());
-  afterAll(() => mockPost.mockRestore());
+  beforeEach(() => (mockPost = jest.spyOn(client, "post")));
+  afterEach(() => mockPost.mockRestore());
 
   describe("sendPin", () => {
     const otpAuthKey = "fdsfdsaffdsaklfds";
     const mobile = "+85262345678";
-    beforeAll(() => {
-      mockPost.mockResolvedValue({
-        otp_auth_key: otpAuthKey,
-      });
-    });
 
     describe("on successful response", () => {
+      beforeEach(() => {
+        mockPost.mockResolvedValue({
+          otp_auth_key: otpAuthKey,
+        });
+      });
+
       it(`should call client with auth/send_pin and the correct data`, () => {
         AuthenticationService.sendPin({ mobile });
         expect(mockPost).toHaveBeenCalledTimes(1);
@@ -30,8 +30,10 @@ describe("Methods with API calls", () => {
 
       it("should store received token in localStorage", async () => {
         expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
-        await AuthenticationService.sendPin({ mobile });
-        expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey);
+        AuthenticationService.sendPin({ mobile });
+        await wait(() =>
+          expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey)
+        );
       });
     });
 
@@ -41,8 +43,7 @@ describe("Methods with API calls", () => {
         type: "ValidationError",
         message: "Mobile is invalid",
       });
-      beforeAll(() => mockPost.mockRejectedValue(error));
-      afterAll(() => mockPost.mockReset());
+      beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
         return expect(
@@ -63,18 +64,19 @@ describe("Methods with API calls", () => {
   });
 
   describe("authenticate", () => {
-    const jwtToken = "ejsdfslk3fdsa";
-    const otpAuthKey = "sdfscsd2fdsjklf2fs";
     const pin = "1234";
-    beforeAll(() =>
-      mockPost.mockResolvedValue({
-        jwt_token: jwtToken,
-      })
-    );
+    const otpAuthKey = "sdfscsd2fdsjklf2fs";
     beforeEach(() => localStorage.setItem(OTP_AUTH_KEY, otpAuthKey));
-    afterAll(() => mockPost.mockRestore());
 
     describe("On successful response", () => {
+      const jwtToken = "ejsdfslk3fdsa";
+
+      beforeEach(() => {
+        mockPost.mockResolvedValue({
+          jwt_token: jwtToken,
+        });
+      });
+
       it("should call client with auth/verify and the correct data", async () => {
         AuthenticationService.authenticate(pin);
 
@@ -106,8 +108,7 @@ describe("Methods with API calls", () => {
         type: "InvalidPinError",
         message: "Invalid SMS code.",
       });
-      beforeAll(() => mockPost.mockRejectedValue(error));
-      afterAll(() => mockPost.mockReset());
+      beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
         return expect(AuthenticationService.authenticate(pin)).rejects.toThrow(
