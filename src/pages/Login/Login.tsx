@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   const [, error, , execute] = useAsync(request2faAndNavigate);
 
   async function request2faAndNavigate(mobile: string) {
-    await AuthenticationService.sendPin(mobile);
+    await AuthenticationService.sendPin({ mobile });
     if (location.state) {
       history.push("/authenticate", { from: location.state.from });
     } else {

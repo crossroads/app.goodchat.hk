@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import AuthContext from "context/AuthContext";
-import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { GC_API_TOKEN } from "config/localStorageKeys";
+
+export const computeAuthState = (initialAuthState: boolean) => {
+  return Boolean(localStorage.getItem(GC_API_TOKEN) ?? initialAuthState);
+};
 interface Props {
   initialAuthState?: boolean;
 }
-const AuthProvider: React.FC<Props> = ({ children, initialAuthState }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => initialAuthState ?? AuthenticationService.isAuthenticated()
+const AuthProvider: React.FC<Props> = ({
+  children,
+  initialAuthState = false,
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+    computeAuthState(initialAuthState)
   );
 
   return (
