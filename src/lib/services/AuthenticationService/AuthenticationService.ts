@@ -1,8 +1,6 @@
 import client from "lib/client/client";
 import {
-  SendPinBody,
   SendPinResponse,
-  VerifyBody,
   VerifyResponse,
 } from "lib/services/AuthenticationService/types";
 
@@ -18,11 +16,10 @@ async function sendPin(mobile: string): Promise<SendPinResponse> {
 }
 
 async function authenticate(pin: string): Promise<VerifyResponse> {
-  const body: VerifyBody = {
+  const response: VerifyResponse = await client.post("auth/verify", {
     otp_auth_key: localStorage.getItem(OTP_AUTH_KEY) ?? "",
     pin,
-  };
-  const response: VerifyResponse = await client.post("auth/verify", body);
+  });
   localStorage.setItem(GC_API_TOKEN, response.jwt_token);
   localStorage.removeItem(OTP_AUTH_KEY);
   return response;
