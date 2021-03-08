@@ -7,7 +7,6 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
-import { GC_API_TOKEN } from "test-utils/config/localStorageKeys";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
@@ -96,7 +95,4 @@ test("Unauthenticated user redirected to login is redirected back to that page a
   await wait(() =>
     expectToBeOnPage(container, history.location.pathname, "offers")
   );
-
-  // cleanup
-  localStorage.removeItem(GC_API_TOKEN);
 });
