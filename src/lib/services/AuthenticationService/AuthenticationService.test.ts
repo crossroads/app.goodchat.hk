@@ -23,14 +23,14 @@ describe("Methods with API calls", () => {
       });
 
       it(`should call client with auth/send_pin and the correct data`, () => {
-        AuthenticationService.sendPin({ mobile });
+        AuthenticationService.sendPin(mobile);
         expect(mockPost).toHaveBeenCalledTimes(1);
         expect(mockPost).toHaveBeenCalledWith("auth/send_pin", { mobile });
       });
 
       it("should store received token in localStorage", async () => {
         expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
-        AuthenticationService.sendPin({ mobile });
+        AuthenticationService.sendPin(mobile);
         await wait(() =>
           expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey)
         );
@@ -46,16 +46,16 @@ describe("Methods with API calls", () => {
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
-        return expect(
-          AuthenticationService.sendPin({ mobile })
-        ).rejects.toThrow(error);
+        return expect(AuthenticationService.sendPin(mobile)).rejects.toThrow(
+          error
+        );
       });
 
       it(`should NOT set ${OTP_AUTH_KEY}`, async () => {
         expect.assertions(2);
         expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
         try {
-          await AuthenticationService.sendPin({ mobile });
+          await AuthenticationService.sendPin(mobile);
         } catch (e) {
           expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
         }
