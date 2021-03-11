@@ -35,12 +35,12 @@ test("should return the correct authentication state", () => {
 
 describe("login", () => {
   let mockAuthenticate: jest.SpyInstance;
-  beforeAll(() => {
+  beforeEach(() => {
     mockAuthenticate = jest
       .spyOn(AuthenticationService, "authenticate")
       .mockImplementation();
   });
-  afterAll(() => mockAuthenticate.mockRestore());
+  afterEach(() => mockAuthenticate.mockRestore());
 
   it("should call AuthenticationService authenticate correctly", async () => {
     const auth = setup(AuthProvider);
@@ -66,10 +66,9 @@ describe("login", () => {
       type: "InvalidPinError",
       message: "Invalid SMS code.",
     });
-    beforeAll(() => {
+    beforeEach(() => {
       mockAuthenticate.mockRejectedValue(error);
     });
-    afterAll(() => mockAuthenticate.mockReset());
 
     it("should just throw the error", async () => {
       const auth = setup(AuthProvider);
