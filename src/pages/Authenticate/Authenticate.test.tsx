@@ -66,7 +66,7 @@ describe("input", () => {
   });
 
   it("should not allow more than 4 characters to be input", () => {
-    const mockIonInputRender = jest.spyOn(IonInput, "render" as never);
+    const mockIonInputRender = jest.spyOn(IonInput as any, "render");
 
     render(<Authenticate />, { wrapper: MemoryRouter });
 
@@ -102,8 +102,7 @@ test("renders a login button", () => {
 
 describe("login button", () => {
   let mockIonButtonRender: jest.SpyInstance;
-  beforeAll(
-    () => (mockIonButtonRender = jest.spyOn(IonButton, "render" as never))
+    () => (mockIonButtonRender = jest.spyOn(IonButton as any, "render"))
   );
   afterEach(() => mockIonButtonRender.mockClear());
   afterAll(() => mockIonButtonRender.mockRestore());
