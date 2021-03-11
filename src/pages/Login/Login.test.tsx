@@ -114,11 +114,10 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    const otpAuthKey = "fdsfdsfdsfdsffd";
     let mockPost: jest.SpyInstance;
     beforeEach(() => {
       mockPost = jest.spyOn(client, "post").mockResolvedValue({
-        otp_auth_key: otpAuthKey,
+        otp_auth_key: "dfsafdsa1231",
       });
     });
     afterEach(() => mockPost.mockRestore());
