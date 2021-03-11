@@ -6,8 +6,8 @@ import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
-import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { ApiError } from "lib/errors";
+import client from "lib/client/client";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -66,7 +66,7 @@ describe("input", () => {
   });
 
   it("should not allow more than 4 characters to be input", () => {
-    const mockIonInputRender = jest.spyOn(IonInput, "render" as never);
+    const mockIonInputRender = jest.spyOn(IonInput as any, "render");
 
     render(<Authenticate />, { wrapper: MemoryRouter });
 
@@ -102,11 +102,10 @@ test("renders a login button", () => {
 
 describe("login button", () => {
   let mockIonButtonRender: jest.SpyInstance;
-  beforeAll(
-    () => (mockIonButtonRender = jest.spyOn(IonButton, "render" as never))
+  beforeEach(
+    () => (mockIonButtonRender = jest.spyOn(IonButton as any, "render"))
   );
-  afterEach(() => mockIonButtonRender.mockClear());
-  afterAll(() => mockIonButtonRender.mockRestore());
+  afterEach(() => mockIonButtonRender.mockRestore());
 
   it("should be disabled when 2fa input length < 4", () => {
     render(<Authenticate />, { wrapper: MemoryRouter });
@@ -132,16 +131,16 @@ describe("login button", () => {
 });
 
 describe("Clicking login button", () => {
-  let mockAuthenticate: jest.SpyInstance;
-  beforeAll(
+  let mockPost: jest.SpyInstance;
+  beforeEach(
     () =>
-      (mockAuthenticate = jest
-        .spyOn(AuthenticationService, "authenticate")
-        .mockImplementation())
+      (mockPost = jest
+        .spyOn(client, "post")
+        .mockResolvedValue(mockResponse["auth/verify"].success))
   );
-  afterAll(() => mockAuthenticate.mockRestore());
+  afterEach(() => mockPost.mockRestore());
 
-  it("should call AuthenticationService authenticate correctly", async () => {
+  it("should call auth/verify correctly", async () => {
     const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
 
     const inputVal = "1234";
@@ -150,8 +149,11 @@ describe("Clicking login button", () => {
     ionFireEvent.ionChange(input!, inputVal);
     await act(async () => userEvent.click(loginButton as TargetElement));
 
-    expect(mockAuthenticate).toHaveBeenCalledTimes(1);
-    expect(mockAuthenticate).toHaveBeenCalledWith(inputVal);
+    expect(mockPost).toHaveBeenCalledTimes(1);
+    expect(mockPost).toHaveBeenCalledWith("auth/verify", {
+      pin: inputVal,
+      otp_auth_key: expect.any(String),
+    });
   });
 
   describe("Successful response", () => {
@@ -181,8 +183,9 @@ describe("Clicking login button", () => {
       });
 
       describe("Redirection origin is present", () => {
-        it("should redirect user to origin of redirection", async () => {
-          const mockUseLocation = jest
+        let mockUseLocation: jest.SpyInstance;
+        beforeEach(() => {
+          mockUseLocation = jest
             .spyOn(ReactRouter, "useLocation")
             .mockReturnValue({
               pathname: "/login",
@@ -190,7 +193,10 @@ describe("Clicking login button", () => {
               hash: "",
               state: { from: "/offers" },
             });
+        });
+        afterEach(() => mockUseLocation.mockRestore());
 
+        it("should redirect user to origin of redirection", async () => {
           const { container } = render(
             <Router history={history}>
               <Authenticate />
@@ -202,21 +208,14 @@ describe("Clicking login button", () => {
 
           await wait(() => expect(mockHistoryReplace).toHaveBeenCalledTimes(1));
           expect(mockHistoryReplace).toHaveBeenCalledWith("/offers");
-
-          mockUseLocation.mockRestore();
         });
       });
     });
   });
 
   describe("Unsuccessful response", () => {
-    const error = new ApiError({
-      httpStatus: 422,
-      type: "ValidationError",
-      message: "Mobile is invalid",
-    });
-    beforeAll(() => mockAuthenticate.mockRejectedValue(error));
-    afterAll(() => mockAuthenticate.mockReset());
+    const error = mockResponse["auth/verify"].error[401];
+    beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {
       const { container } = render(<Authenticate />, { wrapper: MemoryRouter });

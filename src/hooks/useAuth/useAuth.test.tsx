@@ -2,8 +2,8 @@ import React from "react";
 import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
-import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import { ApiError } from "lib/errors";
+import client from "lib/client/client";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};
@@ -34,22 +34,25 @@ test("should return the correct authentication state", () => {
 });
 
 describe("login", () => {
-  let mockAuthenticate: jest.SpyInstance;
-  beforeAll(() => {
-    mockAuthenticate = jest
-      .spyOn(AuthenticationService, "authenticate")
-      .mockImplementation();
+  let mockPost: jest.SpyInstance;
+  beforeEach(() => {
+    mockPost = jest
+      .spyOn(client, "post")
+      .mockResolvedValue(mockResponse["auth/verify"].success);
   });
-  afterAll(() => mockAuthenticate.mockRestore());
+  afterEach(() => mockPost.mockRestore());
 
-  it("should call AuthenticationService authenticate correctly", async () => {
+  it("should call auth/verify correctly", async () => {
     const auth = setup(AuthProvider);
 
     const pin = "1234";
     await act(() => auth.login(pin));
 
-    expect(mockAuthenticate).toHaveBeenCalledTimes(1);
-    expect(mockAuthenticate).toHaveBeenCalledWith(pin);
+    expect(mockPost).toHaveBeenCalledTimes(1);
+    expect(mockPost).toHaveBeenCalledWith("auth/verify", {
+      pin,
+      otp_auth_key: expect.any(String),
+    });
   });
 
   describe("on successful response", () => {
@@ -61,15 +64,8 @@ describe("login", () => {
   });
 
   describe("on unsuccessful response", () => {
-    const error = new ApiError({
-      httpStatus: 401,
-      type: "InvalidPinError",
-      message: "Invalid SMS code.",
-    });
-    beforeAll(() => {
-      mockAuthenticate.mockRejectedValue(error);
-    });
-    afterAll(() => mockAuthenticate.mockReset());
+    const error = mockResponse["auth/verify"].error[401];
+    beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should just throw the error", async () => {
       const auth = setup(AuthProvider);
@@ -91,19 +87,6 @@ describe("login", () => {
 });
 
 describe("logout", () => {
-  it("should call AuthService logout correctly", () => {
-    const mockLogout = jest
-      .spyOn(AuthenticationService, "logout")
-      .mockImplementation(jest.fn());
-    const auth = setup(AuthenticatedAuthProvider);
-
-    act(() => auth.logout());
-
-    expect(mockLogout).toHaveBeenCalledTimes(1);
-
-    mockLogout.mockRestore();
-  });
-
   it("should set auth state to false", () => {
     const auth = setup(AuthenticatedAuthProvider);
 

@@ -1,0 +1,26 @@
+import { ApiError } from "lib/errors";
+
+const mockResponse = {
+  "auth/send_pin": {
+    success: { otp_auth_key: "123dsfdasf" },
+    error: {
+      422: new ApiError({
+        httpStatus: 422,
+        type: "ValidationError",
+        message: "Mobile is invalid",
+      }),
+    },
+  },
+  "auth/verify": {
+    success: { jwt_token: "fdsafadfafs" },
+    error: {
+      401: new ApiError({
+        httpStatus: 401,
+        type: "InvalidPinError",
+        message: "Invalid SMS code.",
+      }),
+    },
+  },
+};
+
+export default mockResponse;
