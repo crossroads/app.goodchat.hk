@@ -78,11 +78,10 @@ test("renders a get sms pin button", () => {
 describe("Get SMS PIN button", () => {
   describe("disabled state", () => {
     let mockIonButtonRender: jest.SpyInstance;
-    beforeAll(
+    beforeEach(
       () => (mockIonButtonRender = jest.spyOn(IonButton as any, "render"))
     );
-    afterEach(() => mockIonButtonRender.mockClear());
-    afterAll(() => mockIonButtonRender.mockRestore());
+    afterEach(() => mockIonButtonRender.mockRestore());
 
     it("should be true when input length < 8", () => {
       render(<Login />, { wrapper: MemoryRouter });
@@ -93,8 +92,6 @@ describe("Get SMS PIN button", () => {
     });
 
     it("should be false when input length = 8", () => {
-      const mockIonButtonRender = jest.spyOn(IonButton as any, "render");
-
       const { container } = render(<Login />, { wrapper: MemoryRouter });
       fillIonInput(container, "12345678");
 
@@ -132,12 +129,12 @@ describe("Get SMS PIN button", () => {
 describe("On receiving successful API response from send_pin", () => {
   let mockPost: jest.SpyInstance;
   const otpAuthKey = "fdsfdsfdsfdsffd";
-  beforeAll(() => {
+  beforeEach(() => {
     mockPost = jest.spyOn(client, "post").mockResolvedValue({
       otp_auth_key: otpAuthKey,
     });
   });
-  afterAll(() => mockPost.mockRestore());
+  afterEach(() => mockPost.mockRestore());
 
   it("should navigate to /authenticate", async () => {
     const history = createMemoryHistory();
