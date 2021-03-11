@@ -6,7 +6,18 @@ import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ApiError } from "lib/errors";
-import { clickButton, fillIonInput } from "./test_utils";
+import { ionFireEvent } from "@ionic/react-test-utils";
+import userEvent, { TargetElement } from "@testing-library/user-event";
+
+function fillIonInput(container: HTMLElement, phoneInput: string) {
+  const input = container.querySelector("ion-input");
+  ionFireEvent.ionChange(input!, phoneInput);
+}
+
+function clickButton(container: HTMLElement) {
+  const button = container.querySelector("ion-button");
+  userEvent.click(button as TargetElement);
+}
 
 test("renders a login title", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
