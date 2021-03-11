@@ -23,6 +23,13 @@ You can either
 ```
 npm run format
 ```
+### Testing
+**Test isolation**
+
+It is important to keep tests isolated and prevent them affecting other tests. We should be able to run tests in any order and they should still pass.
+
+To prevent tests that write to localStorage from affecting other tests (and hence leading to non-isolated tests), there is a `localStorage.clear()` inside `setupTests.ts` that cleans up after every test.
+You can put any other cleanup  or setup logic here to maintain test isolation.
 
 ## Wiki
 [GoodChat App Wiki](https://github.com/crossroads/app.goodchat.hk/wiki)
