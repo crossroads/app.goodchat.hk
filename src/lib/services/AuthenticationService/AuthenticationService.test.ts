@@ -12,7 +12,6 @@ describe("Methods with API calls", () => {
   afterEach(() => mockPost.mockRestore());
 
   describe("sendPin", () => {
-    const otpAuthKey = "fdsfdsaffdsaklfds";
     const mobile = "+85262345678";
 
     describe("on successful response", () => {
@@ -30,7 +29,7 @@ describe("Methods with API calls", () => {
         expect(localStorage.getItem(OTP_AUTH_KEY)).toBeNull();
         AuthenticationService.sendPin(mobile);
         await wait(() =>
-          expect(localStorage.getItem(OTP_AUTH_KEY)).toBe(otpAuthKey)
+          expect(localStorage.getItem(OTP_AUTH_KEY)).toEqual(expect.any(String))
         );
       });
     });
@@ -63,8 +62,6 @@ describe("Methods with API calls", () => {
     beforeEach(() => localStorage.setItem(OTP_AUTH_KEY, otpAuthKey));
 
     describe("On successful response", () => {
-      const jwtToken = "ejsdfslk3fdsa";
-
       beforeEach(() => {
         mockPost.mockResolvedValue(mockResponse["auth/verify"].success);
       });
@@ -83,7 +80,7 @@ describe("Methods with API calls", () => {
         expect(localStorage.getItem(GC_API_TOKEN)).toBeNull();
         AuthenticationService.authenticate(pin);
         await wait(() =>
-          expect(localStorage.getItem(GC_API_TOKEN)).toBe(jwtToken)
+          expect(localStorage.getItem(GC_API_TOKEN)).toEqual(expect.any(String))
         );
       });
 
