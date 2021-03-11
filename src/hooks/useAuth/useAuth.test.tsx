@@ -2,8 +2,8 @@ import React from "react";
 import useAuth, { Auth } from "hooks/useAuth/useAuth";
 import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
-import { ApiError } from "lib/errors";
 import client from "lib/client/client";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 const setup = (Wrapper: React.FC) => {
   let auth: Auth | {} = {};
@@ -36,9 +36,9 @@ test("should return the correct authentication state", () => {
 describe("login", () => {
   let mockPost: jest.SpyInstance;
   beforeEach(() => {
-    mockPost = jest.spyOn(client, "post").mockResolvedValue({
-      jwt_token: "fdsafadfafs",
-    });
+    mockPost = jest
+      .spyOn(client, "post")
+      .mockResolvedValue(mockResponse["auth/verify"].success);
   });
   afterEach(() => mockPost.mockRestore());
 
@@ -64,11 +64,7 @@ describe("login", () => {
   });
 
   describe("on unsuccessful response", () => {
-    const error = new ApiError({
-      httpStatus: 401,
-      type: "InvalidPinError",
-      message: "Invalid SMS code.",
-    });
+    const error = mockResponse["auth/verify"].error[401];
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should just throw the error", async () => {

@@ -6,8 +6,8 @@ import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
-import { ApiError } from "lib/errors";
 import client from "lib/client/client";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -134,9 +134,9 @@ describe("Clicking login button", () => {
   let mockPost: jest.SpyInstance;
   beforeEach(
     () =>
-      (mockPost = jest.spyOn(client, "post").mockResolvedValue({
-        jwt_token: "fdsafadfafs",
-      }))
+      (mockPost = jest
+        .spyOn(client, "post")
+        .mockResolvedValue(mockResponse["auth/verify"].success))
   );
   afterEach(() => mockPost.mockRestore());
 
@@ -214,11 +214,7 @@ describe("Clicking login button", () => {
   });
 
   describe("Unsuccessful response", () => {
-    const error = new ApiError({
-      httpStatus: 422,
-      type: "ValidationError",
-      message: "Mobile is invalid",
-    });
+    const error = mockResponse["auth/verify"].error[401];
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {

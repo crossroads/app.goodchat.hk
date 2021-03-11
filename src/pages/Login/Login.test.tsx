@@ -5,9 +5,9 @@ import { createMemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
-import { ApiError } from "lib/errors";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import userEvent, { TargetElement } from "@testing-library/user-event";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 function fillIonInput(container: HTMLElement, phoneInput: string) {
   const input = container.querySelector("ion-input");
@@ -116,9 +116,9 @@ describe("Get SMS PIN button", () => {
   describe("on click", () => {
     let mockPost: jest.SpyInstance;
     beforeEach(() => {
-      mockPost = jest.spyOn(client, "post").mockResolvedValue({
-        otp_auth_key: "dfsafdsa1231",
-      });
+      mockPost = jest
+        .spyOn(client, "post")
+        .mockResolvedValue(mockResponse["auth/send_pin"].success);
     });
     afterEach(() => mockPost.mockRestore());
 
@@ -194,11 +194,7 @@ describe("Get SMS PIN button", () => {
     });
 
     describe("On receiving error response from send_pin", () => {
-      const error = new ApiError({
-        httpStatus: 422,
-        type: "ValidationError",
-        message: "Mobile is invalid",
-      });
+      const error = mockResponse["auth/send_pin"].error[422];
       beforeEach(
         () =>
           (mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error))
