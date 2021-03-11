@@ -6,8 +6,8 @@ import { createMemoryHistory, MemoryHistory } from "history";
 import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
-import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import { ApiError } from "lib/errors";
+import client from "lib/client/client";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
@@ -131,16 +131,16 @@ describe("login button", () => {
 });
 
 describe("Clicking login button", () => {
-  let mockAuthenticate: jest.SpyInstance;
+  let mockPost: jest.SpyInstance;
   beforeEach(
     () =>
-      (mockAuthenticate = jest
-        .spyOn(AuthenticationService, "authenticate")
-        .mockImplementation())
+      (mockPost = jest.spyOn(client, "post").mockResolvedValue({
+        jwt_token: "fdsafadfafs",
+      }))
   );
-  afterEach(() => mockAuthenticate.mockRestore());
+  afterEach(() => mockPost.mockRestore());
 
-  it("should call AuthenticationService authenticate correctly", async () => {
+  it("should call auth/verify correctly", async () => {
     const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
 
     const inputVal = "1234";
@@ -149,8 +149,11 @@ describe("Clicking login button", () => {
     ionFireEvent.ionChange(input!, inputVal);
     await act(async () => userEvent.click(loginButton as TargetElement));
 
-    expect(mockAuthenticate).toHaveBeenCalledTimes(1);
-    expect(mockAuthenticate).toHaveBeenCalledWith(inputVal);
+    expect(mockPost).toHaveBeenCalledTimes(1);
+    expect(mockPost).toHaveBeenCalledWith("auth/verify", {
+      pin: inputVal,
+      otp_auth_key: expect.any(String),
+    });
   });
 
   describe("Successful response", () => {
@@ -216,7 +219,7 @@ describe("Clicking login button", () => {
       type: "ValidationError",
       message: "Mobile is invalid",
     });
-    beforeEach(() => mockAuthenticate.mockRejectedValue(error));
+    beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {
       const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
