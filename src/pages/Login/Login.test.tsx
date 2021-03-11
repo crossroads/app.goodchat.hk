@@ -103,11 +103,16 @@ describe("Get SMS PIN button", () => {
   });
 
   describe("on click", () => {
-    it("should call auth/send_pin API endpoint with the correct mobile value", async () => {
-      const mockPost = jest.spyOn(client, "post").mockResolvedValue({
-        otp_auth_key: "fdsafdsafds",
+    const otpAuthKey = "fdsfdsfdsfdsffd";
+    let mockPost: jest.SpyInstance;
+    beforeEach(() => {
+      mockPost = jest.spyOn(client, "post").mockResolvedValue({
+        otp_auth_key: otpAuthKey,
       });
+    });
+    afterEach(() => mockPost.mockRestore());
 
+    it("should call auth/send_pin API endpoint with the correct mobile value", async () => {
       const phoneInput = "12345678";
       const { container } = render(<Login />, { wrapper: MemoryRouter });
 
@@ -120,112 +125,106 @@ describe("Get SMS PIN button", () => {
       expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
         mobile: `+852${phoneInput}`,
       });
-
-      mockPost.mockRestore();
     });
-  });
-});
 
-describe("On receiving successful API response from send_pin", () => {
-  let mockPost: jest.SpyInstance;
-  const otpAuthKey = "fdsfdsfdsfdsffd";
-  beforeEach(() => {
-    mockPost = jest.spyOn(client, "post").mockResolvedValue({
-      otp_auth_key: otpAuthKey,
-    });
-  });
-  afterEach(() => mockPost.mockRestore());
+    describe("On receiving successful API response from send_pin", () => {
+      it("should navigate to /authenticate", async () => {
+        const history = createMemoryHistory();
+        const mockHistoryPush = jest.spyOn(history, "push");
 
-  it("should navigate to /authenticate", async () => {
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
+        const { container } = render(
+          <Router history={history}>
+            <Login />
+          </Router>
+        );
 
-    const { container } = render(
-      <Router history={history}>
-        <Login />
-      </Router>
-    );
+        const phoneInput = "12345678";
+        fillIonInput(container, phoneInput);
+        clickButton(container);
 
-    const phoneInput = "12345678";
-    fillIonInput(container, phoneInput);
-    clickButton(container);
+        expect(mockPost).toHaveBeenCalledTimes(1);
+        expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
+          mobile: `+852${phoneInput}`,
+        });
+        await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
+        expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
 
-    expect(mockPost).toHaveBeenCalledTimes(1);
-    expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
-      mobile: `+852${phoneInput}`,
-    });
-    await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
-    expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate");
-
-    mockHistoryPush.mockRestore();
-  });
-
-  it("should pass origin of redirection as history state", async () => {
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
-    const mockUseLocation = jest
-      .spyOn(ReactRouter, "useLocation")
-      .mockReturnValue({
-        pathname: "/login",
-        search: "",
-        hash: "",
-        state: { from: "/offers" },
+        mockHistoryPush.mockRestore();
       });
 
-    const { container } = render(
-      <Router history={history}>
-        <Login />
-      </Router>
-    );
+      it("should pass origin of redirection as history state", async () => {
+        const history = createMemoryHistory();
+        const mockHistoryPush = jest.spyOn(history, "push");
+        const mockUseLocation = jest
+          .spyOn(ReactRouter, "useLocation")
+          .mockReturnValue({
+            pathname: "/login",
+            search: "",
+            hash: "",
+            state: { from: "/offers" },
+          });
 
-    fillIonInput(container, "12345678");
-    clickButton(container);
+        const { container } = render(
+          <Router history={history}>
+            <Login />
+          </Router>
+        );
 
-    await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
-    expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
-      from: "/offers",
+        fillIonInput(container, "12345678");
+        clickButton(container);
+
+        await wait(() => expect(mockHistoryPush).toHaveBeenCalledTimes(1));
+        expect(mockHistoryPush).toHaveBeenCalledWith("/authenticate", {
+          from: "/offers",
+        });
+
+        mockHistoryPush.mockRestore();
+        mockUseLocation.mockRestore();
+      });
     });
 
-    mockHistoryPush.mockRestore();
-    mockUseLocation.mockRestore();
-  });
-});
+    describe("On receiving error response from send_pin", () => {
+      const error = new ApiError({
+        httpStatus: 422,
+        type: "ValidationError",
+        message: "Mobile is invalid",
+      });
+      beforeEach(
+        () =>
+          (mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error))
+      );
 
-describe("On receiving error response from send_pin", () => {
-  it("should show an error message", async () => {
-    const error = new ApiError({
-      httpStatus: 422,
-      type: "ValidationError",
-      message: "Mobile is invalid",
+      it("should show an error message", async () => {
+        const history = createMemoryHistory();
+        const mockHistoryPush = jest.spyOn(history, "push");
+
+        const { container } = render(
+          <Router history={history}>
+            <Login />
+          </Router>
+        );
+
+        expect(
+          container.querySelector('[role="alert"]')
+        ).not.toBeInTheDocument();
+
+        const phoneInput = "12345678";
+        fillIonInput(container, phoneInput);
+        clickButton(container);
+
+        expect(mockPost).toHaveBeenCalledTimes(1);
+        expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
+          mobile: `+852${phoneInput}`,
+        });
+        await wait(() =>
+          expect(container.querySelector('[role="alert"]')).toHaveTextContent(
+            error.message
+          )
+        );
+        expect(mockHistoryPush).not.toHaveBeenCalled();
+
+        mockHistoryPush.mockRestore();
+      });
     });
-    const mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error);
-    const history = createMemoryHistory();
-    const mockHistoryPush = jest.spyOn(history, "push");
-
-    const { container } = render(
-      <Router history={history}>
-        <Login />
-      </Router>
-    );
-
-    expect(container.querySelector('[role="alert"]')).not.toBeInTheDocument();
-
-    const phoneInput = "12345678";
-    fillIonInput(container, phoneInput);
-    clickButton(container);
-
-    expect(mockPost).toHaveBeenCalledTimes(1);
-    expect(mockPost).toHaveBeenCalledWith("auth/send_pin", {
-      mobile: `+852${phoneInput}`,
-    });
-    await wait(() =>
-      expect(container.querySelector('[role="alert"]')).toHaveTextContent(
-        error.message
-      )
-    );
-    expect(mockHistoryPush).not.toHaveBeenCalled();
-
-    mockPost.mockRestore();
-    mockHistoryPush.mockRestore();
   });
 });
