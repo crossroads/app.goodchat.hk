@@ -3,6 +3,8 @@ import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import MainRouter from "components/MainRouter/MainRouter";
 import AuthProvider from "components/AuthProvider/AuthProvider";
+import { ApolloProvider } from "@apollo/client";
+import HasuraClient from "lib/HasuraClient";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -27,9 +29,11 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <AuthProvider>
-        <IonReactRouter>
-          <MainRouter />
-        </IonReactRouter>
+        <ApolloProvider client={HasuraClient}>
+          <IonReactRouter>
+            <MainRouter />
+          </IonReactRouter>
+        </ApolloProvider>
       </AuthProvider>
     </IonApp>
   );
