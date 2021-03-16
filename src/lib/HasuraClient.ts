@@ -1,14 +1,13 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-
-const HASURA_TOKEN_KEY = "hasura_token";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_HASURA_URL,
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem(HASURA_TOKEN_KEY);
+  const token = AuthenticationService.getHasuraToken();
   return {
     headers: {
       ...headers,

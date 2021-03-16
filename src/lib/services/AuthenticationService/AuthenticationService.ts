@@ -7,6 +7,8 @@ import {
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";
 
+let hasuraToken: string | null = null;
+
 async function sendPin(mobile: string): Promise<SendPinResponse> {
   const response: SendPinResponse = await client.post("auth/send_pin", {
     mobile,
@@ -33,11 +35,16 @@ function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
 }
 
+function getHasuraToken(): string | null {
+  return hasuraToken;
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
   logout,
   isAuthenticated,
+  getHasuraToken,
 };
 
 export default AuthenticationService;
