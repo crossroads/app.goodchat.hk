@@ -11,7 +11,16 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      /* 
+        We send a value here ("Bearer ") even when token is 
+        missing because Hasura interprets missing authorization 
+        headers and even empty string as a public user.
+
+        Instead we want Hasura to return an "invalid-jwt" error
+        so that we can check for it as a condition to refresh
+        the token.
+      */
+      authorization: `Bearer ${token}`,
     },
   };
 });
