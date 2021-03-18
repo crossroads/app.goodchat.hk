@@ -27,12 +27,10 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const errorLink = onError(({ graphQLErrors }) => {
-  if (graphQLErrors) {
-    const invalidToken = graphQLErrors.find(
-      ({ extensions }) => extensions?.code === "invalid-jwt"
-    );
-    if (invalidToken) AuthenticationService.refreshHasuraToken();
-  }
+  const invalidToken = (graphQLErrors ?? []).find(
+    ({ extensions }) => extensions?.code === "invalid-jwt"
+  );
+  if (invalidToken) AuthenticationService.refreshHasuraToken();
 });
 
 const client = new ApolloClient({
