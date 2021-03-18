@@ -1,6 +1,7 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
+import { onError } from "@apollo/client/link/error";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_HASURA_URL,
@@ -25,8 +26,18 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const errorLink = onError(({ graphQLErrors }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map(({ extensions }) => {
+      if (extensions?.code === "invalid-jwt") {
+        AuthenticationService.refreshHasuraToken();
+      }
+    });
+  }
+});
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: errorLink.concat(authLink.concat(httpLink)),
   cache: new InMemoryCache(),
 });
 
