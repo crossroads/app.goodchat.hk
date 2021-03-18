@@ -28,11 +28,10 @@ const authLink = setContext((_, { headers }) => {
 
 const errorLink = onError(({ graphQLErrors }) => {
   if (graphQLErrors) {
-    graphQLErrors.map(({ extensions }) => {
-      if (extensions?.code === "invalid-jwt") {
-        AuthenticationService.refreshHasuraToken();
-      }
-    });
+    const invalidToken = graphQLErrors.find(
+      ({ extensions }) => extensions?.code === "invalid-jwt"
+    );
+    if (invalidToken) AuthenticationService.refreshHasuraToken();
   }
 });
 
