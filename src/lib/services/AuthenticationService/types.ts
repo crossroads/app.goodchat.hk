@@ -4,3 +4,7 @@ export interface SendPinResponse {
 export interface VerifyResponse {
   jwt_token: string;
 }
+
+export interface HasuraResponse {
+  token: string;
+}

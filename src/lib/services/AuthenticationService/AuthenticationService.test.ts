@@ -122,6 +122,37 @@ describe("Methods with API calls", () => {
       });
     });
   });
+
+  describe("refreshHasuraToken", () => {
+    beforeEach(() =>
+      mockPost.mockResolvedValue(mockResponse["auth/hasura"].success)
+    );
+
+    it("should call auth/hasura correctly", () => {
+      const gcApiToken = "1231412";
+      localStorage.setItem(GC_API_TOKEN, gcApiToken);
+
+      AuthenticationService.refreshHasuraToken();
+
+      expect(mockPost).toHaveBeenCalledTimes(1);
+      expect(mockPost).toHaveBeenCalledWith("auth/hasura", null, {
+        headers: {
+          Authorization: `Bearer ${gcApiToken}`,
+        },
+      });
+    });
+
+    describe("on unsuccessful response", () => {
+      const error = mockResponse["auth/send_pin"].error[422];
+      beforeEach(() => mockPost.mockRejectedValue(error));
+
+      it("should just throw the error", () => {
+        return expect(
+          AuthenticationService.refreshHasuraToken()
+        ).rejects.toThrow(error);
+      });
+    });
+  });
 });
 
 describe("logout", () => {

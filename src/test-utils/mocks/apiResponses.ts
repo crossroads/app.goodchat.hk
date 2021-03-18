@@ -21,6 +21,18 @@ const mockResponse = {
       }),
     },
   },
+  "auth/hasura": {
+    success: {
+      token: "ewreresckdlsafjdasklfjs",
+    },
+    error: {
+      401: new ApiError({
+        httpStatus: 401,
+        type: "UnauthorizedError",
+        message: "Invalid token",
+      }),
+    },
+  },
 };
 
 export default mockResponse;

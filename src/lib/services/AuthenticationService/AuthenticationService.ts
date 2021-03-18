@@ -1,5 +1,6 @@
 import client from "lib/client/client";
 import {
+  HasuraResponse,
   SendPinResponse,
   VerifyResponse,
 } from "lib/services/AuthenticationService/types";
@@ -39,12 +40,23 @@ function getHasuraToken(): string | null {
   return hasuraToken;
 }
 
+async function refreshHasuraToken(): Promise<void> {
+  const gcApiToken = localStorage.getItem(GC_API_TOKEN);
+  const response: HasuraResponse = await client.post("auth/hasura", null, {
+    headers: {
+      Authorization: gcApiToken ? `Bearer ${gcApiToken}` : "",
+    },
+  });
+  hasuraToken = response.token;
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
   logout,
   isAuthenticated,
   getHasuraToken,
+  refreshHasuraToken,
 };
 
 export default AuthenticationService;
