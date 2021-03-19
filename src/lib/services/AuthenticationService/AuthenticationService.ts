@@ -36,8 +36,9 @@ function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
 }
 
-function getHasuraToken(): string | null {
-  return hasuraToken;
+async function getHasuraToken(): Promise<string> {
+  if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
+  return hasuraToken as string;
 }
 
 async function refreshHasuraToken(): Promise<void> {

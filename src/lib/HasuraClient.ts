@@ -7,8 +7,8 @@ const httpLink = createHttpLink({
   uri: process.env.REACT_APP_HASURA_URL,
 });
 
-const authLink = setContext((_, { headers }) => {
-  const token = AuthenticationService.getHasuraToken();
+const authLink = setContext(async (_, { headers }) => {
+  const token = await AuthenticationService.getHasuraToken();
   return {
     headers: {
       ...headers,
@@ -30,7 +30,7 @@ const errorLink = onError(({ graphQLErrors }) => {
   const invalidToken = (graphQLErrors ?? []).find(
     ({ extensions }) => extensions?.code === "invalid-jwt"
   );
-  if (invalidToken) AuthenticationService.refreshHasuraToken();
+  if (invalidToken) AuthenticationService.invalidateToken();
 });
 
 const client = new ApolloClient({
