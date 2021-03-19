@@ -50,6 +50,10 @@ async function refreshHasuraToken(): Promise<void> {
   hasuraToken = response.token;
 }
 
+function invalidateToken() {
+  hasuraToken = null;
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
@@ -57,6 +61,7 @@ const AuthenticationService = {
   isAuthenticated,
   getHasuraToken,
   refreshHasuraToken,
+  invalidateToken,
 };
 
 export default AuthenticationService;
