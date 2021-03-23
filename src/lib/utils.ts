@@ -1,6 +1,6 @@
 type AsyncCallback<T, A extends unknown[]> = (...args: A) => Promise<T>;
 
-function debounce<T, A extends unknown[]>(fn: AsyncCallback<T, A>) {
+function throttle<T, A extends unknown[]>(fn: AsyncCallback<T, A>) {
   let promise: null | Promise<T> = null;
 
   return (...args: A): Promise<T> => {
@@ -18,4 +18,4 @@ function debounce<T, A extends unknown[]>(fn: AsyncCallback<T, A>) {
   };
 }
 
-export { debounce };
+export { throttle };

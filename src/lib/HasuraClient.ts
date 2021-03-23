@@ -2,13 +2,13 @@ import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import { onError } from "@apollo/client/link/error";
-import { debounce } from "lib/utils";
+import { throttle } from "lib/utils";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_HASURA_URL,
 });
 
-const getHasuraToken = debounce(AuthenticationService.getHasuraToken);
+const getHasuraToken = throttle(AuthenticationService.getHasuraToken);
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await getHasuraToken();
