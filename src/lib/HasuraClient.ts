@@ -30,11 +30,13 @@ const authLink = setContext(async (_, { headers }) => {
   };
 });
 
-const errorLink = onError(({ graphQLErrors }) => {
+const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   const invalidToken = (graphQLErrors ?? []).find(
     ({ extensions }) => extensions?.code === "invalid-jwt"
   );
   if (invalidToken) AuthenticationService.invalidateToken();
+
+  return forward(operation);
 });
 
 const client = new ApolloClient({
