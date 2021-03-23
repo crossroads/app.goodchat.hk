@@ -1,5 +1,9 @@
 type AsyncCallback<T, A extends unknown[]> = (...args: A) => Promise<T>;
 
+/**
+ * Throttles execution of the async callback such that it
+ * is only executed when there isn't already one underway
+ */
 function throttle<T, A extends unknown[]>(fn: AsyncCallback<T, A>) {
   let promise: null | Promise<T> = null;
 
