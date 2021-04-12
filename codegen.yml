@@ -1,5 +1,8 @@
 overwrite: true
-schema: "http://localhost:4000"
+schema:
+  - "${REACT_APP_HASURA_URL}":
+      headers:
+        x-hasura-admin-secret: "${HASURA_ADMIN_SECRET}"
 documents: "src/**/*.graphql"
 generates:
   src/generated/graphql.tsx:
