@@ -30,6 +30,7 @@
     "react-scripts": "^4.0.2"
   },
   "scripts": {
+    "dev": "concurrently \"npm start\" \"npm run codegen:watch\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
