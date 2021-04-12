@@ -24,6 +24,59 @@ This will start the react app as well as run graphQL code generator in the backg
 
 ## Development Guidelines
 
+### GraphQL Development
+
+Refer to the best practices written here https://the-guild.dev/blog/graphql-codegen-best-practices
+
+Write all your queries in `.graphql` files. Then wait for graphql code generator (which should be running in the background and watching for changes) to generate types and documents for you.
+For example if you have a `myOffers.graphql` file like so
+
+```
+query myOffers {
+  offers {
+    id
+    company_id
+  }
+}
+```
+
+The code generator would then generate a whole bunch of types, but most importantly it generates documents and hooks which we can import e.g.
+
+```
+export const MyOffersDocument = gql`
+    query myOffers {
+  offers {
+    id
+    company_id
+  }
+}
+    `;
+```
+
+This is an example of a generated document. According to [GraphQL Codegen Best Practices](https://the-guild.dev/blog/graphql-codegen-best-practices)
+
+> You can manage your GraphQL operations in .graphql files, without worrying about loading it into your application with Webpack loaders ...
+> ...automatically creates an executable copy (DocumentNode) of your GraphQL operations in the generated code file, and it will automatically include it within your wrapper call.
+
+You can import it and use it in your project like so
+
+```
+import { MyOffersDocument } from "generated/graphql";
+```
+
+You could also just directly use the generated hooks.
+Thus instead of doing
+
+```
+const {data} = useQuery<MyOffersQuery>(MyOffersDocument)
+```
+
+you could do
+
+```
+const {data} = useMyOffersQuery()
+```
+
 ### Code formatting
 
 This project uses [Prettier](https://prettier.io) for code formatting.
