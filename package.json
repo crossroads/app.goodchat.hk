@@ -35,7 +35,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
-    "format": "prettier --ignore-path .gitignore --write ."
+    "format": "prettier --ignore-path .gitignore --write .",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -55,7 +56,7 @@
   "description": "An Ionic project",
   "devDependencies": {
     "@capacitor/cli": "2.4.2",
-    "@graphql-codegen/cli": "^1.21.3",
+    "@graphql-codegen/cli": "1.21.3",
     "@ionic/react-test-utils": "0.0.3",
     "axios": "^0.21.1",
     "husky": "^4.3.5",
