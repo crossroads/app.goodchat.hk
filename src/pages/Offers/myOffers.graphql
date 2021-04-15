@@ -1,0 +1,5 @@
+query OffersPageOffers {
+  offers {
+    id
+  }
+}
