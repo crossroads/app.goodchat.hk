@@ -17,9 +17,10 @@ const TestComponent: React.FC = () => {
   return null;
 };
 
-test("renders correctly", () => {
+test("renders without crashing", () => {
   const { container } = render(<Offers />);
-  expect(container).toMatchSnapshot();
+
+  expect(container).toBeInTheDocument();
 });
 
 test("clicking log out button should log user out", () => {
