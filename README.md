@@ -98,6 +98,21 @@ It is important to keep tests isolated and prevent them affecting other tests. W
 To prevent tests that write to localStorage from affecting other tests (and hence leading to non-isolated tests), there is a `localStorage.clear()` inside `setupTests.ts` that cleans up after every test.
 You can put any other cleanup or setup logic here to maintain test isolation.
 
+#### Integration Tests
+Do not render `App` directly. As mentioned in the wiki entry on [Testing Routing](https://github.com/crossroads/app.goodchat.hk/wiki/Testing-Routing), `IonReactRouter` when used together with `IonRouterOutlet` behaves strangely in the test environment. Therefore, you should instead do something like this
+```
+const { container } = render(
+  <IonApp>
+    <AuthProvider>
+      <Router history={history}>
+        <MainRouter />
+      </Router>
+    </AuthProvider>
+  </IonApp>
+);
+```
+You could create an abstraction for this if you like, but the main point is that we use `Router` instead of `IonReactRouter` in tests.
+
 ## Wiki
 
 [GoodChat App Wiki](https://github.com/crossroads/app.goodchat.hk/wiki)
