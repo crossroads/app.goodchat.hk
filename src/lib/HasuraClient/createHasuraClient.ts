@@ -34,7 +34,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   const invalidToken = (graphQLErrors ?? []).find(
     ({ extensions }) => extensions?.code === "invalid-jwt"
   );
-  if (invalidToken) AuthenticationService.invalidateToken();
+  if (invalidToken) AuthenticationService.invalidateHasuraToken();
 
   return forward(operation);
 });

@@ -51,7 +51,7 @@ async function refreshHasuraToken(): Promise<void> {
   hasuraToken = response.token;
 }
 
-function invalidateToken() {
+function invalidateHasuraToken() {
   hasuraToken = null;
 }
 
@@ -62,7 +62,7 @@ const AuthenticationService = {
   isAuthenticated,
   getHasuraToken,
   refreshHasuraToken,
-  invalidateToken,
+  invalidateHasuraToken,
 };
 
 export default AuthenticationService;
