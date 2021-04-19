@@ -40,6 +40,12 @@ function isAuthenticated() {
 function setHasuraToken(tokenValue: string) {
   hasuraToken = tokenValue;
 }
+
+/**
+ * Returns the existing hasuraToken
+ * If it is unavailable, fetches a new one and returns that
+ */
+async function resolveHasuraToken(): Promise<string> {
   if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
   return hasuraToken as string;
 }
@@ -63,7 +69,7 @@ const AuthenticationService = {
   authenticate,
   logout,
   isAuthenticated,
-  getHasuraToken,
+  resolveHasuraToken,
   refreshHasuraToken,
   invalidateHasuraToken,
 };
