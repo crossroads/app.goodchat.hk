@@ -37,7 +37,9 @@ function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
 }
 
-async function getHasuraToken(): Promise<string> {
+function setHasuraToken(tokenValue: string) {
+  hasuraToken = tokenValue;
+}
   if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
   return hasuraToken as string;
 }
@@ -49,7 +51,7 @@ async function refreshHasuraToken(): Promise<void> {
       Authorization: gcApiToken ? `Bearer ${gcApiToken}` : "",
     },
   });
-  hasuraToken = response.token;
+  setHasuraToken(response.token);
 }
 
 function invalidateHasuraToken() {
