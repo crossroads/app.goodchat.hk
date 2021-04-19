@@ -41,7 +41,7 @@ function getHasuraToken(): string | null {
   return hasuraToken;
 }
 
-function setHasuraToken(tokenValue: string) {
+function setHasuraToken(tokenValue: string | null) {
   hasuraToken = tokenValue;
 }
 
@@ -51,7 +51,7 @@ function setHasuraToken(tokenValue: string) {
  */
 async function resolveHasuraToken(): Promise<string> {
   if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
-  return hasuraToken as string;
+  return getHasuraToken() as string;
 }
 
 async function refreshHasuraToken(): Promise<void> {
@@ -65,7 +65,7 @@ async function refreshHasuraToken(): Promise<void> {
 }
 
 function invalidateHasuraToken() {
-  hasuraToken = null;
+  setHasuraToken(null);
 }
 
 const AuthenticationService = {
