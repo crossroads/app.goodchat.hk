@@ -29,6 +29,7 @@ async function authenticate(pin: string): Promise<VerifyResponse> {
 }
 
 function logout() {
+  invalidateHasuraToken();
   localStorage.removeItem(GC_API_TOKEN);
 }
 
