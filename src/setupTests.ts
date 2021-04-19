@@ -3,5 +3,9 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom/extend-expect";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
-afterEach(() => localStorage.clear());
+afterEach(() => {
+  localStorage.clear();
+  AuthenticationService.invalidateHasuraToken();
+});
