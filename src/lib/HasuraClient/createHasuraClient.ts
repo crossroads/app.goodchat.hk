@@ -8,10 +8,10 @@ const httpLink = createHttpLink({
   uri: process.env.REACT_APP_HASURA_URL,
 });
 
-const getHasuraToken = throttle(AuthenticationService.getHasuraToken);
+const resolveHasuraToken = throttle(AuthenticationService.resolveHasuraToken);
 
 const authLink = setContext(async (_, { headers }) => {
-  const token = await getHasuraToken();
+  const token = await resolveHasuraToken();
 
   return {
     headers: {

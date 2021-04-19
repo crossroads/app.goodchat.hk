@@ -29,6 +29,7 @@ async function authenticate(pin: string): Promise<VerifyResponse> {
 }
 
 function logout() {
+  invalidateHasuraToken();
   localStorage.removeItem(GC_API_TOKEN);
 }
 
@@ -36,9 +37,21 @@ function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
 }
 
-async function getHasuraToken(): Promise<string> {
+function getHasuraToken(): string | null {
+  return hasuraToken;
+}
+
+function setHasuraToken(tokenValue: string | null) {
+  hasuraToken = tokenValue;
+}
+
+/**
+ * Returns the existing hasuraToken
+ * If it is unavailable, fetches a new one and returns that
+ */
+async function resolveHasuraToken(): Promise<string> {
   if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
-  return hasuraToken as string;
+  return getHasuraToken() as string;
 }
 
 async function refreshHasuraToken(): Promise<void> {
@@ -48,11 +61,11 @@ async function refreshHasuraToken(): Promise<void> {
       Authorization: gcApiToken ? `Bearer ${gcApiToken}` : "",
     },
   });
-  hasuraToken = response.token;
+  setHasuraToken(response.token);
 }
 
 function invalidateHasuraToken() {
-  hasuraToken = null;
+  setHasuraToken(null);
 }
 
 const AuthenticationService = {
@@ -60,9 +73,10 @@ const AuthenticationService = {
   authenticate,
   logout,
   isAuthenticated,
-  getHasuraToken,
+  resolveHasuraToken,
   refreshHasuraToken,
   invalidateHasuraToken,
+  getHasuraToken,
 };
 
 export default AuthenticationService;

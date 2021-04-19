@@ -22,7 +22,7 @@ test("renders correctly", () => {
   expect(container).toMatchSnapshot();
 });
 
-test("clicking log out button should call the logout function", () => {
+test("clicking log out button should log user out", () => {
   render(
     <AuthProvider initialAuthState={true}>
       <TestComponent />
