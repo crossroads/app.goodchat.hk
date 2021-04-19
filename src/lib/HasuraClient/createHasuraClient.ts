@@ -39,9 +39,10 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   return forward(operation);
 });
 
-const client = new ApolloClient({
-  link: errorLink.concat(authLink.concat(httpLink)),
-  cache: new InMemoryCache(),
-});
+const createHasuraClient = () =>
+  new ApolloClient({
+    link: errorLink.concat(authLink.concat(httpLink)),
+    cache: new InMemoryCache(),
+  });
 
-export default client;
+export default createHasuraClient;
