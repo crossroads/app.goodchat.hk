@@ -37,6 +37,10 @@ function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
 }
 
+function getHasuraToken(): string | null {
+  return hasuraToken;
+}
+
 function setHasuraToken(tokenValue: string) {
   hasuraToken = tokenValue;
 }
@@ -72,6 +76,7 @@ const AuthenticationService = {
   resolveHasuraToken,
   refreshHasuraToken,
   invalidateHasuraToken,
+  getHasuraToken,
 };
 
 export default AuthenticationService;

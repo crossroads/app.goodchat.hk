@@ -190,6 +190,22 @@ describe("logout", () => {
     AuthenticationService.logout();
     expect(AuthenticationService.isAuthenticated()).toBe(false);
   });
+
+  it("should clear the hasura token", async () => {
+    const mockPost = jest
+      .spyOn(client, "post")
+      .mockResolvedValue(mockResponse["auth/hasura"].success);
+
+    await AuthenticationService.refreshHasuraToken();
+
+    expect(AuthenticationService.getHasuraToken()).not.toBe(null);
+
+    AuthenticationService.logout();
+
+    expect(AuthenticationService.getHasuraToken()).toBe(null);
+
+    mockPost.mockRestore();
+  });
 });
 
 describe("isAuthenticated", () => {
