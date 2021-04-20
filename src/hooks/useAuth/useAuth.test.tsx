@@ -4,15 +4,16 @@ import { render, cleanup, act } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import client from "lib/client/client";
 import mockResponse from "test-utils/mocks/apiResponses";
+import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 
-const setup = (Wrapper: React.FC) => {
+const setup = (AuthWrapper: React.FC) => {
   let auth: Auth | {} = {};
   const TestComponent: React.FC = () => {
     Object.assign(auth, useAuth());
     return null;
   };
 
-  render(<TestComponent />, { wrapper: Wrapper });
+  render(<TestComponent />, { wrapper: AuthWrapper });
 
   return auth as Auth;
 };
