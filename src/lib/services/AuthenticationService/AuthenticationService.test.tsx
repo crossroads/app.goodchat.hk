@@ -1,10 +1,8 @@
 import React from "react";
-import { ApolloClient, ApolloProvider, useApolloClient } from "@apollo/client";
-import { render, wait } from "@testing-library/react";
+import { wait } from "@testing-library/react";
 import client from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
 import mockResponse from "test-utils/mocks/apiResponses";
-import createHasuraClient from "lib/HasuraClient/createHasuraClient";
 
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";
@@ -188,26 +186,9 @@ describe("Methods with API calls", () => {
 });
 
 describe("logout", () => {
-  const setupWithApolloClient = () => {
-    let HasuraClient: ApolloClient<object> | null = null;
-    const TestComponent: React.FC = () => {
-      HasuraClient = useApolloClient();
-      return null;
-    };
-
-    render(
-      <ApolloProvider client={createHasuraClient()}>
-        <TestComponent />
-      </ApolloProvider>
-    );
-
-    return (HasuraClient as unknown) as ApolloClient<object>;
-  };
-
   it(`should log user out`, () => {
-    const HasuraClient = setupWithApolloClient();
     localStorage.setItem(GC_API_TOKEN, "fdsfsa");
-    AuthenticationService.logout(HasuraClient as ApolloClient<object>);
+    AuthenticationService.logout();
     expect(AuthenticationService.isAuthenticated()).toBe(false);
   });
 
@@ -215,28 +196,16 @@ describe("logout", () => {
     const mockPost = jest
       .spyOn(client, "post")
       .mockResolvedValue(mockResponse["auth/hasura"].success);
-    const HasuraClient = setupWithApolloClient();
 
     await AuthenticationService.refreshHasuraToken();
 
     expect(AuthenticationService.getHasuraToken()).not.toBe(null);
 
-    AuthenticationService.logout(HasuraClient);
+    AuthenticationService.logout();
 
     expect(AuthenticationService.getHasuraToken()).toBe(null);
 
     mockPost.mockRestore();
-  });
-
-  it("should clear the cache", () => {
-    const HasuraClient = setupWithApolloClient();
-    const mockClearStore = jest.spyOn(HasuraClient, "clearStore");
-
-    AuthenticationService.logout(HasuraClient);
-
-    expect(mockClearStore).toHaveBeenCalledTimes(1);
-
-    mockClearStore.mockRestore();
   });
 });
 
