@@ -9,27 +9,31 @@ import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import mockResponse from "test-utils/mocks/apiResponses";
 
+const setup = () => {
+  return render(<Authenticate />, { wrapper: MemoryRouter });
+};
+
 test("renders without crashing", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container).toBeInTheDocument();
 });
 
 test("renders an authenticate title", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-title")).toHaveTextContent(
     /authenticate/i
   );
 });
 
 test("renders a back button in the header", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(
     container.querySelector("ion-header ion-back-button")
   ).toBeInTheDocument();
 });
 
 test("back button defaults to navigate to /login", async () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-back-button")).toHaveAttribute(
     "default-href",
     "/login"
@@ -37,14 +41,14 @@ test("back button defaults to navigate to /login", async () => {
 });
 
 test("renders a label opting user to input 2fa code", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-label")).toHaveTextContent(
     /please input your 2fa code/i
   );
 });
 
 test("renders the label on top of the input", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-label")).toHaveAttribute(
     "position",
     "floating"
@@ -52,13 +56,13 @@ test("renders the label on top of the input", () => {
 });
 
 test("renders an input", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-input")).toBeInTheDocument();
 });
 
 describe("input", () => {
   it("should have a placeholder XXXX", () => {
-    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+    const { container } = setup();
     expect(container.querySelector("ion-input")).toHaveAttribute(
       "placeholder",
       "XXXX"
@@ -68,7 +72,7 @@ describe("input", () => {
   it("should not allow more than 4 characters to be input", () => {
     const mockIonInputRender = jest.spyOn(IonInput as any, "render");
 
-    render(<Authenticate />, { wrapper: MemoryRouter });
+    setup();
 
     expect(mockIonInputRender).toHaveBeenCalledWith(
       expect.objectContaining({ maxlength: 4 }),
@@ -79,7 +83,7 @@ describe("input", () => {
   });
 
   it("should have its value change accordingly with user input", () => {
-    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+    const { container } = setup();
 
     const input = container.querySelector("ion-input");
 
@@ -96,7 +100,7 @@ describe("input", () => {
 });
 
 test("renders a login button", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+  const { container } = setup();
   expect(container.querySelector("ion-button")).toHaveTextContent(/login/i);
 });
 
@@ -108,7 +112,7 @@ describe("login button", () => {
   afterEach(() => mockIonButtonRender.mockRestore());
 
   it("should be disabled when 2fa input length < 4", () => {
-    render(<Authenticate />, { wrapper: MemoryRouter });
+    setup();
     expect(mockIonButtonRender).toHaveBeenLastCalledWith(
       expect.objectContaining({
         disabled: true,
@@ -141,7 +145,7 @@ describe("Clicking login button", () => {
   afterEach(() => mockPost.mockRestore());
 
   it("should call auth/verify correctly", async () => {
-    const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+    const { container } = setup();
 
     const inputVal = "1234";
     const input = container.querySelector("ion-input");
@@ -218,7 +222,7 @@ describe("Clicking login button", () => {
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {
-      const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
+      const { container } = setup();
 
       expect(container.querySelector('[role="alert"]')).not.toBeInTheDocument();
 
