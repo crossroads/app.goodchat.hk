@@ -1,3 +1,4 @@
+import { ApolloClient } from "@apollo/client";
 import client from "lib/client/client";
 import {
   HasuraResponse,
@@ -28,7 +29,8 @@ async function authenticate(pin: string): Promise<VerifyResponse> {
   return response;
 }
 
-function logout() {
+function logout(client: ApolloClient<object>) {
+  client.clearStore();
   invalidateHasuraToken();
   localStorage.removeItem(GC_API_TOKEN);
 }
