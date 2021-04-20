@@ -4,15 +4,19 @@ import MainTabs from "components/MainTabs/MainTabs";
 import { expectToBeOnPage } from "test-utils/matchers";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
+import { ApolloProvider } from "@apollo/client";
+import createHasuraClient from "lib/HasuraClient/createHasuraClient";
 
 const renderComponent = (initialPath = "/home") => {
   const history = createMemoryHistory({ initialEntries: [initialPath] });
   return {
     history,
     ...render(
-      <Router history={history}>
-        <MainTabs />
-      </Router>
+      <ApolloProvider client={createHasuraClient()}>
+        <Router history={history}>
+          <MainTabs />
+        </Router>
+      </ApolloProvider>
     ),
   };
 };

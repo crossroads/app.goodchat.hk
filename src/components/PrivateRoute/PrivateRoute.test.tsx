@@ -4,6 +4,8 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import PrivateRoute from "components/PrivateRoute/PrivateRoute";
 import { Router, Redirect as MockRedirect } from "react-router";
 import { createMemoryHistory } from "history";
+import { ApolloProvider } from "@apollo/client";
+import createHasuraClient from "lib/HasuraClient/createHasuraClient";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -16,9 +18,11 @@ const renderComponent = (initialPath: string, initialAuthState = false) => {
     history,
     ...render(
       <AuthProvider initialAuthState={initialAuthState}>
-        <Router history={history}>
-          <PrivateRoute path={["/home", "/offers"]} />
-        </Router>
+        <ApolloProvider client={createHasuraClient()}>
+          <Router history={history}>
+            <PrivateRoute path={["/home", "/offers"]} />
+          </Router>
+        </ApolloProvider>
       </AuthProvider>
     ),
   };

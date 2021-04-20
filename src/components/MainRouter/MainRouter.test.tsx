@@ -5,6 +5,8 @@ import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { expectToBeOnPage } from "test-utils/matchers";
+import { ApolloProvider } from "@apollo/client";
+import createHasuraClient from "lib/HasuraClient/createHasuraClient";
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string
@@ -14,9 +16,11 @@ const renderComponent = (initialAuthState: boolean) => (
     history,
     ...render(
       <AuthProvider initialAuthState={initialAuthState}>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
+        <ApolloProvider client={createHasuraClient()}>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </ApolloProvider>
       </AuthProvider>
     ),
   };
