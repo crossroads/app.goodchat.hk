@@ -13,7 +13,8 @@ const useAuth = () => {
   };
 
   const logout = () => {
-    AuthenticationService.logout(client);
+    AuthenticationService.logout();
+    client.clearStore();
     setIsAuthenticated(false);
   };
 

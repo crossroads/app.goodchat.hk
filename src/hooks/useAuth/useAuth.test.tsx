@@ -111,13 +111,23 @@ describe("logout", () => {
 
   it("should call AuthenticationService.logout appropriately", () => {
     const mockLogout = jest.spyOn(AuthenticationService, "logout");
-    const { HasuraClient, auth } = setup(AuthenticatedAuthProvider);
+    const { auth } = setup(AuthenticatedAuthProvider);
 
     act(() => auth.logout());
 
     expect(mockLogout).toHaveBeenCalledTimes(1);
-    expect(mockLogout).toHaveBeenCalledWith(HasuraClient);
 
     mockLogout.mockRestore();
+  });
+
+  it("should clear the cache", () => {
+    const { HasuraClient, auth } = setup(AuthenticatedAuthProvider);
+    const mockClearStore = jest.spyOn(HasuraClient, "clearStore");
+
+    act(() => auth.logout());
+
+    expect(mockClearStore).toHaveBeenCalledTimes(1);
+
+    mockClearStore.mockRestore();
   });
 });
