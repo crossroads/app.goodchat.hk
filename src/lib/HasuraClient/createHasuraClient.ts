@@ -43,6 +43,18 @@ const createHasuraClient = () =>
   new ApolloClient({
     link: errorLink.concat(authLink.concat(httpLink)),
     cache: new InMemoryCache(),
+    /**
+     * We just disable the cache by default since
+     * our app mostly deals with realtime data
+     */
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: "no-cache",
+      },
+      query: {
+        fetchPolicy: "no-cache",
+      },
+    },
   });
 
 export default createHasuraClient;
