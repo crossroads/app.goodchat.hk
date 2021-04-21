@@ -125,7 +125,7 @@ describe("Methods with API calls", () => {
 
   describe("resolveHasuraToken", () => {
     beforeEach(() =>
-      mockPost.mockResolvedValue(mockResponse["auth/hasura"].success)
+      mockPost.mockResolvedValue(mockApiResponse["auth/hasura"].success)
     );
 
     describe("User without hasura token", () => {
@@ -194,7 +194,7 @@ describe("logout", () => {
   it("should clear the hasura token", async () => {
     const mockPost = jest
       .spyOn(client, "post")
-      .mockResolvedValue(mockResponse["auth/hasura"].success);
+      .mockResolvedValue(mockApiResponse["auth/hasura"].success);
 
     await AuthenticationService.refreshHasuraToken();
 
