@@ -50,7 +50,7 @@ function setHasuraToken(tokenValue: string | null) {
  * If it is unavailable, fetches a new one and returns that
  */
 async function resolveHasuraToken(): Promise<string> {
-  if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
+  if (!getHasuraToken()) await AuthenticationService.refreshHasuraToken();
   return getHasuraToken() as string;
 }
 
