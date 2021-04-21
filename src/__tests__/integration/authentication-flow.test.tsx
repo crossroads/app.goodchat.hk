@@ -10,6 +10,8 @@ import MainRouter from "components/MainRouter/MainRouter";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
+import { ApolloProvider } from "@apollo/client";
+import createHasuraClient from "lib/HasuraClient/createHasuraClient";
 
 beforeAll(() => {
   mockServer.use(
@@ -31,17 +33,29 @@ beforeAll(() => {
 
 afterAll(() => mockServer.close());
 
+interface SetupParams {
+  initialPath: string;
+}
+const setup = ({ initialPath }: SetupParams) => {
+  const history = createMemoryHistory({ initialEntries: [initialPath] });
+  return {
+    history,
+    ...render(
+      <IonApp>
+        <AuthProvider>
+          <ApolloProvider client={createHasuraClient()}>
+            <Router history={history}>
+              <MainRouter />
+            </Router>
+          </ApolloProvider>
+        </AuthProvider>
+      </IonApp>
+    ),
+  };
+};
+
 test("User is able to login and logout with correct routing", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/login"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialPath: "/login" });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
@@ -69,16 +83,7 @@ test("User is able to login and logout with correct routing", async () => {
 });
 
 test("Unauthenticated user redirected to login is redirected back to that page after login", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/offers"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialPath: "/offers" });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
