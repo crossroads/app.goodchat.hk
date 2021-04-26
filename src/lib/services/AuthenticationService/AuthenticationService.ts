@@ -68,6 +68,10 @@ function invalidateHasuraToken() {
   setHasuraToken(null);
 }
 
+function getGoodCityToken() {
+  return localStorage.getItem(GC_API_TOKEN);
+}
+
 const AuthenticationService = {
   sendPin,
   authenticate,
@@ -77,6 +81,7 @@ const AuthenticationService = {
   refreshHasuraToken,
   invalidateHasuraToken,
   getHasuraToken,
+  getGoodCityToken,
 };
 
 export default AuthenticationService;
