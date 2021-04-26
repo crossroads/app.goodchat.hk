@@ -1,4 +1,4 @@
 {
   "schema": "graphql.schema.json",
-  "documents": "src/**/*.graphql"
+  "documents": "src/**/*.{gql,graphql}"
 }

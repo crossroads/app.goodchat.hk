@@ -3,7 +3,7 @@ schema:
   - "${REACT_APP_GOODCHAT_URL}":
       headers:
         Authorization: "${GOODCITY_JWT}"
-documents: "src/**/*.graphql"
+documents: "src/**/*.{gql,graphql}"
 generates:
   src/generated/graphql.tsx:
     plugins:
