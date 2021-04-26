@@ -31,17 +31,24 @@ beforeAll(() => {
 
 afterAll(() => mockServer.close());
 
+const setup = ({ initialEntries }: { initialEntries: string[] }) => {
+  const history = createMemoryHistory({ initialEntries });
+  return {
+    history,
+    ...render(
+      <IonApp>
+        <AuthProvider>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </AuthProvider>
+      </IonApp>
+    ),
+  };
+};
+
 test("User is able to login and logout with correct routing", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/login"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialEntries: ["/login"] });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
@@ -69,16 +76,7 @@ test("User is able to login and logout with correct routing", async () => {
 });
 
 test("Unauthenticated user redirected to login is redirected back to that page after login", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/offers"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialEntries: ["/offers"] });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
