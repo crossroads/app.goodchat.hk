@@ -4,7 +4,7 @@ import { IonReactRouter } from "@ionic/react-router";
 import MainRouter from "components/MainRouter/MainRouter";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { ApolloProvider } from "@apollo/client";
-import createHasuraClient from "lib/HasuraClient/createHasuraClient";
+import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -25,13 +25,13 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "theme/variables.css";
 
-const HasuraClient = createHasuraClient();
+const GoodChatClient = createGoodChatClient();
 
 const App: React.FC = () => {
   return (
     <IonApp>
       <AuthProvider>
-        <ApolloProvider client={HasuraClient}>
+        <ApolloProvider client={GoodChatClient}>
           <IonReactRouter>
             <MainRouter />
           </IonReactRouter>

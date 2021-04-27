@@ -10,6 +10,8 @@ import MainRouter from "components/MainRouter/MainRouter";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
+import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
+import { ApolloProvider } from "@apollo/client";
 
 beforeAll(() => {
   mockServer.use(
@@ -31,17 +33,27 @@ beforeAll(() => {
 
 afterAll(() => mockServer.close());
 
+const setup = ({ initialEntries }: { initialEntries: string[] }) => {
+  const history = createMemoryHistory({ initialEntries });
+  const GoodChatClient = createGoodChatClient();
+  return {
+    history,
+    ...render(
+      <IonApp>
+        <AuthProvider>
+          <ApolloProvider client={GoodChatClient}>
+            <Router history={history}>
+              <MainRouter />
+            </Router>
+          </ApolloProvider>
+        </AuthProvider>
+      </IonApp>
+    ),
+  };
+};
+
 test("User is able to login and logout with correct routing", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/login"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialEntries: ["/login"] });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
@@ -69,16 +81,7 @@ test("User is able to login and logout with correct routing", async () => {
 });
 
 test("Unauthenticated user redirected to login is redirected back to that page after login", async () => {
-  const history = createMemoryHistory({ initialEntries: ["/offers"] });
-  const { container } = render(
-    <IonApp>
-      <AuthProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </AuthProvider>
-    </IonApp>
-  );
+  const { history, container } = setup({ initialEntries: ["/offers"] });
 
   expectToBeOnPage(container, history.location.pathname, "login");
 

@@ -1,8 +1,8 @@
 overwrite: true
 schema:
-  - "${REACT_APP_HASURA_URL}":
+  - "${REACT_APP_GOODCHAT_URL}":
       headers:
-        x-hasura-admin-secret: "${HASURA_ADMIN_SECRET}"
+        Authorization: "${GOODCITY_JWT}"
 documents: "src/**/*.graphql"
 generates:
   src/generated/graphql.tsx:
