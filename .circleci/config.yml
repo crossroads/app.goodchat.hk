@@ -57,7 +57,7 @@ commands:
               ;;
               *)
                 echo 'export NODE_ENV=staging' >> $GC_ENV_FILE
-                echo 'export CERTIFICATE=hk.goodcity.dev.p12' >> $GC_ENV_FILE
+                echo 'export CERTIFICATE=hk.goodcity.p12' >> $GC_ENV_FILE
               ;;
             esac
       - run:
