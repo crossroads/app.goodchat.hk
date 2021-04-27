@@ -53,11 +53,11 @@ commands:
             case "$CIRCLE_BRANCH" in
               live)
                 echo 'export NODE_ENV=production' >> $GC_ENV_FILE
-                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $GC_ENV_FILE
+                echo 'export CERTIFICATE=hk.goodcity.p12' >> $GC_ENV_FILE
               ;;
               *)
                 echo 'export NODE_ENV=staging' >> $GC_ENV_FILE
-                echo 'export CERTIFICATE=Goodcity_2020.p12' >> $GC_ENV_FILE
+                echo 'export CERTIFICATE=hk.goodcity.dev.p12' >> $GC_ENV_FILE
               ;;
             esac
       - run:
