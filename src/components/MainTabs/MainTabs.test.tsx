@@ -75,18 +75,3 @@ test("renders footer correctly", () => {
   const { container } = renderComponent();
   expect(container.querySelector("ion-tab-bar")).toMatchSnapshot();
 });
-
-test("visiting /home takes user to Home", () => {
-  const { container, history } = renderComponent();
-  expectToBeOnPage(container, history.location.pathname, "home");
-});
-
-test("visiting /offers takes user to Offers", () => {
-  const { container, history } = renderComponent("/offers");
-  expectToBeOnPage(container, history.location.pathname, "offers");
-});
-
-test("visiting /donors takes user to Donors", () => {
-  const { container, history } = renderComponent("/donors");
-  expectToBeOnPage(container, history.location.pathname, "donors");
-});
