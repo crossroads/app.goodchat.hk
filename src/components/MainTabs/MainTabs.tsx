@@ -19,11 +19,11 @@ const MainTabs = () => (
       <Route exact path="/:tab(offers)">
         <Offers />
       </Route>
-      <Route exact path="/:tab(home)">
-        <Home />
-      </Route>
       <Route exact path="/:tab(donors)">
         <Donors />
+      </Route>
+      <Route exact path="/:tab(home)">
+        <Home />
       </Route>
     </IonRouterOutlet>
     <IonTabBar slot="bottom">
@@ -31,13 +31,13 @@ const MainTabs = () => (
         <IonIcon icon={home} />
         <IonLabel>Home</IonLabel>
       </IonTabButton>
-      <IonTabButton tab="offers" href="/offers">
-        <IonIcon icon={listOutline} />
-        <IonLabel>Offers</IonLabel>
-      </IonTabButton>
       <IonTabButton tab="donors" href="/donors">
         <IonIcon icon={chatbubbleOutline} />
         <IonLabel>Donors</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="offers" href="/offers">
+        <IonIcon icon={listOutline} />
+        <IonLabel>Offers</IonLabel>
       </IonTabButton>
     </IonTabBar>
   </IonTabs>

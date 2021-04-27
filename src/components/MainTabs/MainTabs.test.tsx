@@ -37,8 +37,8 @@ test("renders navbar at the bottom of the page", () => {
 
 [
   { tabName: "home", expectedLink: "/home" },
-  { tabName: "offers", expectedLink: "/offers" },
   { tabName: "donors", expectedLink: "/donors" },
+  { tabName: "offers", expectedLink: "/offers" },
 ].forEach(({ tabName, expectedLink }) => {
   describe(`${tabName} tab`, () => {
     it("should be rendered", () => {
