@@ -38,30 +38,31 @@ test("renders navbar at the bottom of the page", () => {
 [
   { tabName: "home", expectedLink: "/home" },
   { tabName: "offers", expectedLink: "/offers" },
+  { tabName: "donors", expectedLink: "/donors" },
 ].forEach(({ tabName, expectedLink }) => {
   describe(`${tabName} tab`, () => {
-    test("should be rendered", () => {
+    it("should be rendered", () => {
       const { container } = renderComponent();
       expect(
         container.querySelector(`ion-tab-button[tab=${tabName}]`)
       ).toBeInTheDocument();
     });
 
-    test(`should have the appropriate label`, () => {
+    it(`should have the appropriate label`, () => {
       const { container } = renderComponent();
       expect(
         container.querySelector(`ion-tab-button[tab=${tabName}] ion-label`)
       ).toHaveTextContent(new RegExp(tabName, "i"));
     });
 
-    test(`should have an icon`, () => {
+    it(`should have an icon`, () => {
       const { container } = renderComponent();
       expect(
         container.querySelector(`ion-tab-button[tab=${tabName}] ion-icon`)
       ).toBeInTheDocument();
     });
 
-    test(`should contain a link to ${expectedLink}`, () => {
+    it(`should contain a link to ${expectedLink}`, () => {
       const { container } = renderComponent();
       expect(
         container.querySelector(`ion-tab-button[tab=${tabName}]`)
@@ -83,4 +84,9 @@ test("visiting /home takes user to Home", () => {
 test("visiting /offers takes user to Offers", () => {
   const { container, history } = renderComponent("/offers");
   expectToBeOnPage(container, history.location.pathname, "offers");
+});
+
+test("visiting /donors takes user to Donors", () => {
+  const { container, history } = renderComponent("/donors");
+  expectToBeOnPage(container, history.location.pathname, "donors");
 });
