@@ -15,7 +15,10 @@ const expectToBeOnPage = (
   );
 };
 
-const expectToRenderHeaderCorrectly = (Page: React.FC, title: string) => {
+const expectToRenderHeaderWithTitleAndLogoutButton = (
+  Page: React.FC,
+  title: string
+) => {
   test("should render a header", () => {
     const { container } = render(<Page />);
     expect(container.querySelector("ion-header")).toBeInTheDocument();
@@ -68,4 +71,4 @@ const expectToRenderHeaderCorrectly = (Page: React.FC, title: string) => {
   });
 };
 
-export { expectToBeOnPage, expectToRenderHeaderCorrectly };
+export { expectToBeOnPage, expectToRenderHeaderWithTitleAndLogoutButton };
