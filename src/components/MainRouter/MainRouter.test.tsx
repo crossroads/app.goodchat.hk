@@ -10,6 +10,7 @@ import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { ConversationsListQuery } from "generated/graphql";
 import { mockServer } from "mockServer";
 import { graphql } from "msw";
+import mockGqlResponse from "test-utils/mocks/mockGqlResponse";
 
 beforeAll(() => {
   mockServer.listen({ onUnhandledRequest: "error" });
@@ -17,20 +18,7 @@ beforeAll(() => {
     graphql.query<ConversationsListQuery>(
       "ConversationsList",
       (_, res, ctx) => {
-        return res(
-          ctx.data({
-            conversations: [
-              {
-                id: 1,
-                __typename: "Conversation",
-              },
-              {
-                id: 2,
-                __typename: "Conversation",
-              },
-            ],
-          })
-        );
+        return res(ctx.data(mockGqlResponse.ConversationsList));
       }
     )
   );
