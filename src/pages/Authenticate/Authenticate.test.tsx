@@ -8,17 +8,20 @@ import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import mockResponse from "test-utils/mocks/apiResponses";
+import { expectToRenderHeaderWithTitle } from "test-utils/matchers";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container).toBeInTheDocument();
 });
 
-test("renders an authenticate title", () => {
-  const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
-  expect(container.querySelector("ion-title")).toHaveTextContent(
-    /authenticate/i
-  );
+expectToRenderHeaderWithTitle({
+  element: (
+    <MemoryRouter>
+      <Authenticate />
+    </MemoryRouter>
+  ),
+  title: "Authenticate",
 });
 
 test("renders a back button in the header", () => {

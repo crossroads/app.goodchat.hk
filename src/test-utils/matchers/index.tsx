@@ -2,6 +2,7 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import useAuth from "hooks/useAuth/useAuth";
 import { screen, render } from "@testing-library/react";
+import { React } from "@ungap/global-this";
 
 const expectToBeOnPage = (
   container: HTMLElement,
@@ -15,26 +16,23 @@ const expectToBeOnPage = (
   );
 };
 
-const expectToRenderHeaderWithTitleAndLogoutButton = ({
+const expectToRenderHeaderWithTitle = ({
   element,
   title,
 }: {
   element: React.ReactElement;
   title: string;
 }) => {
-  test("should render a header", () => {
+  test(`should render a header with ${title} title`, () => {
     const { container } = render(element);
-    expect(container.querySelector("ion-header")).toBeInTheDocument();
+    expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
+      title
+    );
   });
+};
 
+const expectToRenderLogoutButtonAtHeaderEnd = (element: React.ReactElement) => {
   describe("header", () => {
-    it(`should contain a ${title} title`, () => {
-      const { container } = render(element);
-      expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
-        title
-      );
-    });
-
     it("should contain a log out button", () => {
       const { container } = render(element);
       expect(
@@ -74,4 +72,8 @@ const expectToRenderHeaderWithTitleAndLogoutButton = ({
   });
 };
 
-export { expectToBeOnPage, expectToRenderHeaderWithTitleAndLogoutButton };
+export {
+  expectToBeOnPage,
+  expectToRenderHeaderWithTitle,
+  expectToRenderLogoutButtonAtHeaderEnd,
+};

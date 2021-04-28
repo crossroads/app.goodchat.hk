@@ -1,14 +1,19 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Offers from "pages/Offers/Offers";
-import { expectToRenderHeaderWithTitleAndLogoutButton } from "test-utils/matchers";
+import {
+  expectToRenderHeaderWithTitle,
+  expectToRenderLogoutButtonAtHeaderEnd,
+} from "test-utils/matchers";
 
 test("renders without crashing", () => {
   const { container } = render(<Offers />);
   expect(container).toBeInTheDocument();
 });
 
-expectToRenderHeaderWithTitleAndLogoutButton({
+expectToRenderHeaderWithTitle({
   element: <Offers />,
   title: "Offers",
 });
+
+expectToRenderLogoutButtonAtHeaderEnd(<Offers />);
