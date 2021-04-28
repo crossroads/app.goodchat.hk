@@ -1,0 +1,5 @@
+query ConversationsList {
+  conversations {
+    id
+  }
+}
