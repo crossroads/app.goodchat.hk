@@ -1,19 +1,19 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Offers from "pages/Offers/Offers";
-import {
-  expectToRenderHeaderWithTitle,
-  expectToRenderLogoutButtonAtHeaderEnd,
-} from "test-utils/matchers";
+import { pageHeader } from "test-utils/matchers";
 
 test("renders without crashing", () => {
   const { container } = render(<Offers />);
   expect(container).toBeInTheDocument();
 });
 
-expectToRenderHeaderWithTitle({
-  element: <Offers />,
-  title: "Offers",
-});
-
-expectToRenderLogoutButtonAtHeaderEnd(<Offers />);
+describe(
+  "Offers page header",
+  pageHeader({
+    title: "Offers",
+    privatePage: true,
+    withBackButton: false,
+    element: <Offers />,
+  })
+);

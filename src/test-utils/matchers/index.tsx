@@ -16,24 +16,36 @@ const expectToBeOnPage = (
   );
 };
 
-const expectToRenderHeaderWithTitle = ({
-  element,
-  title,
-}: {
-  element: React.ReactElement;
+interface PageHeaderProps {
   title: string;
-}) => {
-  test(`should render a header with ${title} title`, () => {
+  privatePage: boolean;
+  withBackButton: boolean;
+  element: React.ReactElement;
+}
+const pageHeader = ({
+  title,
+  privatePage,
+  withBackButton,
+  element,
+}: PageHeaderProps) => () => {
+  test(`should have a ${title} title`, () => {
     const { container } = render(element);
     expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
       title
     );
   });
-};
 
-const expectToRenderLogoutButtonAtHeaderEnd = (element: React.ReactElement) => {
-  describe("header", () => {
-    it("should contain a log out button", () => {
+  if (withBackButton) {
+    test("should contain a back button", () => {
+      const { container } = render(element);
+      expect(
+        container.querySelector("ion-header ion-back-button")
+      ).toBeInTheDocument();
+    });
+  }
+
+  if (privatePage) {
+    test("should contain a log out button", () => {
       const { container } = render(element);
       expect(
         container.querySelector("ion-header ion-button")
@@ -41,14 +53,14 @@ const expectToRenderLogoutButtonAtHeaderEnd = (element: React.ReactElement) => {
     });
 
     describe("log out button", () => {
-      it("should be rendered at the end of the header", () => {
+      test("should be rendered at the end of the header", () => {
         const { container } = render(element);
         expect(
           container.querySelector("ion-header ion-buttons")
         ).toHaveAttribute("slot", "end");
       });
 
-      it("should log user out on click", () => {
+      test("should log user out on click", () => {
         let isAuthenticated = true;
         const TestComponent = () => {
           isAuthenticated = useAuth().isAuthenticated;
@@ -69,11 +81,7 @@ const expectToRenderLogoutButtonAtHeaderEnd = (element: React.ReactElement) => {
         expect(isAuthenticated).toBe(false);
       });
     });
-  });
+  }
 };
 
-export {
-  expectToBeOnPage,
-  expectToRenderHeaderWithTitle,
-  expectToRenderLogoutButtonAtHeaderEnd,
-};
+export { expectToBeOnPage, pageHeader };
