@@ -1,16 +1,20 @@
 import {
   IonButton,
   IonButtons,
+  IonContent,
   IonHeader,
+  IonItem,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
+import { useConversationsListQuery } from "generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
 const Donors: React.FC = () => {
   const { logout } = useAuth();
+  const { data } = useConversationsListQuery();
 
   return (
     <IonPage>
@@ -22,6 +26,11 @@ const Donors: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
+      <IonContent>
+        {data?.conversations?.map((conversation, idx) => (
+          <IonItem key={idx}>{conversation?.id}</IonItem>
+        ))}
+      </IonContent>
     </IonPage>
   );
 };
