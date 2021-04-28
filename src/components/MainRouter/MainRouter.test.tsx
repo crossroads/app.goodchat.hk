@@ -5,6 +5,38 @@ import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { expectToBeOnPage } from "test-utils/matchers";
+import { ApolloProvider } from "@apollo/client";
+import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
+import { ConversationsListQuery } from "generated/graphql";
+import { mockServer } from "mockServer";
+import { graphql } from "msw";
+
+beforeAll(() => {
+  mockServer.listen({ onUnhandledRequest: "error" });
+  mockServer.use(
+    graphql.query<ConversationsListQuery>(
+      "ConversationsList",
+      (_, res, ctx) => {
+        return res(
+          ctx.data({
+            conversations: [
+              {
+                id: 1,
+                __typename: "Conversation",
+              },
+              {
+                id: 2,
+                __typename: "Conversation",
+              },
+            ],
+          })
+        );
+      }
+    )
+  );
+});
+
+afterAll(() => mockServer.close());
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string
@@ -14,9 +46,11 @@ const renderComponent = (initialAuthState: boolean) => (
     history,
     ...render(
       <AuthProvider initialAuthState={initialAuthState}>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
+        <ApolloProvider client={createGoodChatClient()}>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </ApolloProvider>
       </AuthProvider>
     ),
   };
