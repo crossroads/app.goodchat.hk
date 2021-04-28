@@ -8,6 +8,7 @@ import client from "lib/client/client";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import mockResponse from "test-utils/mocks/apiResponses";
+import { pageHeader } from "test-utils/matchers";
 
 function fillIonInput(container: HTMLElement, phoneInput: string) {
   const input = container.querySelector("ion-input");
@@ -19,10 +20,19 @@ function clickButton(container: HTMLElement) {
   userEvent.click(button as TargetElement);
 }
 
-test("renders a login title", () => {
-  const { container } = render(<Login />, { wrapper: MemoryRouter });
-  expect(container.querySelector("ion-title")).toHaveTextContent(/login/i);
-});
+describe(
+  "Login page header",
+  pageHeader({
+    title: "Login",
+    privatePage: false,
+    withBackButton: false,
+    element: (
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    ),
+  })
+);
 
 test("renders a +852 label", () => {
   const { container } = render(<Login />, { wrapper: MemoryRouter });
