@@ -7,4 +7,7 @@ test("should render without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
-expectToRenderHeaderWithTitleAndLogoutButton(Donors, "Donors");
+expectToRenderHeaderWithTitleAndLogoutButton({
+  element: <Donors />,
+  title: "Donors",
+});

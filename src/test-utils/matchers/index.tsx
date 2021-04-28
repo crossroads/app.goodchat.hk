@@ -15,25 +15,28 @@ const expectToBeOnPage = (
   );
 };
 
-const expectToRenderHeaderWithTitleAndLogoutButton = (
-  Page: React.FC,
-  title: string
-) => {
+const expectToRenderHeaderWithTitleAndLogoutButton = ({
+  element,
+  title,
+}: {
+  element: React.ReactElement;
+  title: string;
+}) => {
   test("should render a header", () => {
-    const { container } = render(<Page />);
+    const { container } = render(element);
     expect(container.querySelector("ion-header")).toBeInTheDocument();
   });
 
   describe("header", () => {
     it(`should contain a ${title} title`, () => {
-      const { container } = render(<Page />);
+      const { container } = render(element);
       expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
         title
       );
     });
 
     it("should contain a log out button", () => {
-      const { container } = render(<Page />);
+      const { container } = render(element);
       expect(
         container.querySelector("ion-header ion-button")
       ).toHaveTextContent(/log out/i);
@@ -41,7 +44,7 @@ const expectToRenderHeaderWithTitleAndLogoutButton = (
 
     describe("log out button", () => {
       it("should be rendered at the end of the header", () => {
-        const { container } = render(<Page />);
+        const { container } = render(element);
         expect(
           container.querySelector("ion-header ion-buttons")
         ).toHaveAttribute("slot", "end");
@@ -51,7 +54,7 @@ const expectToRenderHeaderWithTitleAndLogoutButton = (
         let isAuthenticated = true;
         const TestComponent = () => {
           isAuthenticated = useAuth().isAuthenticated;
-          return <Page />;
+          return element;
         };
 
         expect(isAuthenticated).toBe(true);
