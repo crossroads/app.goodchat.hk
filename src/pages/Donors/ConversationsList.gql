@@ -1,5 +1,11 @@
 query ConversationsList {
   conversations {
     id
+    customer {
+      displayName
+    }
+    messages {
+      content
+    }
   }
 }

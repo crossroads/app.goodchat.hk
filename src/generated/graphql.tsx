@@ -326,6 +326,13 @@ export type ConversationsListQuery = (
   & { conversations?: Maybe<Array<Maybe<(
     { __typename?: 'Conversation' }
     & Pick<Conversation, 'id'>
+    & { customer?: Maybe<(
+      { __typename?: 'Customer' }
+      & Pick<Customer, 'displayName'>
+    )>, messages?: Maybe<Array<Maybe<(
+      { __typename?: 'Message' }
+      & Pick<Message, 'content'>
+    )>>> }
   )>>> }
 );
 
@@ -334,6 +341,12 @@ export const ConversationsListDocument = gql`
     query ConversationsList {
   conversations {
     id
+    customer {
+      displayName
+    }
+    messages {
+      content
+    }
   }
 }
     `;
