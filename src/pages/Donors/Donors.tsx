@@ -4,6 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonItem,
+  IonList,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -27,11 +28,15 @@ const Donors: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {(data?.conversations ?? []).map((conversation) => (
-          <IonItem key={conversation?.id}>
-            {conversation?.customer?.displayName}
-          </IonItem>
-        ))}
+        {data && (
+          <IonList>
+            {(data.conversations ?? []).map((conversation) => (
+              <IonItem key={conversation?.id}>
+                {conversation?.customer?.displayName}
+              </IonItem>
+            ))}
+          </IonList>
+        )}
       </IonContent>
     </IonPage>
   );
