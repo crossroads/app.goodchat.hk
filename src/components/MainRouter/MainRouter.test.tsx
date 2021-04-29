@@ -16,9 +16,9 @@ beforeAll(() => {
   mockServer.listen({ onUnhandledRequest: "error" });
   mockServer.use(
     graphql.query<CustomerConversationsListQuery>(
-      "ConversationsList",
+      "CustomerConversationsList",
       (_, res, ctx) => {
-        return res(ctx.data(mockGqlResponse.ConversationsList));
+        return res(ctx.data(mockGqlResponse.CustomerConversationsList));
       }
     )
   );
