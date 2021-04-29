@@ -160,17 +160,17 @@ export type Scalars = {
 
 export type Conversation = {
   __typename?: 'Conversation';
-  id?: Maybe<Scalars['Int']>;
+  id: Scalars['Int'];
   customerId?: Maybe<Scalars['Int']>;
   customer?: Maybe<Customer>;
-  source?: Maybe<Scalars['String']>;
-  readByCustomer?: Maybe<Scalars['Boolean']>;
-  type?: Maybe<Scalars['String']>;
-  metadata?: Maybe<Scalars['JSON']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  messages?: Maybe<Array<Maybe<Message>>>;
-  staffs?: Maybe<Array<Maybe<Staff>>>;
+  source: Scalars['String'];
+  readByCustomer: Scalars['Boolean'];
+  type: Scalars['String'];
+  metadata: Scalars['JSON'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  messages: Array<Message>;
+  staffs: Array<Staff>;
 };
 
 
@@ -182,14 +182,14 @@ export type ConversationMessagesArgs = {
 
 export type Customer = {
   __typename?: 'Customer';
-  id?: Maybe<Scalars['Int']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  displayName: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   avatarUrl?: Maybe<Scalars['String']>;
   locale: Scalars['String'];
-  metadata?: Maybe<Scalars['JSON']>;
-  conversations?: Maybe<Array<Maybe<Conversation>>>;
+  metadata: Scalars['JSON'];
+  conversations: Array<Conversation>;
 };
 
 
@@ -218,15 +218,15 @@ export type Customer = {
 
 export type Message = {
   __typename?: 'Message';
-  id?: Maybe<Scalars['Int']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  conversationId?: Maybe<Scalars['Int']>;
-  conversation?: Maybe<Conversation>;
-  authorType?: Maybe<Scalars['String']>;
-  authorId?: Maybe<Scalars['Int']>;
-  content?: Maybe<Scalars['JSON']>;
-  metadata?: Maybe<Scalars['JSON']>;
+  id: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  conversationId: Scalars['Int'];
+  conversation: Conversation;
+  authorType: Scalars['String'];
+  authorId: Scalars['Int'];
+  content: Scalars['JSON'];
+  metadata: Scalars['JSON'];
 };
 
 export type MessageEvent = {
@@ -261,7 +261,7 @@ export type MutationSendMessageArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  conversations?: Maybe<Array<Maybe<Conversation>>>;
+  conversations: Array<Conversation>;
   conversation?: Maybe<Conversation>;
 };
 
@@ -282,19 +282,19 @@ export type QueryConversationArgs = {
 
 export type Staff = {
   __typename?: 'Staff';
-  id?: Maybe<Scalars['Int']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   externalId?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  metadata?: Maybe<Scalars['JSON']>;
-  permissions?: Maybe<Array<Maybe<Scalars['String']>>>;
-  conversations?: Maybe<Array<Maybe<Conversation>>>;
+  displayName: Scalars['String'];
+  metadata: Scalars['JSON'];
+  permissions: Array<Scalars['String']>;
+  conversations: Array<Conversation>;
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
-  messageEvent?: Maybe<MessageEvent>;
+  messageEvent: MessageEvent;
 };
 
 
@@ -318,28 +318,28 @@ export enum SubscriptionAction {
 
 
 
-export type ConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
+export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ConversationsListQuery = (
+export type CustomerConversationsListQuery = (
   { __typename?: 'Query' }
-  & { conversations?: Maybe<Array<Maybe<(
+  & { conversations: Array<(
     { __typename?: 'Conversation' }
     & Pick<Conversation, 'id'>
     & { customer?: Maybe<(
       { __typename?: 'Customer' }
       & Pick<Customer, 'displayName'>
-    )>, messages?: Maybe<Array<Maybe<(
+    )>, messages: Array<(
       { __typename?: 'Message' }
       & Pick<Message, 'content'>
-    )>>> }
-  )>>> }
+    )> }
+  )> }
 );
 
 
-export const ConversationsListDocument = gql`
-    query ConversationsList {
-  conversations {
+export const CustomerConversationsListDocument = gql`
+    query CustomerConversationsList {
+  conversations(type: "CUSTOMER") {
     id
     customer {
       displayName
@@ -352,28 +352,28 @@ export const ConversationsListDocument = gql`
     `;
 
 /**
- * __useConversationsListQuery__
+ * __useCustomerConversationsListQuery__
  *
- * To run a query within a React component, call `useConversationsListQuery` and pass it any options that fit your needs.
- * When your component renders, `useConversationsListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useCustomerConversationsListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCustomerConversationsListQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useConversationsListQuery({
+ * const { data, loading, error } = useCustomerConversationsListQuery({
  *   variables: {
  *   },
  * });
  */
-export function useConversationsListQuery(baseOptions?: Apollo.QueryHookOptions<ConversationsListQuery, ConversationsListQueryVariables>) {
+export function useCustomerConversationsListQuery(baseOptions?: Apollo.QueryHookOptions<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ConversationsListQuery, ConversationsListQueryVariables>(ConversationsListDocument, options);
+        return Apollo.useQuery<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>(CustomerConversationsListDocument, options);
       }
-export function useConversationsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConversationsListQuery, ConversationsListQueryVariables>) {
+export function useCustomerConversationsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ConversationsListQuery, ConversationsListQueryVariables>(ConversationsListDocument, options);
+          return Apollo.useLazyQuery<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>(CustomerConversationsListDocument, options);
         }
-export type ConversationsListQueryHookResult = ReturnType<typeof useConversationsListQuery>;
-export type ConversationsListLazyQueryHookResult = ReturnType<typeof useConversationsListLazyQuery>;
-export type ConversationsListQueryResult = Apollo.QueryResult<ConversationsListQuery, ConversationsListQueryVariables>;
+export type CustomerConversationsListQueryHookResult = ReturnType<typeof useCustomerConversationsListQuery>;
+export type CustomerConversationsListLazyQueryHookResult = ReturnType<typeof useCustomerConversationsListLazyQuery>;
+export type CustomerConversationsListQueryResult = Apollo.QueryResult<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>;
