@@ -1,6 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
-import { render, screen, wait } from "@testing-library/react";
-import { ConversationsListQuery } from "generated/graphql";
+import { render, wait } from "@testing-library/react";
+import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
 import { graphql } from "msw";
@@ -11,7 +11,7 @@ import mockGqlResponse from "test-utils/mocks/mockGqlResponse";
 beforeAll(() => {
   mockServer.listen({ onUnhandledRequest: "error" });
   mockServer.use(
-    graphql.query<ConversationsListQuery>(
+    graphql.query<CustomerConversationsListQuery>(
       "ConversationsList",
       (_, res, ctx) => {
         return res(ctx.data(mockGqlResponse.ConversationsList));

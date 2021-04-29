@@ -9,13 +9,13 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useConversationsListQuery } from "generated/graphql";
+import { useCustomerConversationsListQuery } from "generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
 const Donors: React.FC = () => {
   const { logout } = useAuth();
-  const { data } = useConversationsListQuery();
+  const { data } = useCustomerConversationsListQuery();
 
   return (
     <IonPage>
