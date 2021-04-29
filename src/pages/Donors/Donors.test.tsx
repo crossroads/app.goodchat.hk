@@ -46,12 +46,14 @@ describe(
 );
 
 test("should show a list of conversations", async () => {
-  render(
+  const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
       <Donors />
     </ApolloProvider>
   );
 
-  await wait(() => expect(screen.getByText("1")).toBeInTheDocument());
-  expect(screen.getByText("2")).toBeInTheDocument();
+  await wait(() =>
+    expect(container.querySelector("ion-item")).toBeInTheDocument()
+  );
+  expect(container.querySelectorAll("ion-item")).toHaveLength(2);
 });
