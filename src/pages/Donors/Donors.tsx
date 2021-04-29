@@ -27,8 +27,10 @@ const Donors: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {data?.conversations?.map((conversation, idx) => (
-          <IonItem key={idx}>{conversation?.id}</IonItem>
+        {(data?.conversations ?? []).map((conversation) => (
+          <IonItem key={conversation?.id}>
+            {conversation?.customer?.displayName}
+          </IonItem>
         ))}
       </IonContent>
     </IonPage>

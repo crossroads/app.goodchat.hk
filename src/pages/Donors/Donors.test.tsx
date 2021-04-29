@@ -57,3 +57,20 @@ test("should show a list of conversations", async () => {
   );
   expect(container.querySelectorAll("ion-item")).toHaveLength(2);
 });
+
+describe("conversation", () => {
+  it("should display customer displayName", async () => {
+    const { container } = render(
+      <ApolloProvider client={createGoodChatClient()}>
+        <Donors />
+      </ApolloProvider>
+    );
+
+    await wait(() =>
+      expect(container.querySelector("ion-item")).toHaveTextContent(/jane doe/i)
+    );
+    expect(container.querySelectorAll("ion-item")[1]).toHaveTextContent(
+      /chan tai man/i
+    );
+  });
+});
