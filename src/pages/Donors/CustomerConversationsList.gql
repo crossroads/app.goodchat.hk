@@ -1,5 +1,5 @@
 query CustomerConversationsList {
-  conversations(type: "CUSTOMER") {
+  conversations(type: CUSTOMER) {
     id
     customer {
       displayName

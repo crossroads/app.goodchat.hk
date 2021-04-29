@@ -165,7 +165,7 @@ export type Conversation = {
   customer?: Maybe<Customer>;
   source: Scalars['String'];
   readByCustomer: Scalars['Boolean'];
-  type: Scalars['String'];
+  type: ConversationType;
   metadata: Scalars['JSON'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -178,6 +178,12 @@ export type ConversationMessagesArgs = {
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
 };
+
+export enum ConversationType {
+  Customer = 'CUSTOMER',
+  Private = 'PRIVATE',
+  Public = 'PUBLIC'
+}
 
 
 export type Customer = {
@@ -269,7 +275,7 @@ export type Query = {
 export type QueryConversationsArgs = {
   limit?: Maybe<Scalars['Int']>;
   offset?: Maybe<Scalars['Int']>;
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<ConversationType>;
 };
 
 
@@ -339,7 +345,7 @@ export type CustomerConversationsListQuery = (
 
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList {
-  conversations(type: "CUSTOMER") {
+  conversations(type: CUSTOMER) {
     id
     customer {
       displayName
