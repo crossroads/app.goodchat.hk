@@ -68,7 +68,10 @@ const Donors: React.FC = () => {
         {data && (
           <IonList>
             {data.conversations.map((conversation) => (
-              <ConversationItem conversation={conversation} />
+              <ConversationItem
+                key={conversation.id}
+                conversation={conversation}
+              />
             ))}
           </IonList>
         )}
