@@ -11,6 +11,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import {
+  CustomerConversationsListQuery,
   Maybe,
   Message,
   useCustomerConversationsListQuery,
@@ -38,18 +39,19 @@ const LatestMessagePreview: React.FC<LatestMessagePreviewProps> = ({
 };
 
 interface ConversationItemProps {
-  displayName: string;
-  messages: Array<Maybe<{ __typename?: "Message" } & Pick<Message, "content">>>;
+  conversation: Pick<
+    CustomerConversationsListQuery["conversations"][0],
+    "customer" | "messages"
+  >;
 }
 const ConversationItem: React.FC<ConversationItemProps> = ({
-  displayName,
-  messages,
+  conversation,
 }) => {
   return (
     <IonItem>
       <IonLabel>
-        <h2>{displayName}</h2>
-        <LatestMessagePreview messages={messages} />
+        <h2>{conversation.customer!.displayName}</h2>
+        <LatestMessagePreview messages={conversation.messages} />
       </IonLabel>
     </IonItem>
   );
@@ -73,11 +75,7 @@ const Donors: React.FC = () => {
         {data && (
           <IonList>
             {data.conversations.map((conversation) => (
-              <ConversationItem
-                key={conversation.id}
-                displayName={conversation.customer!.displayName}
-                messages={conversation.messages}
-              />
+              <ConversationItem conversation={conversation} />
             ))}
           </IonList>
         )}
