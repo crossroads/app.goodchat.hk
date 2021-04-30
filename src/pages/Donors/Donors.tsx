@@ -7,6 +7,7 @@ import {
   IonLabel,
   IonList,
   IonPage,
+  IonSkeletonText,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -55,9 +56,38 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   );
 };
 
+const SkeletonBody: React.FC = () => (
+  <>
+    <IonList>
+      <IonItem>
+        <IonLabel>
+          <h2>
+            <IonSkeletonText animated={true} style={{ width: "40%" }} />
+          </h2>
+          <p>
+            <IonSkeletonText animated={true} style={{ width: "60%" }} />
+          </p>
+        </IonLabel>
+      </IonItem>
+    </IonList>
+    <IonList>
+      <IonItem>
+        <IonLabel>
+          <h2>
+            <IonSkeletonText animated={true} style={{ width: "40%" }} />
+          </h2>
+          <p>
+            <IonSkeletonText animated={true} style={{ width: "60%" }} />
+          </p>
+        </IonLabel>
+      </IonItem>
+    </IonList>
+  </>
+);
+
 const Donors: React.FC = () => {
   const { logout } = useAuth();
-  const { data } = useCustomerConversationsListQuery();
+  const { data, loading } = useCustomerConversationsListQuery();
 
   return (
     <IonPage>
@@ -70,7 +100,9 @@ const Donors: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {data && (
+        {loading ? (
+          <SkeletonBody />
+        ) : data ? (
           <IonList>
             {data.conversations.map((conversation) => (
               <ConversationItem
@@ -80,7 +112,7 @@ const Donors: React.FC = () => {
               />
             ))}
           </IonList>
-        )}
+        ) : null}
       </IonContent>
     </IonPage>
   );
