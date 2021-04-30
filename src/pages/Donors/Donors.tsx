@@ -4,14 +4,56 @@ import {
   IonContent,
   IonHeader,
   IonItem,
+  IonLabel,
   IonList,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { useCustomerConversationsListQuery } from "generated/graphql";
+import {
+  Maybe,
+  Message,
+  useCustomerConversationsListQuery,
+} from "generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
+
+interface LatestMessagePreviewProps {
+  messages: Array<Maybe<{ __typename?: "Message" } & Pick<Message, "content">>>;
+}
+const LatestMessagePreview: React.FC<LatestMessagePreviewProps> = ({
+  messages,
+}) => {
+  const latestMessage = messages[0];
+
+  if (latestMessage) {
+    const contentType = latestMessage.content.type;
+    if (contentType === "text") {
+      return <p>{latestMessage.content.text}</p>;
+    }
+
+    return <p>{`Sent ${contentType}`}</p>;
+  }
+  return null;
+};
+
+interface ConversationItemProps {
+  displayName: string;
+  messages: Array<Maybe<{ __typename?: "Message" } & Pick<Message, "content">>>;
+}
+const ConversationItem: React.FC<ConversationItemProps> = ({
+  displayName,
+  messages,
+}) => {
+  return (
+    <IonItem>
+      <IonLabel>
+        <h2>{displayName}</h2>
+        <LatestMessagePreview messages={messages} />
+      </IonLabel>
+    </IonItem>
+  );
+};
 
 const Donors: React.FC = () => {
   const { logout } = useAuth();
@@ -30,10 +72,12 @@ const Donors: React.FC = () => {
       <IonContent>
         {data && (
           <IonList>
-            {(data.conversations ?? []).map((conversation) => (
-              <IonItem key={conversation?.id}>
-                {conversation?.customer?.displayName}
-              </IonItem>
+            {data.conversations.map((conversation) => (
+              <ConversationItem
+                key={conversation.id}
+                displayName={conversation.customer!.displayName}
+                messages={conversation.messages}
+              />
             ))}
           </IonList>
         )}

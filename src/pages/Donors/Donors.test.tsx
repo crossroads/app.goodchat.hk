@@ -67,10 +67,40 @@ describe("conversation", () => {
     );
 
     await wait(() =>
-      expect(container.querySelector("ion-item")).toHaveTextContent(/jane doe/i)
+      expect(container.querySelector("ion-label")).toHaveTextContent(
+        /jane doe/i
+      )
     );
-    expect(container.querySelectorAll("ion-item")[1]).toHaveTextContent(
+    expect(container.querySelectorAll("ion-label")[1]).toHaveTextContent(
       /chan tai man/i
     );
+  });
+
+  describe("last message display", () => {
+    it("should display the last message if it is text", async () => {
+      const { container } = render(
+        <ApolloProvider client={createGoodChatClient()}>
+          <Donors />
+        </ApolloProvider>
+      );
+
+      await wait(() =>
+        expect(container.querySelector("p")).toHaveTextContent("world")
+      );
+    });
+
+    it('should display "Sent image" for image type', async () => {
+      const { container } = render(
+        <ApolloProvider client={createGoodChatClient()}>
+          <Donors />
+        </ApolloProvider>
+      );
+
+      await wait(() =>
+        expect(container.querySelectorAll("p")[1]).toHaveTextContent(
+          "Sent image"
+        )
+      );
+    });
   });
 });
