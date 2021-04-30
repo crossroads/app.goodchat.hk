@@ -12,25 +12,21 @@ import {
 } from "@ionic/react";
 import {
   CustomerConversationsListQuery,
-  Maybe,
-  Message,
   useCustomerConversationsListQuery,
 } from "generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
-interface LatestMessagePreviewProps {
-  messages: Array<Maybe<{ __typename?: "Message" } & Pick<Message, "content">>>;
-}
-const LatestMessagePreview: React.FC<LatestMessagePreviewProps> = ({
-  messages,
-}) => {
-  const latestMessage = messages[0];
+type ConversationItemType = CustomerConversationsListQuery["conversations"][0];
 
-  if (latestMessage) {
-    const contentType = latestMessage.content.type;
+interface MessagePreview {
+  message: ConversationItemType["messages"][0] | undefined;
+}
+const MessagePreview: React.FC<MessagePreview> = ({ message }) => {
+  if (message) {
+    const contentType = message.content.type;
     if (contentType === "text") {
-      return <p>{latestMessage.content.text}</p>;
+      return <p>{message.content.text}</p>;
     }
 
     return <p>{`Sent ${contentType}`}</p>;
@@ -39,10 +35,7 @@ const LatestMessagePreview: React.FC<LatestMessagePreviewProps> = ({
 };
 
 interface ConversationItemProps {
-  conversation: Pick<
-    CustomerConversationsListQuery["conversations"][0],
-    "customer" | "messages"
-  >;
+  conversation: ConversationItemType;
 }
 const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
@@ -51,7 +44,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     <IonItem>
       <IonLabel>
         <h2>{conversation.customer!.displayName}</h2>
-        <LatestMessagePreview messages={conversation.messages} />
+        <MessagePreview message={conversation.messages[0]} />
       </IonLabel>
     </IonItem>
   );
