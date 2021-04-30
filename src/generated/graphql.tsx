@@ -350,7 +350,7 @@ export const CustomerConversationsListDocument = gql`
     customer {
       displayName
     }
-    messages {
+    messages(limit: 1) {
       content
     }
   }
