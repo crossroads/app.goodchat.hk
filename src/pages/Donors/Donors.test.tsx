@@ -67,16 +67,14 @@ describe("conversation", () => {
     );
 
     await wait(() =>
-      expect(container.querySelector("ion-label")).toHaveTextContent(
-        /jane doe/i
-      )
+      expect(container.querySelector("ion-label")).toHaveTextContent("Jane Doe")
     );
     expect(container.querySelectorAll("ion-label")[1]).toHaveTextContent(
-      /chan tai man/i
+      "Chan Tai Man"
     );
   });
 
-  describe("last message display", () => {
+  describe("last message preview", () => {
     it("should display the last message if it is text", async () => {
       const { container } = render(
         <ApolloProvider client={createGoodChatClient()}>
