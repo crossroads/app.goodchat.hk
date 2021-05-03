@@ -9,19 +9,34 @@ import { ApolloProvider } from "@apollo/client";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { CustomerConversationsListQuery } from "generated/graphql";
 import { mockServer } from "mockServer";
-import { graphql } from "msw";
-import mockGqlResponse from "test-utils/mocks/mockGqlResponse";
+import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
 
 beforeAll(() => {
   mockServer.listen({ onUnhandledRequest: "error" });
-  mockServer.use(
-    graphql.query<CustomerConversationsListQuery>(
-      "CustomerConversationsList",
-      (_, res, ctx) => {
-        return res(ctx.data(mockGqlResponse.CustomerConversationsList));
-      }
-    )
-  );
+
+  mockGraphQLQueryResponse<
+    Pick<CustomerConversationsListQuery, "conversations">
+  >(mockServer, "CustomerConversationsList", {
+    conversations: [
+      {
+        id: 1,
+        customer: {
+          displayName: "Jane Doe",
+          __typename: "Customer",
+        },
+        messages: [
+          {
+            content: {
+              text: "world",
+              type: "text",
+            },
+            __typename: "Message",
+          },
+        ],
+        __typename: "Conversation",
+      },
+    ],
+  });
 });
 
 afterAll(() => mockServer.close());
