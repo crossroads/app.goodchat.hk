@@ -3,26 +3,47 @@ import { render, wait } from "@testing-library/react";
 import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
-import { graphql } from "msw";
 import Donors from "pages/Donors/Donors";
 import { pageHeader } from "test-utils/matchers";
-import mockGqlResponse from "test-utils/mocks/mockGqlResponse";
+import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
 
-beforeAll(() => {
-  mockServer.listen({ onUnhandledRequest: "error" });
-  mockServer.use(
-    graphql.query<CustomerConversationsListQuery>(
-      "CustomerConversationsList",
-      (_, res, ctx) => {
-        return res(ctx.data(mockGqlResponse.CustomerConversationsList));
-      }
-    )
-  );
-});
+const mockConversations = (
+  conversationsList: CustomerConversationsListQuery["conversations"]
+) => {
+  mockGraphQLQueryResponse<
+    Pick<CustomerConversationsListQuery, "conversations">
+  >(mockServer, "CustomerConversationsList", {
+    conversations: conversationsList,
+  });
+};
+
+beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+
+afterEach(() => mockServer.resetHandlers());
 
 afterAll(() => mockServer.close());
 
 test("should render without crashing", () => {
+  mockConversations([
+    {
+      id: 1,
+      customer: {
+        displayName: "Jane Doe",
+        __typename: "Customer",
+      },
+      messages: [
+        {
+          content: {
+            text: "world",
+            type: "text",
+          },
+          __typename: "Message",
+        },
+      ],
+      __typename: "Conversation",
+    },
+  ]);
+
   const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
       <Donors />
@@ -31,8 +52,29 @@ test("should render without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
-describe(
-  "Donors page header",
+describe("Donors page header", () => {
+  beforeEach(() =>
+    mockConversations([
+      {
+        id: 1,
+        customer: {
+          displayName: "Jane Doe",
+          __typename: "Customer",
+        },
+        messages: [
+          {
+            content: {
+              text: "world",
+              type: "text",
+            },
+            __typename: "Message",
+          },
+        ],
+        __typename: "Conversation",
+      },
+    ])
+  );
+
   pageHeader({
     title: "Donors",
     privatePage: true,
@@ -42,10 +84,47 @@ describe(
         <Donors />
       </ApolloProvider>
     ),
-  })
-);
+  })();
+});
 
 test("should show a list of conversations", async () => {
+  mockConversations([
+    {
+      id: 1,
+      customer: {
+        displayName: "Jane Doe",
+        __typename: "Customer",
+      },
+      messages: [
+        {
+          content: {
+            text: "world",
+            type: "text",
+          },
+          __typename: "Message",
+        },
+      ],
+      __typename: "Conversation",
+    },
+    {
+      id: 2,
+      customer: {
+        displayName: "Chan Tai Man",
+        __typename: "Customer",
+      },
+      messages: [
+        {
+          content: {
+            text: "Can I donate this?",
+            type: "text",
+          },
+          __typename: "Message",
+        },
+      ],
+      __typename: "Conversation",
+    },
+  ]);
+
   const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
       <Donors />
@@ -60,6 +139,26 @@ test("should show a list of conversations", async () => {
 
 describe("conversation", () => {
   it("should display customer displayName", async () => {
+    mockConversations([
+      {
+        id: 1,
+        customer: {
+          displayName: "Jane Doe",
+          __typename: "Customer",
+        },
+        messages: [
+          {
+            content: {
+              text: "world",
+              type: "text",
+            },
+            __typename: "Message",
+          },
+        ],
+        __typename: "Conversation",
+      },
+    ]);
+
     const { container } = render(
       <ApolloProvider client={createGoodChatClient()}>
         <Donors />
@@ -69,36 +168,76 @@ describe("conversation", () => {
     await wait(() =>
       expect(container.querySelector("ion-label")).toHaveTextContent("Jane Doe")
     );
-    expect(container.querySelectorAll("ion-label")[1]).toHaveTextContent(
-      "Chan Tai Man"
-    );
   });
 
   describe("last message preview", () => {
-    it("should display the last message if it is text", async () => {
-      const { container } = render(
-        <ApolloProvider client={createGoodChatClient()}>
-          <Donors />
-        </ApolloProvider>
-      );
+    describe("last message is text", () => {
+      it("should display the text content", async () => {
+        mockConversations([
+          {
+            id: 1,
+            customer: {
+              displayName: "Jane Doe",
+              __typename: "Customer",
+            },
+            messages: [
+              {
+                content: {
+                  text: "world",
+                  type: "text",
+                },
+                __typename: "Message",
+              },
+            ],
+            __typename: "Conversation",
+          },
+        ]);
 
-      await wait(() =>
-        expect(container.querySelector("p")).toHaveTextContent("world")
-      );
+        const { container } = render(
+          <ApolloProvider client={createGoodChatClient()}>
+            <Donors />
+          </ApolloProvider>
+        );
+
+        await wait(() =>
+          expect(container.querySelector("p")).toHaveTextContent("world")
+        );
+      });
     });
 
-    it('should display "Sent image" for image type', async () => {
-      const { container } = render(
-        <ApolloProvider client={createGoodChatClient()}>
-          <Donors />
-        </ApolloProvider>
-      );
+    describe("last message is an image", () => {
+      it('should display "Sent image"', async () => {
+        mockConversations([
+          {
+            id: 1,
+            customer: {
+              displayName: "Jane Doe",
+              __typename: "Customer",
+            },
+            messages: [
+              {
+                content: {
+                  type: "image",
+                  altText: "fNp8q3k.jpg",
+                  mediaUrl: "http://i.imgur.com/fNp8q3k.jpg",
+                  mediaType: "image/jpeg",
+                },
+              },
+            ],
+            __typename: "Conversation",
+          },
+        ]);
 
-      await wait(() =>
-        expect(container.querySelectorAll("p")[1]).toHaveTextContent(
-          "Sent image"
-        )
-      );
+        const { container } = render(
+          <ApolloProvider client={createGoodChatClient()}>
+            <Donors />
+          </ApolloProvider>
+        );
+
+        await wait(() =>
+          expect(container.querySelector("p")).toHaveTextContent("Sent image")
+        );
+      });
     });
   });
 });
