@@ -28,6 +28,8 @@ This will start the react app as well as run graphQL code generator in the backg
 
 Refer to the best practices written here https://the-guild.dev/blog/graphql-codegen-best-practices
 
+**Note:** Before running the code generator make sure to set the environment variable for it. It should be the same token that you use with GoodCity API.
+
 Write all your queries in `.graphql` or `.gql` files. Then wait for graphql code generator (which should be running in the background and watching for changes) to generate types and documents for you.
 For example if you have a `myOffers.graphql` file like so
 
@@ -96,8 +98,6 @@ You can use Mock Service Worker to define mock responses. According to the [MSW 
 > Follow the response shape of your GraphQL client to ensure you produce a compatible mocked response.
 
 A quick way to get this is by inspecting the graphql request on the Network tab in your browser developer tools and looking at the response.
-
-Note that GraphQL playground responses do not have the `__typename` property!
 
 ### Code formatting
 
