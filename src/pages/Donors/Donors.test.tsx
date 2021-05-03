@@ -98,26 +98,17 @@ test("should show a list of conversations", async () => {
   );
 
   await wait(() =>
-    expect(container.querySelector("ion-item")).toBeInTheDocument()
+    expect(container.querySelector("ion-item ion-label")).toHaveTextContent(
+      "Jane Doe"
+    )
   );
-  expect(container.querySelectorAll("ion-item")).toHaveLength(2);
+
+  expect(container.querySelectorAll("ion-item ion-label")[1]).toHaveTextContent(
+    "Chan Tai Man"
+  );
 });
 
 describe("conversation", () => {
-  it("should display customer displayName", async () => {
-    mockConversations(defaultConversations);
-
-    const { container } = render(
-      <ApolloProvider client={createGoodChatClient()}>
-        <Donors />
-      </ApolloProvider>
-    );
-
-    await wait(() =>
-      expect(container.querySelector("ion-label")).toHaveTextContent("Jane Doe")
-    );
-  });
-
   describe("last message preview", () => {
     describe("last message is text", () => {
       it("should display the text content", async () => {
@@ -130,7 +121,9 @@ describe("conversation", () => {
         );
 
         await wait(() =>
-          expect(container.querySelector("p")).toHaveTextContent("world")
+          expect(
+            container.querySelector("ion-item ion-label")
+          ).toHaveTextContent("world")
         );
       });
     });
@@ -165,7 +158,9 @@ describe("conversation", () => {
         );
 
         await wait(() =>
-          expect(container.querySelector("p")).toHaveTextContent("Sent image")
+          expect(
+            container.querySelector("ion-item ion-label")
+          ).toHaveTextContent("Sent image")
         );
       });
     });
