@@ -17,6 +17,26 @@ const mockConversations = (
   });
 };
 
+const defaultConversations: CustomerConversationsListQuery["conversations"] = [
+  {
+    id: 1,
+    customer: {
+      displayName: "Jane Doe",
+      __typename: "Customer",
+    },
+    messages: [
+      {
+        content: {
+          text: "world",
+          type: "text",
+        },
+        __typename: "Message",
+      },
+    ],
+    __typename: "Conversation",
+  },
+];
+
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 
 afterEach(() => mockServer.resetHandlers());
@@ -24,25 +44,7 @@ afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
 
 test("should render without crashing", () => {
-  mockConversations([
-    {
-      id: 1,
-      customer: {
-        displayName: "Jane Doe",
-        __typename: "Customer",
-      },
-      messages: [
-        {
-          content: {
-            text: "world",
-            type: "text",
-          },
-          __typename: "Message",
-        },
-      ],
-      __typename: "Conversation",
-    },
-  ]);
+  mockConversations(defaultConversations);
 
   const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
@@ -53,27 +55,7 @@ test("should render without crashing", () => {
 });
 
 describe("Donors page header", () => {
-  beforeEach(() =>
-    mockConversations([
-      {
-        id: 1,
-        customer: {
-          displayName: "Jane Doe",
-          __typename: "Customer",
-        },
-        messages: [
-          {
-            content: {
-              text: "world",
-              type: "text",
-            },
-            __typename: "Message",
-          },
-        ],
-        __typename: "Conversation",
-      },
-    ])
-  );
+  beforeEach(() => mockConversations(defaultConversations));
 
   pageHeader({
     title: "Donors",
@@ -89,23 +71,7 @@ describe("Donors page header", () => {
 
 test("should show a list of conversations", async () => {
   mockConversations([
-    {
-      id: 1,
-      customer: {
-        displayName: "Jane Doe",
-        __typename: "Customer",
-      },
-      messages: [
-        {
-          content: {
-            text: "world",
-            type: "text",
-          },
-          __typename: "Message",
-        },
-      ],
-      __typename: "Conversation",
-    },
+    ...defaultConversations,
     {
       id: 2,
       customer: {
@@ -139,25 +105,7 @@ test("should show a list of conversations", async () => {
 
 describe("conversation", () => {
   it("should display customer displayName", async () => {
-    mockConversations([
-      {
-        id: 1,
-        customer: {
-          displayName: "Jane Doe",
-          __typename: "Customer",
-        },
-        messages: [
-          {
-            content: {
-              text: "world",
-              type: "text",
-            },
-            __typename: "Message",
-          },
-        ],
-        __typename: "Conversation",
-      },
-    ]);
+    mockConversations(defaultConversations);
 
     const { container } = render(
       <ApolloProvider client={createGoodChatClient()}>
@@ -173,25 +121,7 @@ describe("conversation", () => {
   describe("last message preview", () => {
     describe("last message is text", () => {
       it("should display the text content", async () => {
-        mockConversations([
-          {
-            id: 1,
-            customer: {
-              displayName: "Jane Doe",
-              __typename: "Customer",
-            },
-            messages: [
-              {
-                content: {
-                  text: "world",
-                  type: "text",
-                },
-                __typename: "Message",
-              },
-            ],
-            __typename: "Conversation",
-          },
-        ]);
+        mockConversations(defaultConversations);
 
         const { container } = render(
           <ApolloProvider client={createGoodChatClient()}>
