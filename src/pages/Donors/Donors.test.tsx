@@ -1,8 +1,9 @@
 import { ApolloProvider } from "@apollo/client";
-import { render, wait } from "@testing-library/react";
+import { render, screen, wait } from "@testing-library/react";
 import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
+import { graphql } from "msw";
 import Donors from "pages/Donors/Donors";
 import { pageHeader } from "test-utils/matchers";
 import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
@@ -163,5 +164,31 @@ describe("conversation", () => {
         );
       });
     });
+  });
+});
+
+describe("Network error", () => {
+  it("should show error message about network error", async () => {
+    mockServer.use(
+      graphql.query("CustomerConversationsList", (_, res) => {
+        return res.networkError("Failed to connect");
+      })
+    );
+
+    render(
+      <ApolloProvider client={createGoodChatClient()}>
+        <Donors />
+      </ApolloProvider>
+    );
+
+    await wait(() =>
+      expect(screen.getByRole("alert")).toMatchInlineSnapshot(`
+        <div
+          role="alert"
+        >
+          Failed to fetch
+        </div>
+      `)
+    );
   });
 });

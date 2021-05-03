@@ -54,7 +54,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
 const Donors: React.FC = () => {
   const { logout } = useAuth();
-  const { data } = useCustomerConversationsListQuery();
+  const { data, error } = useCustomerConversationsListQuery();
 
   return (
     <IonPage>
@@ -82,6 +82,14 @@ const Donors: React.FC = () => {
             ))}
           </IonList>
         )}
+
+        {error && error.networkError && (
+          <div role="alert" style={{ color: "var(--ion-color-danger)" }}>
+            Failed to fetch
+          </div>
+        )}
+
+        {error?.networkError}
       </IonContent>
     </IonPage>
   );
