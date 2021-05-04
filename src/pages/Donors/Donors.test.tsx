@@ -99,11 +99,11 @@ test("should show a list of conversations", async () => {
 
   await wait(() =>
     expect(
-      container.getElementsByClassName("conversation-item")[0]
+      container.querySelector(".conversation-item:first-child")
     ).toHaveTextContent("Jane Doe")
   );
   expect(
-    container.getElementsByClassName("conversation-item")[1]
+    container.querySelector(".conversation-item:nth-child(2)")
   ).toHaveTextContent("Chan Tai Man");
 });
 
@@ -121,7 +121,7 @@ describe("conversation", () => {
 
         await wait(() =>
           expect(
-            container.getElementsByClassName("conversation-item")[0]
+            container.querySelector(".conversation-item:first-child")
           ).toHaveTextContent("world")
         );
       });
@@ -158,7 +158,7 @@ describe("conversation", () => {
 
         await wait(() =>
           expect(
-            container.getElementsByClassName("conversation-item")[0]
+            container.querySelector(".conversation-item:first-child")
           ).toHaveTextContent("Sent image")
         );
       });
