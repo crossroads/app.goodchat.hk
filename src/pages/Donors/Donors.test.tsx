@@ -98,14 +98,13 @@ test("should show a list of conversations", async () => {
   );
 
   await wait(() =>
-    expect(container.querySelector("ion-item ion-label")).toHaveTextContent(
-      "Jane Doe"
-    )
+    expect(
+      container.getElementsByClassName("conversation-item")[0]
+    ).toHaveTextContent("Jane Doe")
   );
-
-  expect(container.querySelectorAll("ion-item ion-label")[1]).toHaveTextContent(
-    "Chan Tai Man"
-  );
+  expect(
+    container.getElementsByClassName("conversation-item")[1]
+  ).toHaveTextContent("Chan Tai Man");
 });
 
 describe("conversation", () => {
@@ -122,7 +121,7 @@ describe("conversation", () => {
 
         await wait(() =>
           expect(
-            container.querySelector("ion-item ion-label")
+            container.getElementsByClassName("conversation-item")[0]
           ).toHaveTextContent("world")
         );
       });
@@ -159,7 +158,7 @@ describe("conversation", () => {
 
         await wait(() =>
           expect(
-            container.querySelector("ion-item ion-label")
+            container.getElementsByClassName("conversation-item")[0]
           ).toHaveTextContent("Sent image")
         );
       });

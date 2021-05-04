@@ -43,7 +43,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
 }) => {
   return (
-    <IonItem>
+    <IonItem className="conversation-item">
       <IonLabel>
         <h2>{conversation.customer!.displayName}</h2>
         <MessagePreview message={conversation.messages[0]} />
