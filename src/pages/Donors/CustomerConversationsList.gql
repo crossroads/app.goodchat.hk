@@ -1,0 +1,11 @@
+query CustomerConversationsList {
+  conversations(type: CUSTOMER) {
+    id
+    customer {
+      displayName
+    }
+    messages(limit: 1) {
+      content
+    }
+  }
+}
