@@ -11,16 +11,15 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import {
-  CustomerConversationsListQuery,
+  Customer,
+  Message,
   useCustomerConversationsListQuery,
 } from "generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
-type ConversationItemType = CustomerConversationsListQuery["conversations"][0];
-
 interface MessagePreview {
-  message: ConversationItemType["messages"][0] | undefined;
+  message: Pick<Message, "content"> | undefined;
 }
 const MessagePreview: React.FC<MessagePreview> = ({ message }) => {
   if (message) {
@@ -35,7 +34,10 @@ const MessagePreview: React.FC<MessagePreview> = ({ message }) => {
 };
 
 interface ConversationItemProps {
-  conversation: ConversationItemType;
+  conversation: {
+    customer: Pick<Customer, "displayName">;
+    messages: Pick<Message, "content">[];
+  };
 }
 const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
@@ -70,7 +72,12 @@ const Donors: React.FC = () => {
             {data.conversations.map((conversation) => (
               <ConversationItem
                 key={conversation.id}
-                conversation={conversation}
+                conversation={{
+                  // We know customer exists because we queried
+                  // by conversation type customer in the first place
+                  customer: conversation.customer!,
+                  messages: conversation.messages,
+                }}
               />
             ))}
           </IonList>
