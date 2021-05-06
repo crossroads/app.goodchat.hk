@@ -26,9 +26,28 @@ This will start the react app as well as run graphQL code generator in the backg
 
 ### GraphQL Development
 
-Refer to the best practices written here https://the-guild.dev/blog/graphql-codegen-best-practices
+**Type Generation**
 
-**Note:** Before running the code generator make sure to set the environment variable for it. It should be the same token that you use with GoodCity API.
+We use [GraphQL code generator](https://www.graphql-code-generator.com/) to auto-generate types for use in our application.
+
+Before running the code generator, make sure to set the required environment variables for it. You can infer the variables you need to set from `codegen.yml`.
+
+You will need to set the environment variables for
+
+1. `GOODCHAT_URL`. This is the url of the Goodchat GraphQL server
+2. `GOODCITY_ADMIN_JWT`. You can get this by logging in to GoodChat App as an admin user and getting the jwt. Note that it MUST be an admin user.
+
+To run codegen with these env vars, specify them by prefixing them before `npm run codegen`.
+
+For example:
+
+```bash
+GOODCHAT_URL=http://xyz.com/graphql GOODCITY_ADMIN_JWT=1234 npm run codegen
+```
+
+Note that this applies to any command that runs the codegen script (e.g. `npm run codegen:watch`)
+
+**Working with types and queries**
 
 Write all your queries in `.graphql` or `.gql` files. Then wait for graphql code generator (which should be running in the background and watching for changes) to generate types and documents for you.
 For example if you have a `myOffers.graphql` file like so
