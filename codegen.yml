@@ -1,8 +1,8 @@
 overwrite: true
 schema:
-  - "${REACT_APP_GOODCHAT_URL}":
+  - "${GOODCHAT_URL}":
       headers:
-        Authorization: "Bearer ${GOODCITY_JWT}"
+        Authorization: "Bearer ${GOODCITY_ADMIN_JWT}"
 documents: "src/**/*.{gql,graphql}"
 generates:
   src/generated/graphql.tsx:

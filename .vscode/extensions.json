@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "graphql.vscode-graphql",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "bungcip.better-toml"
   ]
 }
