@@ -31,7 +31,6 @@
     "react-scripts": "^4.0.2"
   },
   "scripts": {
-    "dev": "concurrently \"npm start\" \"npm run codegen:watch\"",
     "start": "kankyo exec -- react-scripts start",
     "build": "kankyo exec -- react-scripts build",
     "test": "kankyo exec -- react-scripts test",
@@ -65,7 +64,6 @@
     "@graphql-codegen/typescript-react-apollo": "2.2.3",
     "@ionic/react-test-utils": "0.0.3",
     "axios": "^0.21.1",
-    "concurrently": "^6.0.1",
     "husky": "^4.3.5",
     "msw": "^0.25.0",
     "prettier": "2.2.0",

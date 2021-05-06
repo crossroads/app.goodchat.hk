@@ -17,10 +17,10 @@ npm install
 ### Running the application
 
 ```
-npm run dev
+npm start
 ```
 
-This will start the react app as well as run graphQL code generator in the background which will watch for any code changes in `.graphql` files.
+This will start the react app.
 
 ## Development Guidelines
 
