@@ -11,7 +11,7 @@ import {
   IonTabs,
 } from "@ionic/react";
 import { home, listOutline, chatbubbleOutline } from "ionicons/icons";
-import Donors from "pages/Donors/Donors";
+import Chats from "pages/Chats/Chats";
 
 const MainTabs = () => (
   <IonTabs>
@@ -19,8 +19,8 @@ const MainTabs = () => (
       <Route exact path="/:tab(offers)">
         <Offers />
       </Route>
-      <Route exact path="/:tab(donors)">
-        <Donors />
+      <Route exact path="/:tab(chats)">
+        <Chats />
       </Route>
       <Route exact path="/:tab(home)">
         <Home />
@@ -31,9 +31,9 @@ const MainTabs = () => (
         <IonIcon icon={home} />
         <IonLabel>Home</IonLabel>
       </IonTabButton>
-      <IonTabButton tab="donors" href="/donors">
+      <IonTabButton tab="chats" href="/chats">
         <IonIcon icon={chatbubbleOutline} />
-        <IonLabel>Donors</IonLabel>
+        <IonLabel>Chats</IonLabel>
       </IonTabButton>
       <IonTabButton tab="offers" href="/offers">
         <IonIcon icon={listOutline} />
