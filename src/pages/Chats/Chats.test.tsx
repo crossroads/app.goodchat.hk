@@ -3,7 +3,7 @@ import { render, wait } from "@testing-library/react";
 import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
-import Donors from "pages/Donors/Donors";
+import Chats from "pages/Chats/Chats";
 import { pageHeader } from "test-utils/matchers";
 import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
 
@@ -48,22 +48,22 @@ test("should render without crashing", () => {
 
   const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
-      <Donors />
+      <Chats />
     </ApolloProvider>
   );
   expect(container).toBeInTheDocument();
 });
 
-describe("Donors page header", () => {
+describe("Chats page header", () => {
   beforeEach(() => mockConversations(defaultConversations));
 
   pageHeader({
-    title: "Donors",
+    title: "Chats",
     privatePage: true,
     withBackButton: false,
     element: (
       <ApolloProvider client={createGoodChatClient()}>
-        <Donors />
+        <Chats />
       </ApolloProvider>
     ),
   })();
@@ -93,7 +93,7 @@ test("should show a list of conversations", async () => {
 
   const { container } = render(
     <ApolloProvider client={createGoodChatClient()}>
-      <Donors />
+      <Chats />
     </ApolloProvider>
   );
 
@@ -115,7 +115,7 @@ describe("conversation", () => {
 
         const { container } = render(
           <ApolloProvider client={createGoodChatClient()}>
-            <Donors />
+            <Chats />
           </ApolloProvider>
         );
 
@@ -152,7 +152,7 @@ describe("conversation", () => {
 
         const { container } = render(
           <ApolloProvider client={createGoodChatClient()}>
-            <Donors />
+            <Chats />
           </ApolloProvider>
         );
 

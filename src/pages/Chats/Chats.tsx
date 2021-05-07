@@ -52,7 +52,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   );
 };
 
-const Donors: React.FC = () => {
+const Chats: React.FC = () => {
   const { logout } = useAuth();
   const { data } = useCustomerConversationsListQuery();
 
@@ -60,7 +60,7 @@ const Donors: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Donors</IonTitle>
+          <IonTitle>Chats</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={logout}>Log out</IonButton>
           </IonButtons>
@@ -87,4 +87,4 @@ const Donors: React.FC = () => {
   );
 };
 
-export default Donors;
+export default Chats;

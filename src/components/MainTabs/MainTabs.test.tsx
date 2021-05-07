@@ -1,7 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import MainTabs from "components/MainTabs/MainTabs";
-import { expectToBeOnPage } from "test-utils/matchers";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 
@@ -37,7 +36,7 @@ test("renders navbar at the bottom of the page", () => {
 
 [
   { tabName: "home", expectedLink: "/home" },
-  { tabName: "donors", expectedLink: "/donors" },
+  { tabName: "chats", expectedLink: "/chats" },
   { tabName: "offers", expectedLink: "/offers" },
 ].forEach(({ tabName, expectedLink }) => {
   describe(`${tabName} tab`, () => {
