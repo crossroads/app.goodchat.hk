@@ -1,3 +1,4 @@
+import { gql, useQuery } from "@apollo/client";
 import {
   IonButton,
   IonButtons,
@@ -52,9 +53,28 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   );
 };
 
+const invalidQuery = gql`
+  query CustomerConversationsList {
+    conversations(type: CUSTOMER) {
+      id
+      customer {
+        displayName
+      }
+      messages(limit: 1) {
+        content
+      }
+    }
+  }
+`;
+
 const Donors: React.FC = () => {
   const { logout } = useAuth();
   const { data, error } = useCustomerConversationsListQuery();
+
+  // const { data, error } = useQuery(invalidQuery);
+
+  console.dir(error);
+  console.dir("network Error?", error?.networkError);
 
   return (
     <IonPage>
@@ -88,8 +108,6 @@ const Donors: React.FC = () => {
             Failed to fetch
           </div>
         )}
-
-        {error?.networkError}
       </IonContent>
     </IonPage>
   );

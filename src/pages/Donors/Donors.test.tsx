@@ -192,3 +192,59 @@ describe("Network error", () => {
     );
   });
 });
+
+describe("Unauthenticated error", () => {
+  const errors = [
+    {
+      message: "Context creation failed: Request failed with status code 401",
+      extensions: {
+        code: "UNAUTHENTICATED",
+        exception: {
+          error: "Request failed with status code 401",
+          status: 401,
+          type: "UnauthorizedError",
+          stacktrace: [
+            "AuthenticationError: Context creation failed: Request failed with status code 401",
+            "    at GoodchatError.toApolloError (/home/site/wwwroot/dist/lib/utils/errors.js:95:23)",
+            "    at Object.<anonymous> (/home/site/wwwroot/dist/lib/routes/graphql/index.js:68:65)",
+            "    at Generator.throw (<anonymous>)",
+            "    at rejected (/home/site/wwwroot/dist/lib/routes/graphql/index.js:25:65)",
+            "    at processTicksAndRejections (internal/process/task_queues.js:93:5)",
+          ],
+        },
+      },
+    },
+  ];
+
+  it("should show error message about being unauthenticated?", async () => {
+    // mockServer.use(
+    //   graphql.query("CustomerConversationsList", (_, res, ctx) => {
+    //     return res(ctx.errors(errors));
+    //   })
+    // );
+
+    // mockConversations(defaultConversations);
+
+    mockServer.use(
+      graphql.query("CustomerConversationsList", (_, res, ctx) => {
+        return res.networkError("GSFSAFSFS");
+      })
+    );
+
+    render(
+      <ApolloProvider client={createGoodChatClient()}>
+        <Donors />
+      </ApolloProvider>
+    );
+
+    await wait(() =>
+      expect(screen.getByRole("alert")).toMatchInlineSnapshot(`
+        <div
+          role="alert"
+        >
+          Failed to fetch
+        </div>
+      `)
+    );
+  });
+});
