@@ -45,7 +45,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   return (
     <IonItem className="conversation-item">
       <IonLabel>
-        <h2>{conversation.customer!.displayName}</h2>
+        <h2>{conversation.customer.displayName}</h2>
         <MessagePreview message={conversation.messages[0]} />
       </IonLabel>
     </IonItem>
