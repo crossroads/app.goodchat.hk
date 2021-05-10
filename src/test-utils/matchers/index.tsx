@@ -53,13 +53,6 @@ const pageHeader = ({
     });
 
     describe("log out button", () => {
-      test("should be rendered at the end of the header", () => {
-        const { container } = render(element);
-        expect(
-          container.querySelector("ion-header ion-buttons")
-        ).toHaveAttribute("slot", "end");
-      });
-
       test("should log user out on click", () => {
         let isAuthenticated = true;
         const TestComponent = () => {
