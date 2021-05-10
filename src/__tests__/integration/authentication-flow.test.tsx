@@ -80,22 +80,39 @@ test("User is able to login and logout with correct routing", async () => {
   expectToBeOnPage(container, history.location.pathname, "login");
 });
 
-test("Unauthenticated user redirected to login is redirected back to that page after login", async () => {
-  const { history, container } = setup({ initialEntries: ["/offers"] });
+[
+  { initialPath: "/home", expectedPage: "home" },
+  { initialPath: "/offers", expectedPage: "offers" },
+  { initialPath: "/chats", expectedPage: "chats" },
+  { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" },
+  {
+    initialPath: "/chats/bad-route",
+    expectedPage: "chat",
+    expectedPath: "/chats/bad-route",
+  },
+].map(({ initialPath, expectedPage, expectedPath }) => {
+  test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPage} after login`, async () => {
+    const { history, container } = setup({ initialEntries: [initialPath] });
 
-  expectToBeOnPage(container, history.location.pathname, "login");
+    expectToBeOnPage(container, history.location.pathname, "login");
 
-  const goToAuthenticateButton = container.querySelector("ion-button");
-  userEvent.click(goToAuthenticateButton as TargetElement);
+    const goToAuthenticateButton = container.querySelector("ion-button");
+    userEvent.click(goToAuthenticateButton as TargetElement);
 
-  await wait(() =>
-    expectToBeOnPage(container, history.location.pathname, "authenticate")
-  );
+    await wait(() =>
+      expectToBeOnPage(container, history.location.pathname, "authenticate")
+    );
 
-  const loginButton = container.querySelector("ion-button");
-  userEvent.click(loginButton as TargetElement);
+    const loginButton = container.querySelector("ion-button");
+    userEvent.click(loginButton as TargetElement);
 
-  await wait(() =>
-    expectToBeOnPage(container, history.location.pathname, "offers")
-  );
+    await wait(() =>
+      expectToBeOnPage(
+        container,
+        history.location.pathname,
+        expectedPage,
+        expectedPath
+      )
+    );
+  });
 });
