@@ -8,16 +8,15 @@ import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import mockResponse from "test-utils/mocks/apiResponses";
-import { pageHeader } from "test-utils/matchers";
+import { testPageHeader } from "test-utils/matchers";
 
 test("renders without crashing", () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });
   expect(container).toBeInTheDocument();
 });
 
-describe(
-  "Authenticate page header",
-  pageHeader({
+describe("Authenticate page header", () =>
+  testPageHeader({
     title: "Authenticate",
     privatePage: false,
     withBackButton: true,
@@ -26,8 +25,7 @@ describe(
         <Authenticate />
       </MemoryRouter>
     ),
-  })
-);
+  }));
 
 test("back button defaults to navigate to /login", async () => {
   const { container } = render(<Authenticate />, { wrapper: MemoryRouter });

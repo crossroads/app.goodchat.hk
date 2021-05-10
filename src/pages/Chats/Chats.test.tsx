@@ -4,7 +4,7 @@ import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
 import Chats from "pages/Chats/Chats";
-import { pageHeader } from "test-utils/matchers";
+import { testPageHeader } from "test-utils/matchers";
 import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
 
 const mockConversations = (
@@ -57,7 +57,7 @@ test("should render without crashing", () => {
 describe("Chats page header", () => {
   beforeEach(() => mockConversations(defaultConversations));
 
-  pageHeader({
+  testPageHeader({
     title: "Chats",
     privatePage: true,
     withBackButton: false,
@@ -66,7 +66,7 @@ describe("Chats page header", () => {
         <Chats />
       </ApolloProvider>
     ),
-  })();
+  });
 });
 
 test("should show a list of conversations", async () => {
