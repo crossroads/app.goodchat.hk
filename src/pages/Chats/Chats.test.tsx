@@ -164,4 +164,20 @@ describe("conversation", () => {
       });
     });
   });
+
+  it("should link to the individual conversation", async () => {
+    mockConversations(defaultConversations);
+
+    const { container } = render(
+      <ApolloProvider client={createGoodChatClient()}>
+        <Chats />
+      </ApolloProvider>
+    );
+
+    await wait(() =>
+      expect(
+        container.querySelector(".conversation-item:first-child")
+      ).toHaveAttribute("router-link", "/chats/1")
+    );
+  });
 });
