@@ -7,10 +7,10 @@ import { React } from "@ungap/global-this";
 const expectToBeOnPage = (
   container: HTMLElement,
   myPath: string,
-  expectedPage: string
+  expectedPage: string,
+  expectedPath?: string
 ) => {
-  const expectedPath = `/${expectedPage}`;
-  expect(myPath).toEqual(expectedPath);
+  expect(myPath).toEqual(expectedPath ?? `/${expectedPage}`);
   expect(container.querySelector("ion-title")).toHaveTextContent(
     new RegExp(expectedPage, "i")
   );

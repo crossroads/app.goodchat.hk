@@ -12,6 +12,7 @@ import {
 } from "@ionic/react";
 import { home, listOutline, chatbubbleOutline } from "ionicons/icons";
 import Chats from "pages/Chats/Chats";
+import Chat from "pages/Chat/Chat";
 
 const MainTabs = () => (
   <IonTabs>
@@ -21,6 +22,9 @@ const MainTabs = () => (
       </Route>
       <Route exact path="/:tab(chats)">
         <Chats />
+      </Route>
+      <Route exact path="/:tab(chats)/:conversationId">
+        <Chat />
       </Route>
       <Route exact path="/:tab(home)">
         <Home />

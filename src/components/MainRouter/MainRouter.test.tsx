@@ -65,6 +65,7 @@ describe("Unauthenticated User", () => {
   [
     { initialPath: "/home", expectedPage: "login" },
     { initialPath: "/chats", expectedPage: "login" },
+    { initialPath: "/chats/1", expectedPage: "login" },
     { initialPath: "/offers", expectedPage: "login" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/authenticate", expectedPage: "authenticate" },
@@ -72,6 +73,7 @@ describe("Unauthenticated User", () => {
     { initialPath: "/bad-route", expectedPage: "login" },
     { initialPath: "/home/bad-route", expectedPage: "login" },
     { initialPath: "/chats/bad-route", expectedPage: "login" },
+    { initialPath: "/chats/1", expectedPage: "login" },
     { initialPath: "/offers/bad-route", expectedPage: "login" },
     { initialPath: "/login/bad-route", expectedPage: "login" },
     { initialPath: "/authenticate/bad-route", expectedPage: "login" },
@@ -91,20 +93,30 @@ describe("Authenticated User", () => {
   [
     { initialPath: "/home", expectedPage: "home" },
     { initialPath: "/chats", expectedPage: "chats" },
+    { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" },
     { initialPath: "/offers", expectedPage: "offers" },
     { initialPath: "/login", expectedPage: "login" },
     { initialPath: "/authenticate", expectedPage: "authenticate" },
     { initialPath: "/", expectedPage: "home" },
     { initialPath: "/bad-route", expectedPage: "home" },
     { initialPath: "/home/bad-route", expectedPage: "home" },
-    { initialPath: "/chats/bad-route", expectedPage: "home" },
+    {
+      initialPath: "/chats/bad-route",
+      expectedPage: "chat",
+      expectedPath: "/chats/bad-route",
+    },
     { initialPath: "/offers/bad-route", expectedPage: "home" },
     { initialPath: "/login/bad-route", expectedPage: "home" },
     { initialPath: "/authenticate/bad-route", expectedPage: "home" },
-  ].map(({ initialPath, expectedPage }) => {
+  ].map(({ initialPath, expectedPage, expectedPath }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPage}`, () => {
       const { container, history } = renderAuthenticatedComponent(initialPath);
-      expectToBeOnPage(container, history.location.pathname, expectedPage);
+      expectToBeOnPage(
+        container,
+        history.location.pathname,
+        expectedPage,
+        expectedPath
+      );
     });
   });
 });
