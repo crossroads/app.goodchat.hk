@@ -18,7 +18,7 @@ const Chat: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton />
+            <IonBackButton defaultHref="/chats" />
           </IonButtons>
           <IonTitle>Chat</IonTitle>
           <IonButtons slot="end">

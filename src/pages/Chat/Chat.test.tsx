@@ -7,10 +7,20 @@ test("renders without crashing", () => {
   expect(container).toBeInTheDocument();
 });
 
-describe("Chat page header", () =>
+describe("Chat page header", () => {
   testPageHeader({
     title: "Chat",
     privatePage: true,
     withBackButton: true,
     element: <Chat />,
-  }));
+  });
+});
+
+test("back button should default to /chats", () => {
+  const { container } = render(<Chat />);
+
+  expect(container.querySelector("ion-header ion-back-button")).toHaveAttribute(
+    "default-href",
+    "/chats"
+  );
+});
