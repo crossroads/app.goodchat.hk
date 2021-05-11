@@ -244,12 +244,30 @@ export type MessageEvent = {
 export type Mutation = {
   __typename?: 'Mutation';
   sendMessage: Message;
+  startTyping: Conversation;
+  stopTyping: Conversation;
+  markAsRead: ReadReceipt;
 };
 
 
 export type MutationSendMessageArgs = {
   conversationId: Scalars['Int'];
   text: Scalars['String'];
+};
+
+
+export type MutationStartTypingArgs = {
+  conversationId: Scalars['Int'];
+};
+
+
+export type MutationStopTypingArgs = {
+  conversationId: Scalars['Int'];
+};
+
+
+export type MutationMarkAsReadArgs = {
+  conversationId: Scalars['Int'];
 };
 
 
@@ -284,6 +302,19 @@ export type QueryConversationArgs = {
 };
 
 
+
+export type ReadReceipt = {
+  __typename?: 'ReadReceipt';
+  id: Scalars['Int'];
+  userId: Scalars['Int'];
+  userType: Scalars['String'];
+  conversationId: Scalars['Int'];
+  conversation: Conversation;
+  lastReadMessageId: Scalars['Int'];
+  lastReadMessage: Message;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
 
 
 export type Staff = {
