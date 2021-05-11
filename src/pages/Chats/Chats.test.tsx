@@ -4,7 +4,7 @@ import { CustomerConversationsListQuery } from "generated/graphql";
 import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
 import Chats from "pages/Chats/Chats";
-import { pageHeader } from "test-utils/matchers";
+import { testPageHeader } from "test-utils/matchers";
 import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
 
 const mockConversations = (
@@ -57,7 +57,7 @@ test("should render without crashing", () => {
 describe("Chats page header", () => {
   beforeEach(() => mockConversations(defaultConversations));
 
-  pageHeader({
+  testPageHeader({
     title: "Chats",
     privatePage: true,
     withBackButton: false,
@@ -66,7 +66,7 @@ describe("Chats page header", () => {
         <Chats />
       </ApolloProvider>
     ),
-  })();
+  });
 });
 
 test("should show a list of conversations", async () => {
@@ -163,5 +163,21 @@ describe("conversation", () => {
         );
       });
     });
+  });
+
+  it("should link to the individual conversation", async () => {
+    mockConversations(defaultConversations);
+
+    const { container } = render(
+      <ApolloProvider client={createGoodChatClient()}>
+        <Chats />
+      </ApolloProvider>
+    );
+
+    await wait(() =>
+      expect(
+        container.querySelector(".conversation-item:first-child")
+      ).toHaveAttribute("router-link", "/chats/1")
+    );
   });
 });

@@ -11,6 +11,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import {
+  Conversation,
   Customer,
   Message,
   useCustomerConversationsListQuery,
@@ -35,6 +36,7 @@ const MessagePreview: React.FC<MessagePreview> = ({ message }) => {
 
 interface ConversationItemProps {
   conversation: {
+    id: Conversation["id"];
     customer: Pick<Customer, "displayName">;
     messages: Pick<Message, "content">[];
   };
@@ -43,9 +45,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
 }) => {
   return (
-    <IonItem className="conversation-item">
+    <IonItem
+      className="conversation-item"
+      button
+      routerLink={`/chats/${conversation.id}`}
+    >
       <IonLabel>
-        <h2>{conversation.customer!.displayName}</h2>
+        <h2>{conversation.customer.displayName}</h2>
         <MessagePreview message={conversation.messages[0]} />
       </IonLabel>
     </IonItem>
@@ -75,6 +81,7 @@ const Chats: React.FC = () => {
                 conversation={{
                   // We know customer exists because we queried
                   // by conversation type customer in the first place
+                  id: conversation.id,
                   customer: conversation.customer!,
                   messages: conversation.messages,
                 }}

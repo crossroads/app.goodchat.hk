@@ -7,10 +7,10 @@ import { React } from "@ungap/global-this";
 const expectToBeOnPage = (
   container: HTMLElement,
   myPath: string,
-  expectedPage: string
+  expectedPage: string,
+  expectedPath?: string
 ) => {
-  const expectedPath = `/${expectedPage}`;
-  expect(myPath).toEqual(expectedPath);
+  expect(myPath).toEqual(expectedPath ?? `/${expectedPage}`);
   expect(container.querySelector("ion-title")).toHaveTextContent(
     new RegExp(expectedPage, "i")
   );
@@ -22,12 +22,12 @@ interface PageHeaderProps {
   withBackButton: boolean;
   element: React.ReactElement;
 }
-const pageHeader = ({
+const testPageHeader = ({
   title,
   privatePage,
   withBackButton,
   element,
-}: PageHeaderProps) => () => {
+}: PageHeaderProps) => {
   test(`should have a ${title} title`, () => {
     const { container } = render(element);
     expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
@@ -53,13 +53,6 @@ const pageHeader = ({
     });
 
     describe("log out button", () => {
-      test("should be rendered at the end of the header", () => {
-        const { container } = render(element);
-        expect(
-          container.querySelector("ion-header ion-buttons")
-        ).toHaveAttribute("slot", "end");
-      });
-
       test("should log user out on click", () => {
         let isAuthenticated = true;
         const TestComponent = () => {
@@ -84,4 +77,4 @@ const pageHeader = ({
   }
 };
 
-export { expectToBeOnPage, pageHeader };
+export { expectToBeOnPage, testPageHeader };
