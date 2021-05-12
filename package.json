@@ -37,7 +37,7 @@
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
     "format": "prettier --ignore-path .gitignore --write .",
-    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen": "graphql-codegen --config codegen.yml dotenv_config_path=.env.codegen --require dotenv/config",
     "codegen:watch": "npm run codegen -- --watch"
   },
   "eslintConfig": {
