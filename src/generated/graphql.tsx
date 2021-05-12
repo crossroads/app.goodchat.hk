@@ -355,6 +355,22 @@ export enum SubscriptionAction {
 
 
 
+export type ConversationMessagesQueryVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type ConversationMessagesQuery = (
+  { __typename?: 'Query' }
+  & { conversation?: Maybe<(
+    { __typename?: 'Conversation' }
+    & { messages: Array<(
+      { __typename?: 'Message' }
+      & Pick<Message, 'authorType' | 'content'>
+    )> }
+  )> }
+);
+
 export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -374,6 +390,44 @@ export type CustomerConversationsListQuery = (
 );
 
 
+export const ConversationMessagesDocument = gql`
+    query ConversationMessages($conversationId: Int!) {
+  conversation(id: $conversationId) {
+    messages {
+      authorType
+      content
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationMessagesQuery__
+ *
+ * To run a query within a React component, call `useConversationMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConversationMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationMessagesQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useConversationMessagesQuery(baseOptions: Apollo.QueryHookOptions<ConversationMessagesQuery, ConversationMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConversationMessagesQuery, ConversationMessagesQueryVariables>(ConversationMessagesDocument, options);
+      }
+export function useConversationMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConversationMessagesQuery, ConversationMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConversationMessagesQuery, ConversationMessagesQueryVariables>(ConversationMessagesDocument, options);
+        }
+export type ConversationMessagesQueryHookResult = ReturnType<typeof useConversationMessagesQuery>;
+export type ConversationMessagesLazyQueryHookResult = ReturnType<typeof useConversationMessagesLazyQuery>;
+export type ConversationMessagesQueryResult = Apollo.QueryResult<ConversationMessagesQuery, ConversationMessagesQueryVariables>;
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList {
   conversations(type: CUSTOMER) {

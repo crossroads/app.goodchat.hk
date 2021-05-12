@@ -1,0 +1,8 @@
+query ConversationMessages($conversationId: Int!) {
+  conversation(id: $conversationId) {
+    messages {
+      authorType
+      content
+    }
+  }
+}
