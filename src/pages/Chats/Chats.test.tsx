@@ -1,14 +1,7 @@
 import { render, wait } from "@testing-library/react";
-import { mockServer } from "mockServer";
 import Chats from "pages/Chats/Chats";
 import { testPageHeader } from "test-utils/matchers";
 import GoodChatMockedProvider from "components/GoodChatMockedProvider/GoodChatMockedProvider";
-
-beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
-
-afterEach(() => mockServer.resetHandlers());
-
-afterAll(() => mockServer.close());
 
 test("should render without crashing", async () => {
   const { container } = render(
