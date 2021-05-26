@@ -3,19 +3,27 @@ import { SchemaLink } from "@apollo/client/link/schema";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { addMocksToSchema, IMocks } from "@graphql-tools/mock";
 import { ITypeDefinitions } from "@graphql-tools/utils";
+import { mergeResolvers } from "@graphql-tools/merge";
 
 interface AutoMockedProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;
   mockResolvers?: IMocks;
 }
 
-const createAutoMockedProvider = (typeDefs: ITypeDefinitions) => {
+const createAutoMockedProvider = (
+  typeDefs: ITypeDefinitions,
+  globalMockResolvers: IMocks = {}
+) => {
   const AutoMockedProvider: React.FC<AutoMockedProviderProps> = ({
     children,
-    mockResolvers,
+    mockResolvers = {},
   }) => {
     const schema = makeExecutableSchema({ typeDefs });
-    const schemaWithMocks = addMocksToSchema({ schema, mocks: mockResolvers });
+    const schemaWithMocks = addMocksToSchema({
+      schema,
+      // Merge global and local mock resolvers
+      mocks: mergeResolvers([globalMockResolvers, mockResolvers]),
+    });
 
     const client = new ApolloClient({
       /**
