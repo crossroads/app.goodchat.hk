@@ -1,41 +1,8 @@
-import { ApolloProvider } from "@apollo/client";
 import { render, wait } from "@testing-library/react";
-import { CustomerConversationsListQuery } from "generated/graphql";
-import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
 import { mockServer } from "mockServer";
 import Chats from "pages/Chats/Chats";
 import { testPageHeader } from "test-utils/matchers";
-import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
-
-const mockConversations = (
-  conversationsList: CustomerConversationsListQuery["conversations"]
-) => {
-  mockGraphQLQueryResponse<
-    Pick<CustomerConversationsListQuery, "conversations">
-  >(mockServer, "CustomerConversationsList", {
-    conversations: conversationsList,
-  });
-};
-
-const defaultConversations: CustomerConversationsListQuery["conversations"] = [
-  {
-    id: 1,
-    customer: {
-      displayName: "Jane Doe",
-      __typename: "Customer",
-    },
-    messages: [
-      {
-        content: {
-          text: "world",
-          type: "text",
-        },
-        __typename: "Message",
-      },
-    ],
-    __typename: "Conversation",
-  },
-];
+import GoodChatMockedProvider from "components/GoodChatMockedProvider/GoodChatMockedProvider";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 
@@ -43,117 +10,103 @@ afterEach(() => mockServer.resetHandlers());
 
 afterAll(() => mockServer.close());
 
-test("should render without crashing", () => {
-  mockConversations(defaultConversations);
-
+test("should render without crashing", async () => {
   const { container } = render(
-    <ApolloProvider client={createGoodChatClient()}>
+    <GoodChatMockedProvider>
       <Chats />
-    </ApolloProvider>
-  );
-  expect(container).toBeInTheDocument();
-});
-
-describe("Chats page header", () => {
-  beforeEach(() => mockConversations(defaultConversations));
-
-  testPageHeader({
-    title: "Chats",
-    privatePage: true,
-    withBackButton: false,
-    element: (
-      <ApolloProvider client={createGoodChatClient()}>
-        <Chats />
-      </ApolloProvider>
-    ),
-  });
-});
-
-test("should show a list of conversations", async () => {
-  mockConversations([
-    ...defaultConversations,
-    {
-      id: 2,
-      customer: {
-        displayName: "Chan Tai Man",
-        __typename: "Customer",
-      },
-      messages: [
-        {
-          content: {
-            text: "Can I donate this?",
-            type: "text",
-          },
-          __typename: "Message",
-        },
-      ],
-      __typename: "Conversation",
-    },
-  ]);
-
-  const { container } = render(
-    <ApolloProvider client={createGoodChatClient()}>
-      <Chats />
-    </ApolloProvider>
+    </GoodChatMockedProvider>
   );
 
   await wait(() =>
     expect(
       container.querySelector(".conversation-item:first-child")
-    ).toHaveTextContent("Jane Doe")
+    ).toHaveTextContent("I want to donate")
+  );
+});
+
+describe("Chats page header", () => {
+  // TODO wait for state updates to be flushed using `act` utility
+  testPageHeader({
+    title: "Chats",
+    privatePage: true,
+    withBackButton: false,
+    element: (
+      <GoodChatMockedProvider>
+        <Chats />
+      </GoodChatMockedProvider>
+    ),
+  });
+});
+
+test("should show a list of conversations", async () => {
+  const mockConversationsList = [1, 2].map((id) => ({
+    messages: [
+      {
+        content: {
+          type: "text",
+          text: `Donate ${id}`,
+        },
+      },
+    ],
+  }));
+
+  const { container } = render(
+    <GoodChatMockedProvider
+      mockResolvers={{
+        Query: () => ({
+          conversations: () => mockConversationsList,
+        }),
+      }}
+    >
+      <Chats />
+    </GoodChatMockedProvider>
+  );
+
+  await wait(() =>
+    expect(
+      container.querySelector(".conversation-item:first-child")
+    ).toHaveTextContent("Donate 1")
   );
   expect(
     container.querySelector(".conversation-item:nth-child(2)")
-  ).toHaveTextContent("Chan Tai Man");
+  ).toHaveTextContent("Donate 2");
 });
 
 describe("conversation", () => {
   describe("last message preview", () => {
     describe("last message is text", () => {
       it("should display the text content", async () => {
-        mockConversations(defaultConversations);
-
         const { container } = render(
-          <ApolloProvider client={createGoodChatClient()}>
+          <GoodChatMockedProvider>
             <Chats />
-          </ApolloProvider>
+          </GoodChatMockedProvider>
         );
 
         await wait(() =>
           expect(
             container.querySelector(".conversation-item:first-child")
-          ).toHaveTextContent("world")
+          ).toHaveTextContent("I want to donate")
         );
       });
     });
 
     describe("last message is an image", () => {
       it('should display "Sent image"', async () => {
-        mockConversations([
-          {
-            id: 1,
-            customer: {
-              displayName: "Jane Doe",
-              __typename: "Customer",
-            },
-            messages: [
-              {
+        const { container } = render(
+          <GoodChatMockedProvider
+            mockResolvers={{
+              Message: () => ({
                 content: {
                   type: "image",
                   altText: "fNp8q3k.jpg",
                   mediaUrl: "http://i.imgur.com/fNp8q3k.jpg",
                   mediaType: "image/jpeg",
                 },
-              },
-            ],
-            __typename: "Conversation",
-          },
-        ]);
-
-        const { container } = render(
-          <ApolloProvider client={createGoodChatClient()}>
+              }),
+            }}
+          >
             <Chats />
-          </ApolloProvider>
+          </GoodChatMockedProvider>
         );
 
         await wait(() =>
@@ -166,12 +119,16 @@ describe("conversation", () => {
   });
 
   it("should link to the individual conversation", async () => {
-    mockConversations(defaultConversations);
-
     const { container } = render(
-      <ApolloProvider client={createGoodChatClient()}>
+      <GoodChatMockedProvider
+        mockResolvers={{
+          Query: () => ({
+            conversations: () => [{ id: 1 }],
+          }),
+        }}
+      >
         <Chats />
-      </ApolloProvider>
+      </GoodChatMockedProvider>
     );
 
     await wait(() =>
