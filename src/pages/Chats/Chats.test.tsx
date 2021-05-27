@@ -1,7 +1,7 @@
 import { render, wait } from "@testing-library/react";
 import Chats from "pages/Chats/Chats";
 import { testPageHeader } from "test-utils/matchers";
-import GoodChatMockedProvider from "components/GoodChatMockedProvider/GoodChatMockedProvider";
+import GoodChatMockedProvider from "test-utils/components/GoodChatMockedProvider/GoodChatMockedProvider";
 
 test("should render without crashing", async () => {
   const { container } = render(

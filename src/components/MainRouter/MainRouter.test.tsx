@@ -5,7 +5,7 @@ import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { expectToBeOnPage } from "test-utils/matchers";
-import GoodChatMockedProvider from "components/GoodChatMockedProvider/GoodChatMockedProvider";
+import GoodChatMockedProvider from "test-utils/components/GoodChatMockedProvider/GoodChatMockedProvider";
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string
