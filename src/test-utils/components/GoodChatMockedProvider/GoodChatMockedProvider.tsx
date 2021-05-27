@@ -1,7 +1,4 @@
-import {
-  buildClientSchema,
-  printSchema,
-} from "apollo-mocked-provider/node_modules/graphql";
+import { printSchema, buildClientSchema } from "graphql/utilities";
 import createAutoMockedProvider from "lib/AutoMockedProvider/createAutoMockedProvider";
 import introspectionResult from "../../../../graphql.schema.json";
 
