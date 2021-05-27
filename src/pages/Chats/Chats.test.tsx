@@ -18,7 +18,6 @@ test("should render without crashing", async () => {
 });
 
 describe("Chats page header", () => {
-  // TODO wait for state updates to be flushed using `act` utility
   testPageHeader({
     title: "Chats",
     privatePage: true,

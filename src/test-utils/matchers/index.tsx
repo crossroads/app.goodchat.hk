@@ -3,6 +3,7 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import useAuth from "hooks/useAuth/useAuth";
 import { screen, render } from "@testing-library/react";
 import { React } from "@ungap/global-this";
+import { act } from "react-dom/test-utils";
 
 const expectToBeOnPage = (
   container: HTMLElement,
@@ -28,32 +29,44 @@ const testPageHeader = ({
   withBackButton,
   element,
 }: PageHeaderProps) => {
-  test(`should have a ${title} title`, () => {
-    const { container } = render(element);
-    expect(container.querySelector("ion-header ion-title")).toHaveTextContent(
+  test(`should have a ${title} title`, async () => {
+    let container: HTMLElement | undefined;
+    await act(async () => {
+      container = render(element).container;
+    });
+
+    expect(container!.querySelector("ion-header ion-title")).toHaveTextContent(
       title
     );
   });
 
   if (withBackButton) {
-    test("should contain a back button", () => {
-      const { container } = render(element);
+    test("should contain a back button", async () => {
+      let container: HTMLElement | undefined;
+      await act(async () => {
+        container = render(element).container;
+      });
+
       expect(
-        container.querySelector("ion-header ion-back-button")
+        container!.querySelector("ion-header ion-back-button")
       ).toBeInTheDocument();
     });
   }
 
   if (privatePage) {
-    test("should contain a log out button", () => {
-      const { container } = render(element);
+    test("should contain a log out button", async () => {
+      let container: HTMLElement | undefined;
+      await act(async () => {
+        container = render(element).container;
+      });
+
       expect(
-        container.querySelector("ion-header ion-button")
+        container!.querySelector("ion-header ion-button")
       ).toHaveTextContent(/log out/i);
     });
 
     describe("log out button", () => {
-      test("should log user out on click", () => {
+      test("should log user out on click", async () => {
         let isAuthenticated = true;
         const TestComponent = () => {
           isAuthenticated = useAuth().isAuthenticated;
@@ -62,11 +75,13 @@ const testPageHeader = ({
 
         expect(isAuthenticated).toBe(true);
 
-        render(
-          <AuthProvider initialAuthState={true}>
-            <TestComponent />
-          </AuthProvider>
-        );
+        await act(async () => {
+          render(
+            <AuthProvider initialAuthState={true}>
+              <TestComponent />
+            </AuthProvider>
+          );
+        });
 
         const logoutButton = screen.getByText(/log out/i);
         userEvent.click(logoutButton);
