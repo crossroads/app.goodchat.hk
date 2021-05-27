@@ -5,41 +5,7 @@ import { createMemoryHistory } from "history";
 import { Router } from "react-router";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import { expectToBeOnPage } from "test-utils/matchers";
-import { ApolloProvider } from "@apollo/client";
-import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
-import { CustomerConversationsListQuery } from "generated/graphql";
-import { mockServer } from "mockServer";
-import mockGraphQLQueryResponse from "test-utils/mockGraphQLQueryResponse";
-
-beforeAll(() => {
-  mockServer.listen({ onUnhandledRequest: "error" });
-
-  mockGraphQLQueryResponse<
-    Pick<CustomerConversationsListQuery, "conversations">
-  >(mockServer, "CustomerConversationsList", {
-    conversations: [
-      {
-        id: 1,
-        customer: {
-          displayName: "Jane Doe",
-          __typename: "Customer",
-        },
-        messages: [
-          {
-            content: {
-              text: "world",
-              type: "text",
-            },
-            __typename: "Message",
-          },
-        ],
-        __typename: "Conversation",
-      },
-    ],
-  });
-});
-
-afterAll(() => mockServer.close());
+import GoodChatMockedProvider from "components/GoodChatMockedProvider/GoodChatMockedProvider";
 
 const renderComponent = (initialAuthState: boolean) => (
   initialPath: string
@@ -49,11 +15,11 @@ const renderComponent = (initialAuthState: boolean) => (
     history,
     ...render(
       <AuthProvider initialAuthState={initialAuthState}>
-        <ApolloProvider client={createGoodChatClient()}>
+        <GoodChatMockedProvider>
           <Router history={history}>
             <MainRouter />
           </Router>
-        </ApolloProvider>
+        </GoodChatMockedProvider>
       </AuthProvider>
     ),
   };
