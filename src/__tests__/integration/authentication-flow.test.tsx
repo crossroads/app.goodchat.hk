@@ -10,8 +10,7 @@ import MainRouter from "components/MainRouter/MainRouter";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
-import createGoodChatClient from "lib/GoodChatClient/createGoodChatClient";
-import { ApolloProvider } from "@apollo/client";
+import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 
 beforeAll(() => {
   mockServer.use(
@@ -35,17 +34,16 @@ afterAll(() => mockServer.close());
 
 const setup = ({ initialEntries }: { initialEntries: string[] }) => {
   const history = createMemoryHistory({ initialEntries });
-  const GoodChatClient = createGoodChatClient();
   return {
     history,
     ...render(
       <IonApp>
         <AuthProvider>
-          <ApolloProvider client={GoodChatClient}>
+          <GoodChatProvider>
             <Router history={history}>
               <MainRouter />
             </Router>
-          </ApolloProvider>
+          </GoodChatProvider>
         </AuthProvider>
       </IonApp>
     ),
