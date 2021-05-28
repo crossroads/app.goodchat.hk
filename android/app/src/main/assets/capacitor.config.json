@@ -1,13 +1,11 @@
 {
-  "appId": "hk.goodcity.chat",
-  "appName": "app.goodchat.hk",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "build",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {}
+	"appId": "hk.goodcity.chat",
+	"appName": "app.goodchat.hk",
+	"webDir": "build",
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 0
+		}
+	},
+	"cordova": {}
 }
