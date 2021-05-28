@@ -13,16 +13,22 @@ import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
-const VALID_PHONE = "+85291111111";
-
-// TODO move to a centralised location
-interface AuthSendPinBody {
+interface SendPinBody {
   mobile: string;
 }
 
+interface VerifyBody {
+  otp_auth_key: string;
+  pin: string;
+}
+
 beforeAll(() => {
+  const VALID_PHONE = "+85291111111";
+  const VALID_PIN = "1234";
+  const VALID_OTP_AUTH_KEY = "123dsfdasf";
+
   mockServer.use(
-    rest.post<AuthSendPinBody>(
+    rest.post<SendPinBody>(
       `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
       (req, res, ctx) => {
         if (req.body.mobile === VALID_PHONE) {
@@ -38,13 +44,23 @@ beforeAll(() => {
         }
       }
     ),
-    rest.post(
+    rest.post<VerifyBody>(
       `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
-      (_, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(mockApiResponses["auth/verify"].success)
-        );
+      (req, res, ctx) => {
+        if (
+          req.body.pin === VALID_PIN &&
+          req.body.otp_auth_key === VALID_OTP_AUTH_KEY
+        ) {
+          return res(
+            ctx.status(200),
+            ctx.json(mockApiResponses["auth/verify"].success)
+          );
+        } else {
+          return res(
+            ctx.status(401),
+            ctx.json(mockApiResponses["auth/verify"][401].errorResponse)
+          );
+        }
       }
     )
   );
@@ -128,7 +144,10 @@ test("User is able to login and logout with correct routing", async () => {
       expectToBeOnPage(container, history.location.pathname, "authenticate")
     );
 
+    const inputVal = "1234";
+    const input = container.querySelector("ion-input");
     const loginButton = container.querySelector("ion-button");
+    ionFireEvent.ionChange(input!, inputVal);
     userEvent.click(loginButton as TargetElement);
 
     await wait(() =>
