@@ -1,6 +1,6 @@
 import { ApiError } from "lib/errors";
 
-const mockResponse = {
+const mockApiResponses = {
   "auth/send_pin": {
     success: { otp_auth_key: "123dsfdasf" },
     error: {
@@ -35,4 +35,4 @@ const mockResponse = {
   },
 };
 
-export default mockResponse;
+export default mockApiResponses;

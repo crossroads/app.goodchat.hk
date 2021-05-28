@@ -1,7 +1,7 @@
 import { wait } from "@testing-library/react";
 import client from "lib/client/client";
 import AuthenticationService from "lib/services/AuthenticationService/AuthenticationService";
-import mockResponse from "test-utils/mocks/apiResponses";
+import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";
@@ -16,7 +16,7 @@ describe("Methods with API calls", () => {
 
     describe("on successful response", () => {
       beforeEach(() => {
-        mockPost.mockResolvedValue(mockResponse["auth/send_pin"].success);
+        mockPost.mockResolvedValue(mockApiResponses["auth/send_pin"].success);
       });
 
       it(`should call client with auth/send_pin and the correct data`, () => {
@@ -35,7 +35,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("on unsuccessful response", () => {
-      const error = mockResponse["auth/send_pin"].error[422];
+      const error = mockApiResponses["auth/send_pin"].error[422];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
@@ -63,7 +63,7 @@ describe("Methods with API calls", () => {
 
     describe("On successful response", () => {
       beforeEach(() => {
-        mockPost.mockResolvedValue(mockResponse["auth/verify"].success);
+        mockPost.mockResolvedValue(mockApiResponses["auth/verify"].success);
       });
 
       it("should call client with auth/verify and the correct data", async () => {
@@ -92,7 +92,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("On unsuccessful response", () => {
-      const error = mockResponse["auth/verify"].error[401];
+      const error = mockApiResponses["auth/verify"].error[401];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
@@ -125,7 +125,7 @@ describe("Methods with API calls", () => {
 
   describe("resolveHasuraToken", () => {
     beforeEach(() =>
-      mockPost.mockResolvedValue(mockResponse["auth/hasura"].success)
+      mockPost.mockResolvedValue(mockApiResponses["auth/hasura"].success)
     );
 
     describe("User without hasura token", () => {
@@ -154,7 +154,7 @@ describe("Methods with API calls", () => {
 
   describe("refreshHasuraToken", () => {
     beforeEach(() =>
-      mockPost.mockResolvedValue(mockResponse["auth/hasura"].success)
+      mockPost.mockResolvedValue(mockApiResponses["auth/hasura"].success)
     );
 
     it("should call auth/hasura correctly", () => {
@@ -172,7 +172,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("on unsuccessful response", () => {
-      const error = mockResponse["auth/send_pin"].error[422];
+      const error = mockApiResponses["auth/send_pin"].error[422];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
@@ -194,7 +194,7 @@ describe("logout", () => {
   it("should clear the hasura token", async () => {
     const mockPost = jest
       .spyOn(client, "post")
-      .mockResolvedValue(mockResponse["auth/hasura"].success);
+      .mockResolvedValue(mockApiResponses["auth/hasura"].success);
 
     await AuthenticationService.refreshHasuraToken();
 

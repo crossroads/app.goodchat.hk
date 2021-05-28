@@ -7,7 +7,7 @@ import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import mockResponse from "test-utils/mocks/apiResponses";
+import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 import { testPageHeader } from "test-utils/matchers";
 
 function fillIonInput(container: HTMLElement, phoneInput: string) {
@@ -126,7 +126,7 @@ describe("Get SMS PIN button", () => {
     beforeEach(() => {
       mockPost = jest
         .spyOn(client, "post")
-        .mockResolvedValue(mockResponse["auth/send_pin"].success);
+        .mockResolvedValue(mockApiResponses["auth/send_pin"].success);
     });
     afterEach(() => mockPost.mockRestore());
 
@@ -202,7 +202,7 @@ describe("Get SMS PIN button", () => {
     });
 
     describe("On receiving error response from send_pin", () => {
-      const error = mockResponse["auth/send_pin"].error[422];
+      const error = mockApiResponses["auth/send_pin"].error[422];
       beforeEach(
         () =>
           (mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error))

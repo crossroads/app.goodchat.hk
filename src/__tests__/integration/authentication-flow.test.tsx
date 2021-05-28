@@ -11,7 +11,7 @@ import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
-import mockResponse from "test-utils/mocks/apiResponses";
+import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
 beforeAll(() => {
   mockServer.use(
@@ -20,7 +20,7 @@ beforeAll(() => {
       (_, res, ctx) => {
         return res(
           ctx.status(200),
-          ctx.json(mockResponse["auth/send_pin"].success)
+          ctx.json(mockApiResponses["auth/send_pin"].success)
         );
       }
     ),
@@ -29,7 +29,7 @@ beforeAll(() => {
       (_, res, ctx) => {
         return res(
           ctx.status(200),
-          ctx.json(mockResponse["auth/verify"].success)
+          ctx.json(mockApiResponses["auth/verify"].success)
         );
       }
     )
