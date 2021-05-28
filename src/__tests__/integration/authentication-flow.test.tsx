@@ -11,19 +11,26 @@ import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
+import mockResponse from "test-utils/mocks/apiResponses";
 
 beforeAll(() => {
   mockServer.use(
     rest.post(
       `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
       (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json({ otp_auth_key: "fdsafasaf" }));
+        return res(
+          ctx.status(200),
+          ctx.json(mockResponse["auth/send_pin"].success)
+        );
       }
     ),
     rest.post(
       `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
       (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json({ jwt_token: "ejhksfdsfafds" }));
+        return res(
+          ctx.status(200),
+          ctx.json(mockResponse["auth/verify"].success)
+        );
       }
     )
   );
