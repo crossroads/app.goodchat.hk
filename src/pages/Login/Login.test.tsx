@@ -202,7 +202,7 @@ describe("Get SMS PIN button", () => {
     });
 
     describe("On receiving error response from send_pin", () => {
-      const error = mockApiResponses["auth/send_pin"].error[422];
+      const { error } = mockApiResponses["auth/send_pin"][422];
       beforeEach(
         () =>
           (mockPost = jest.spyOn(client, "post").mockRejectedValueOnce(error))

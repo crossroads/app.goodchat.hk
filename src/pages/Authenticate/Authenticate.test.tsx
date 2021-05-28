@@ -213,7 +213,7 @@ describe("Clicking login button", () => {
   });
 
   describe("Unsuccessful response", () => {
-    const error = mockApiResponses["auth/verify"].error[401];
+    const { error } = mockApiResponses["auth/verify"][401];
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {

@@ -3,8 +3,13 @@ import { ApiError } from "lib/errors";
 const mockApiResponses = {
   "auth/send_pin": {
     success: { otp_auth_key: "123dsfdasf" },
-    error: {
-      422: new ApiError({
+    422: {
+      errorResponse: {
+        status: 422,
+        type: "ValidationError",
+        error: "Mobile is invalid",
+      },
+      error: new ApiError({
         httpStatus: 422,
         type: "ValidationError",
         message: "Mobile is invalid",
@@ -13,8 +18,13 @@ const mockApiResponses = {
   },
   "auth/verify": {
     success: { jwt_token: "fdsafadfafs" },
-    error: {
-      401: new ApiError({
+    401: {
+      errorResponse: {
+        status: 401,
+        type: "InvalidPinError",
+        error: "Invalid SMS code.",
+      },
+      error: new ApiError({
         httpStatus: 401,
         type: "InvalidPinError",
         message: "Invalid SMS code.",
@@ -25,8 +35,13 @@ const mockApiResponses = {
     success: {
       token: "ewreresckdlsafjdasklfjs",
     },
-    error: {
-      401: new ApiError({
+    401: {
+      errorResponse: {
+        status: 401,
+        type: "UnauthorizedError",
+        error: "Invalid token",
+      },
+      error: new ApiError({
         httpStatus: 401,
         type: "UnauthorizedError",
         message: "Invalid token",

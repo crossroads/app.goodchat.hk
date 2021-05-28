@@ -64,7 +64,7 @@ describe("login", () => {
   });
 
   describe("on unsuccessful response", () => {
-    const error = mockApiResponses["auth/verify"].error[401];
+    const { error } = mockApiResponses["auth/verify"][401];
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should just throw the error", async () => {

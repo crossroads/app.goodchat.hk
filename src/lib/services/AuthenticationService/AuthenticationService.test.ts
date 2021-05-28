@@ -35,7 +35,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("on unsuccessful response", () => {
-      const error = mockApiResponses["auth/send_pin"].error[422];
+      const { error } = mockApiResponses["auth/send_pin"][422];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
@@ -92,7 +92,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("On unsuccessful response", () => {
-      const error = mockApiResponses["auth/verify"].error[401];
+      const { error } = mockApiResponses["auth/verify"][401];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
@@ -172,7 +172,7 @@ describe("Methods with API calls", () => {
     });
 
     describe("on unsuccessful response", () => {
-      const error = mockApiResponses["auth/send_pin"].error[422];
+      const { error } = mockApiResponses["auth/send_pin"][422];
       beforeEach(() => mockPost.mockRejectedValue(error));
 
       it("should just throw the error", () => {
