@@ -3,7 +3,7 @@ import {
   HasuraResponse,
   SendPinResponse,
   VerifyResponse,
-} from "lib/services/AuthenticationService/types";
+} from "types/api_request_response";
 
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";

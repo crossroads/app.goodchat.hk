@@ -12,15 +12,7 @@ import { mockServer } from "mockServer";
 import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 import mockApiResponses from "test-utils/fixtures/mockApiResponses";
-
-interface SendPinBody {
-  mobile: string;
-}
-
-interface VerifyBody {
-  otp_auth_key: string;
-  pin: string;
-}
+import { SendPinBody, VerifyBody } from "types/api_request_response";
 
 beforeAll(() => {
   const VALID_PHONE = "+85291111111";
