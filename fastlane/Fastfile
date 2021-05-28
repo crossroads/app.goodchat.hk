@@ -130,7 +130,7 @@ platform :ios do
   XCODEPROJ_PATH        = "ios/App/App.xcodeproj".freeze
   XCWORKSPACE_PATH      = "ios/App/App.xcworkspace".freeze
   KEYCHAIN_NAME         = "goodcity_fastlane_keychain".freeze
-  SDK_VERSION           = "14.1" 
+  SDK_VERSION           = "14.2" 
   APPSTORE_API_KEY      = nil
 
   before_all do
