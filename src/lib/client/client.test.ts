@@ -2,6 +2,7 @@ import client from "lib/client/client";
 import { rest } from "msw";
 import { mockServer } from "mockServer";
 import { ApiError, NetworkError } from "lib/errors";
+import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 
@@ -28,11 +29,7 @@ test("should call GoodCity API V2 correctly", () => {
 describe("Api client receiving error response from server", () => {
   const body = { mobile: "+85212345678" };
   describe("Known error response format", () => {
-    const errorResponse = {
-      status: 422,
-      type: "ValidationError",
-      error: "Mobile is invalid",
-    };
+    const { errorResponse } = mockApiResponses["auth/send_pin"][422];
     beforeEach(() => {
       mockServer.use(
         rest.post(
