@@ -5,7 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.12",
     "@capacitor/android": "^2.4.2",
-    "@capacitor/core": "2.4.2",
+    "@capacitor/core": "^3.0.0",
     "@capacitor/ios": "^2.4.2",
     "@ionic/react": "^5.0.7",
     "@ionic/react-router": "^5.0.7",
@@ -63,7 +63,7 @@
   },
   "description": "An Ionic project",
   "devDependencies": {
-    "@capacitor/cli": "2.4.2",
+    "@capacitor/cli": "^3.0.0",
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/introspection": "1.18.1",
     "@graphql-codegen/typescript": "1.21.1",
