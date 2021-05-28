@@ -13,15 +13,29 @@ import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
+const VALID_PHONE = "+85291111111";
+
+// TODO move to a centralised location
+interface AuthSendPinBody {
+  mobile: string;
+}
+
 beforeAll(() => {
   mockServer.use(
-    rest.post(
+    rest.post<AuthSendPinBody>(
       `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-      (_, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(mockApiResponses["auth/send_pin"].success)
-        );
+      (req, res, ctx) => {
+        if (req.body.mobile === VALID_PHONE) {
+          return res(
+            ctx.status(200),
+            ctx.json(mockApiResponses["auth/send_pin"].success)
+          );
+        } else {
+          return res(
+            ctx.status(422),
+            ctx.json(mockApiResponses["auth/send_pin"][422].errorResponse)
+          );
+        }
       }
     ),
     rest.post(
@@ -62,6 +76,9 @@ test("User is able to login and logout with correct routing", async () => {
 
   expectToBeOnPage(container, history.location.pathname, "login");
 
+  const mobileInput = container.querySelector("ion-input");
+  ionFireEvent.ionChange(mobileInput!, "91111111");
+
   const goToAuthenticateButton = container.querySelector("ion-button");
   userEvent.click(goToAuthenticateButton as TargetElement);
 
@@ -100,6 +117,9 @@ test("User is able to login and logout with correct routing", async () => {
     const { history, container } = setup({ initialEntries: [initialPath] });
 
     expectToBeOnPage(container, history.location.pathname, "login");
+
+    const mobileInput = container.querySelector("ion-input");
+    ionFireEvent.ionChange(mobileInput!, "91111111");
 
     const goToAuthenticateButton = container.querySelector("ion-button");
     userEvent.click(goToAuthenticateButton as TargetElement);
