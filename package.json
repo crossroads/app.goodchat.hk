@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.12",
-    "@capacitor/android": "^2.4.2",
+    "@capacitor/android": "^3.0.0",
     "@capacitor/core": "^3.0.0",
     "@capacitor/ios": "^3.0.0",
     "@ionic/react": "^5.0.7",
