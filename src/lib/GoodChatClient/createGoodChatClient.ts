@@ -26,11 +26,8 @@ const createGoodChatClient = () =>
      * this client mostly deals with realtime data
      */
     defaultOptions: {
-      watchQuery: {
-        fetchPolicy: "no-cache",
-      },
       query: {
-        fetchPolicy: "no-cache",
+        fetchPolicy: "network-only",
       },
     },
   });

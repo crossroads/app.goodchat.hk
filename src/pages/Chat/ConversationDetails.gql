@@ -1,0 +1,28 @@
+query ConversationDetails($conversationId: Int!) {
+  conversation(id: $conversationId) {
+    id
+    type
+    source
+    createdAt
+    updatedAt
+    customerId
+    customer {
+      id
+      externalId
+      createdAt
+      displayName
+      email
+      avatarUrl
+      locale
+      metadata
+    }
+    staffs {
+      id
+      createdAt
+      updatedAt
+      externalId
+      displayName
+      metadata
+    }
+  }
+}

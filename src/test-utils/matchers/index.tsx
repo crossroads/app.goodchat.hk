@@ -2,20 +2,7 @@ import userEvent from "@testing-library/user-event";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import useAuth from "hooks/useAuth/useAuth";
 import { screen } from "@testing-library/react";
-import { React } from "@ungap/global-this";
 import { renderWithAct } from "test-utils/renderers";
-
-const expectToBeOnPage = (
-  container: HTMLElement,
-  myPath: string,
-  expectedPage: string,
-  expectedPath?: string
-) => {
-  expect(myPath).toEqual(expectedPath ?? `/${expectedPage}`);
-  expect(container.querySelector("ion-title")).toHaveTextContent(
-    new RegExp(expectedPage, "i")
-  );
-};
 
 interface PageHeaderProps {
   title: string;
@@ -78,4 +65,4 @@ const testPageHeader = ({
   }
 };
 
-export { expectToBeOnPage, testPageHeader };
+export { testPageHeader };

@@ -1,0 +1,65 @@
+import { generatePartialFactory } from './helpers';
+import { customerFactory } from './customer.factory';
+import { messageFactory } from './message.factory';
+import { Factory } from 'fishery'
+import {
+  Conversation,
+  Message,
+  ConversationType,
+} from '../../typings/goodchat'
+
+// ---------------------------------
+// ~ TYPES
+// ---------------------------------
+
+export type ConversationFactoryParams = {
+  messageCount?: number
+}
+
+export type ConversationField = keyof Conversation
+
+// ---------------------------------
+// ~ FACTORY
+// ---------------------------------
+
+export const conversationFactory = Factory.define<Conversation, ConversationFactoryParams>(({ sequence, params, transientParams }) => {
+  const date = new Date();
+  const id = sequence;
+
+  const messages : Message[] = (
+    params.messages ||
+    messageFactory.buildList(transientParams.messageCount || 3)
+  ).map(m => ({
+    ...m,
+    conversationId: id
+  }));
+
+  const conversation : Conversation = {
+    __typename: 'Conversation',
+    id: id,
+    customerId: null,
+    customer: null,
+    source: 'whatsapp',
+    type: params.type || params.customer ? ConversationType.Customer : ConversationType.Public,
+    metadata: {},
+    createdAt: date,
+    updatedAt: date,
+    messages: messages,
+    readReceipts: [],
+    staffs: []
+  }
+
+  if (conversation.type === ConversationType.Customer) {
+    conversation.customer = customerFactory.build();
+    conversation.customerId = conversation.customer.id;
+    conversation.customer.conversations = [{ ...conversation }];
+  }
+
+  return conversation;
+});
+
+// ---------------------------------
+// ~ PARTIAL CONVERSATION
+// ---------------------------------
+
+export const conversationFields = generatePartialFactory(conversationFactory)

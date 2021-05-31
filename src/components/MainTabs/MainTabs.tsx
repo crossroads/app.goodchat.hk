@@ -2,6 +2,9 @@ import React from "react";
 import Home from "pages/Home/Home";
 import Offers from "pages/Offers/Offers";
 import { Route } from "react-router";
+import { home, listOutline, chatbubbleOutline } from "ionicons/icons";
+import Chats from "pages/Chats/Chats";
+import Chat from "pages/Chat/Chat";
 import {
   IonIcon,
   IonLabel,
@@ -10,9 +13,6 @@ import {
   IonTabButton,
   IonTabs,
 } from "@ionic/react";
-import { home, listOutline, chatbubbleOutline } from "ionicons/icons";
-import Chats from "pages/Chats/Chats";
-import Chat from "pages/Chat/Chat";
 
 const MainTabs = () => (
   <IonTabs>

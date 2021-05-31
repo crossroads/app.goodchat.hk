@@ -17,10 +17,7 @@ const MainRouter: React.FC = () => {
       <Route exact path="/authenticate">
         <Authenticate />
       </Route>
-      <PrivateRoute exact path={["/home", "/offers"]}>
-        <MainTabs />
-      </PrivateRoute>
-      <PrivateRoute path="/chats">
+      <PrivateRoute path={["/home", "/offers", "/chats"]}>
         <MainTabs />
       </PrivateRoute>
       <Redirect to={isAuthenticated ? "/home" : "/login"} />

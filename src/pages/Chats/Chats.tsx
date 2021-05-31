@@ -15,7 +15,7 @@ import {
   Customer,
   Message,
   useCustomerConversationsListQuery,
-} from "generated/graphql";
+} from "../../generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 
