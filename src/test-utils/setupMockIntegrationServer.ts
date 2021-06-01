@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { SetupServerApi } from "msw/lib/types/node";
-import { SendPinBody, VerifyBody } from "types/api_request_response";
+import { SendPinBody, VerifyBody } from "typings/goodcity";
 import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 
 function setupMockIntegrationServer(mockServer: SetupServerApi) {

@@ -1,6 +1,7 @@
 /**
  * Types relates to api request
  * params, body, response etc.
+ * for goodcity api
  */
 
 export interface SendPinResponse {
@@ -18,8 +19,4 @@ export interface VerifyResponse {
 export interface VerifyBody {
   otp_auth_key: string;
   pin: string;
-}
-
-export interface HasuraResponse {
-  token: string;
 }
