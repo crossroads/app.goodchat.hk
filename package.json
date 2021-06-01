@@ -34,7 +34,7 @@
     "typestyle": "^2.1.0"
   },
   "scripts": {
-    "start": "NODE_ENV=development kankyo exec -- react-scripts start",
+    "start": "kankyo exec -- react-scripts start",
     "build": "kankyo exec -- react-scripts build",
     "test": "NODE_ENV=test kankyo exec -- react-scripts test",
     "eject": "react-scripts eject",
