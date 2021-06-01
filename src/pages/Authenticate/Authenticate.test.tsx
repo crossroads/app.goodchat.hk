@@ -7,7 +7,7 @@ import ReactRouter, { MemoryRouter, Router } from "react-router";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { IonButton, IonInput } from "@ionic/react";
 import client from "lib/client/client";
-import mockResponse from "test-utils/mocks/apiResponses";
+import mockApiResponses from "test-utils/fixtures/mockApiResponses";
 import { testPageHeader } from "test-utils/matchers";
 
 test("renders without crashing", () => {
@@ -135,7 +135,7 @@ describe("Clicking login button", () => {
     () =>
       (mockPost = jest
         .spyOn(client, "post")
-        .mockResolvedValue(mockResponse["auth/verify"].success))
+        .mockResolvedValue(mockApiResponses["auth/verify"].success))
   );
   afterEach(() => mockPost.mockRestore());
 
@@ -213,7 +213,7 @@ describe("Clicking login button", () => {
   });
 
   describe("Unsuccessful response", () => {
-    const error = mockResponse["auth/verify"].error[401];
+    const { error } = mockApiResponses["auth/verify"][401];
     beforeEach(() => mockPost.mockRejectedValue(error));
 
     it("should show the error message", async () => {

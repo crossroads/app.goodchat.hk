@@ -9,24 +9,11 @@ import { Router } from "react-router";
 import MainRouter from "components/MainRouter/MainRouter";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
-import { rest } from "msw";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
+import setupMockIntegrationServer from "test-utils/setupMockIntegrationServer";
 
 beforeAll(() => {
-  mockServer.use(
-    rest.post(
-      `${process.env.REACT_APP_API_V2_URL}/auth/send_pin`,
-      (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json({ otp_auth_key: "fdsafasaf" }));
-      }
-    ),
-    rest.post(
-      `${process.env.REACT_APP_API_V2_URL}/auth/verify`,
-      (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json({ jwt_token: "ejhksfdsfafds" }));
-      }
-    )
-  );
+  setupMockIntegrationServer(mockServer);
   mockServer.listen({ onUnhandledRequest: "error" });
 });
 
@@ -54,6 +41,9 @@ test("User is able to login and logout with correct routing", async () => {
   const { history, container } = setup({ initialEntries: ["/login"] });
 
   expectToBeOnPage(container, history.location.pathname, "login");
+
+  const mobileInput = container.querySelector("ion-input");
+  ionFireEvent.ionChange(mobileInput!, "91111111");
 
   const goToAuthenticateButton = container.querySelector("ion-button");
   userEvent.click(goToAuthenticateButton as TargetElement);
@@ -94,6 +84,9 @@ test("User is able to login and logout with correct routing", async () => {
 
     expectToBeOnPage(container, history.location.pathname, "login");
 
+    const mobileInput = container.querySelector("ion-input");
+    ionFireEvent.ionChange(mobileInput!, "91111111");
+
     const goToAuthenticateButton = container.querySelector("ion-button");
     userEvent.click(goToAuthenticateButton as TargetElement);
 
@@ -101,7 +94,10 @@ test("User is able to login and logout with correct routing", async () => {
       expectToBeOnPage(container, history.location.pathname, "authenticate")
     );
 
+    const inputVal = "1234";
+    const input = container.querySelector("ion-input");
     const loginButton = container.querySelector("ion-button");
+    ionFireEvent.ionChange(input!, inputVal);
     userEvent.click(loginButton as TargetElement);
 
     await wait(() =>

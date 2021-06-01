@@ -1,14 +1,8 @@
 import client from "lib/client/client";
-import {
-  HasuraResponse,
-  SendPinResponse,
-  VerifyResponse,
-} from "lib/services/AuthenticationService/types";
+import { SendPinResponse, VerifyResponse } from "typings/goodcity";
 
 const GC_API_TOKEN = "gc_api_token";
 const OTP_AUTH_KEY = "otp_auth_key";
-
-let hasuraToken: string | null = null;
 
 async function sendPin(mobile: string): Promise<SendPinResponse> {
   const response: SendPinResponse = await client.post("auth/send_pin", {
@@ -29,43 +23,11 @@ async function authenticate(pin: string): Promise<VerifyResponse> {
 }
 
 function logout() {
-  invalidateHasuraToken();
   localStorage.removeItem(GC_API_TOKEN);
 }
 
 function isAuthenticated() {
   return Boolean(localStorage.getItem(GC_API_TOKEN));
-}
-
-function getHasuraToken(): string | null {
-  return hasuraToken;
-}
-
-function setHasuraToken(tokenValue: string | null) {
-  hasuraToken = tokenValue;
-}
-
-/**
- * Returns the existing hasuraToken
- * If it is unavailable, fetches a new one and returns that
- */
-async function resolveHasuraToken(): Promise<string> {
-  if (!hasuraToken) await AuthenticationService.refreshHasuraToken();
-  return getHasuraToken() as string;
-}
-
-async function refreshHasuraToken(): Promise<void> {
-  const gcApiToken = localStorage.getItem(GC_API_TOKEN);
-  const response: HasuraResponse = await client.post("auth/hasura", null, {
-    headers: {
-      Authorization: gcApiToken ? `Bearer ${gcApiToken}` : "",
-    },
-  });
-  setHasuraToken(response.token);
-}
-
-function invalidateHasuraToken() {
-  setHasuraToken(null);
 }
 
 function getGoodCityToken() {
@@ -77,10 +39,6 @@ const AuthenticationService = {
   authenticate,
   logout,
   isAuthenticated,
-  resolveHasuraToken,
-  refreshHasuraToken,
-  invalidateHasuraToken,
-  getHasuraToken,
   getGoodCityToken,
 };
 

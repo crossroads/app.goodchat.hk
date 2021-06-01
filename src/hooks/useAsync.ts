@@ -20,6 +20,7 @@ const useAsync = <T, A extends unknown[]>(
   const safeSetState = useSafeSetState();
 
   const execute = async (...args: A) => {
+    setData(null);
     setIsLoading(true);
     setError(null);
     try {
