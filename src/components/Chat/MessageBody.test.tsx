@@ -1,4 +1,4 @@
-import { MessageImageContent, MessageTextContent } from "../../typings/goodchat";
+import { MessageImageContent, MessageTextContent, MessageContent } from "../../typings/goodchat";
 import MessageBody from "./MessageBody"
 import { render } from "@testing-library/react";
 import Message from './Message'
@@ -16,6 +16,11 @@ const textContent : MessageTextContent = {
   type: 'text',
   text: faker.lorem.words(4)
 };
+
+const unknownContent = {
+  type: 'weird',
+  other: 'prop'
+} as any
 
 test('it renders type "image" as an image', () => {
   const { container } = render(
@@ -42,3 +47,17 @@ test('it renders type "text" as a label', () => {
   expect(textElement).toBeTruthy();
   expect(textElement.textContent).toEqual(textContent.text);
 })
+
+test('it renders type unknown content types as "unknown"', () => {
+  const { container } = render(
+    <Message>
+      <MessageBody content={unknownContent}></MessageBody>
+    </Message>
+  )
+
+  const textElement = container.querySelector('.chat-message-content.unknown');
+
+  expect(textElement).toBeTruthy();
+  expect(textElement.textContent).toEqual('Cannot display message');
+})
+

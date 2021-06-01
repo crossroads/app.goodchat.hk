@@ -1,11 +1,10 @@
-import { testPageHeader } from "test-utils/matchers"
-import { renderPage } from "test-utils/renderers"
-import * as Apollo from '@apollo/client'
-import * as factories from 'test-utils/factories'
-import { wait, waitForElement } from "@testing-library/dom"
 import { Conversation, ConversationType } from "typings/goodchat"
+import { wait, waitForElement } from "@testing-library/dom"
+import { renderPage } from "test-utils/renderers"
+import * as factories from 'test-utils/factories'
+import * as Apollo from '@apollo/client'
+import { act } from "react-dom/test-utils"
 import range from "lodash/range"
-import { assertNonNullType } from "graphql"
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -140,6 +139,86 @@ describe('Content', () => {
           .reverse()
           .map(m => m.content.text)
       )
+    })
+  })
+
+  describe('Subscriptions', () => {
+
+    it('subscribes to new messages', async () => {
+      const spy = jest.spyOn(Apollo, 'useSubscription')
+
+      await renderChat();
+
+      expect(spy).toBeCalledWith(
+        expect.objectContaining({
+          definitions: expect.arrayContaining([
+            expect.objectContaining({
+              operation: "subscription",
+              name: {
+                kind: 'Name',
+                value: 'NewMessagesSub'
+              }
+            })
+          ])
+        }),
+        expect.objectContaining({
+          variables: {
+            conversationId: conversation.id, // id matching
+          }
+        })
+      )
+    })
+
+    it('appends new messages to the bottom of the chat', async () => {
+      let onSubscriptionData : any= null;
+
+      const original = Apollo.useSubscription
+      const spy = jest.spyOn(Apollo, 'useSubscription').mockImplementation((...args) => {
+        // Catch the callback in order to trigger subscriptions ourselves
+        onSubscriptionData = (args[1]?.onSubscriptionData || null)
+        return original(...args);
+      });
+
+      const { container } = await renderChat();
+
+      expect(spy).toBeCalledWith(
+        expect.any(Object),
+        expect.objectContaining({
+          onSubscriptionData: expect.any(Function)
+        })
+      )
+
+      expect(container.querySelectorAll('ion-item')).toHaveLength(PAGE_SIZE)
+      expect(onSubscriptionData).not.toBeNull();
+
+      act(() => {
+        onSubscriptionData({
+          client: {} as any,
+          subscriptionData: {
+            loading: false,
+            error: undefined,
+            data: {
+              messageEvent: {
+                action: 'CREATE',
+                message: factories.messageFactory.build({
+                  content: {
+                    type: 'text',
+                    text: 'a subscription message'
+                  }
+                })
+              }
+            }
+          }
+        })
+      })
+
+      await wait(() => {
+        expect(container.querySelectorAll('ion-item')).toHaveLength(PAGE_SIZE + 1)
+      });
+
+      const lastMessage = container.querySelector('ion-item:last-child .chat-message .chat-message-content.text');
+      expect(lastMessage).toBeInTheDocument();
+      expect(lastMessage).toHaveTextContent('a subscription message')
     })
   })
 })

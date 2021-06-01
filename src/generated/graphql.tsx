@@ -416,6 +416,23 @@ export type ConversationMessagesQuery = (
   )> }
 );
 
+export type NewMessagesSubSubscriptionVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type NewMessagesSubSubscription = (
+  { __typename?: 'Subscription' }
+  & { messageEvent: (
+    { __typename?: 'MessageEvent' }
+    & Pick<MessageEvent, 'action'>
+    & { message: (
+      { __typename?: 'Message' }
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
+    ) }
+  ) }
+);
+
 export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -537,6 +554,44 @@ export function useConversationMessagesLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type ConversationMessagesQueryHookResult = ReturnType<typeof useConversationMessagesQuery>;
 export type ConversationMessagesLazyQueryHookResult = ReturnType<typeof useConversationMessagesLazyQuery>;
 export type ConversationMessagesQueryResult = Apollo.QueryResult<ConversationMessagesQuery, ConversationMessagesQueryVariables>;
+export const NewMessagesSubDocument = gql`
+    subscription NewMessagesSub($conversationId: Int!) {
+  messageEvent(conversationId: $conversationId, actions: [CREATE]) {
+    action
+    message {
+      id
+      authorType
+      authorId
+      conversationId
+      content
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewMessagesSubSubscription__
+ *
+ * To run a query within a React component, call `useNewMessagesSubSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessagesSubSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessagesSubSubscription({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useNewMessagesSubSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>(NewMessagesSubDocument, options);
+      }
+export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
+export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList {
   conversations(type: CUSTOMER) {

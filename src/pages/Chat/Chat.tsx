@@ -5,17 +5,16 @@ import { MessageBody } from 'components/Chat/MessageBody'
 import { Message } from 'components/Chat/Message'
 import { timeString } from "lib/utils/strings"
 import { useParams } from "react-router"
-import useAuth from "hooks/useAuth/useAuth"
 import uniqBy from 'lodash/sortedUniqBy'
 import sortBy from 'lodash/sortBy'
 import {
   ConversationMessagesQuery,
   ConversationDetailsQuery,
   useConversationMessagesQuery,
+  useNewMessagesSubSubscription,
   useConversationDetailsQuery } from "../../generated/graphql";
 import {
   IonBackButton,
-  IonButton,
   IonButtons,
   IonHeader,
   IonInfiniteScroll,
@@ -68,13 +67,12 @@ const getMessageTime = (message: MessageRecord) => {
 const PAGE_SIZE = 25;
 
 const Chat: React.FC = () => {
-  const { logout }              = useAuth();
-  const { conversationId }      = useParams<ChatPageParams>();
-  const [page, setPage]         = useState(0);
-  const ionContent              = useRef<HTMLIonContentElement>(null);
-  const [messages, setMessages] = useState<MessageRecord[]>([]);
-
+  const { conversationId } = useParams<ChatPageParams>();
+  const [page, setPage] = useState(0);
+  const ionContent = useRef<HTMLIonContentElement>(null);
+  const [requireScroll, setRequireScroll] = useState(false);
   const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
+  const [messages, setMessages] = useState<MessageRecord[]>([]);
 
   // --- Helpers
 
@@ -84,8 +82,18 @@ const Chat: React.FC = () => {
     offset: pageNumber * PAGE_SIZE
   })
 
+  const scrollToBottom = () => {
+    if (ionContent.current?.scrollToBottom) {
+      ionContent.current.scrollToBottom();
+    }
+  }
+
   const addMessages = (newMessages?: MessageRecord[]) => {
     if (!newMessages || newMessages.length === 0) return;
+
+    //
+    // @todo: improve to avoid flickering
+    //
 
     setMessages(
       uniqBy(
@@ -100,7 +108,7 @@ const Chat: React.FC = () => {
     );
   }
 
-  const onPageLoaded = (pageData: ConversationMessagesQuery, ...rest : any[]) => {
+  const onPageLoaded = (pageData: ConversationMessagesQuery) => {
     addMessages(pageData?.conversation?.messages);
     setPage(page + 1)
   }
@@ -122,17 +130,27 @@ const Chat: React.FC = () => {
     }
   })
 
+  const { error: subError } = useNewMessagesSubSubscription({
+    variables: { conversationId: Number(conversationId) },
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (subscriptionData.data?.messageEvent) {
+        addMessages([subscriptionData.data?.messageEvent.message]);
+        setRequireScroll(true);
+      }
+    }
+  });
+
   const nextPage = ($event: CustomEvent<void>) => {
     fetchMore({
       variables: variables(page),
-      updateQuery(prev, { fetchMoreResult }) {
+      updateQuery(originalResult, { fetchMoreResult }) {
 
         if (!fetchMoreResult?.conversation?.messages.length) {
           //
           // We've reached the end, disable the scroll
           //
           setDisableInfiniteScroll(true)
-          return prev;
+          return originalResult;
         }
 
         onPageLoaded(fetchMoreResult);
@@ -140,22 +158,20 @@ const Chat: React.FC = () => {
         // Toggle the spinner off
         ($event.target as HTMLIonInfiniteScrollElement).complete();
 
-        return fetchMoreResult;
+        return originalResult;
       }
     })
   }
 
   useEffect(() => {
-    if (page <= 1) {
+    if (requireScroll || page <= 1) {
       // On the first page load, we start at the bottom of the list
-      if (ionContent.current?.scrollToBottom) {
-        ionContent.current.scrollToBottom();
-      }
+      scrollToBottom();
+      setRequireScroll(false);
     }
-  }, [page])
+  }, [page, requireScroll])
 
   // @TODO: Error messages
-
   return (
     <IonPage>
 
@@ -175,7 +191,7 @@ const Chat: React.FC = () => {
       <IonContent ref={ionContent}>
 
         {/* Infinite Scroll Spinner  */}
-        <IonInfiniteScroll threshold="100px" position="top"
+        <IonInfiniteScroll threshold="100%" position="top"
           disabled={disableInfiniteScroll}
           onIonInfinite={nextPage}>
           <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
