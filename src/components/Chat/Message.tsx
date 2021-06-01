@@ -1,6 +1,3 @@
-
-import MessageFooter from './MessageFooter';
-import MessageBody from './MessageBody';
 import classnames from 'classnames'
 import { style } from 'typestyle'
 import React from 'react'
@@ -85,30 +82,13 @@ const bubbleStyle = style({
 // ~ MESSAGE BUBBLE
 // ---------------------------------
 
-const CHILDREN_TYPES = [
-  // ordered array
-  MessageBody,
-  MessageFooter
-]
-
 export const Message: React.FC<MessageProps> = ({ slot, children }) => {
   slot = slot ?? 'start';
-
-  const isValidChild = (ch : any) : ch is React.ReactElement => {
-    return ch?.type && CHILDREN_TYPES.indexOf(ch.type) >= 0
-  }
 
   return (
     <div className={classnames('chat-message', slot, bubbleStyle)} slot={slot} >
       {
-        React.Children
-          .toArray(children)
-          .filter(isValidChild)
-          .sort((left : any, right: any) => {
-            const v1 = CHILDREN_TYPES.indexOf(left.type);
-            const v2 = CHILDREN_TYPES.indexOf(right.type);
-            return v1 > v2 ? 1 : -1;
-          })
+        children
       }
     </div>
   );

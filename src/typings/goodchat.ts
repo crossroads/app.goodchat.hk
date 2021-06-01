@@ -32,7 +32,7 @@ export interface MessageImageContent extends MessageContentBase {
   mediaUrl:   string
   mediaType:  string,
   mediaSize:  number,
-  altText:    string
+  altText?:   string
 }
 
 export type MessageContent = MessageTextContent | MessageImageContent
