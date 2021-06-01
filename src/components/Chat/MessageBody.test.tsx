@@ -32,20 +32,20 @@ test('it renders type "image" as an image', () => {
   const imageElement = container.querySelector('ion-img.chat-message-content.image');
 
   expect(imageElement).toBeTruthy();
-  expect(imageElement.getAttribute('src')).toEqual(imageContent.mediaUrl);
+  expect(imageElement?.getAttribute('src')).toEqual(imageContent.mediaUrl);
 })
 
-test('it renders type "text" as a label', () => {
+test('it renders type "text" as a text', () => {
   const { container } = render(
     <Message>
       <MessageBody content={textContent}></MessageBody>
     </Message>
   )
 
-  const textElement = container.querySelector('ion-label.chat-message-content.text');
+  const textElement = container.querySelector('ion-text.chat-message-content.text');
 
   expect(textElement).toBeTruthy();
-  expect(textElement.textContent).toEqual(textContent.text);
+  expect(textElement?.textContent).toEqual(textContent.text);
 })
 
 test('it renders type unknown content types as "unknown"', () => {
@@ -58,6 +58,6 @@ test('it renders type unknown content types as "unknown"', () => {
   const textElement = container.querySelector('.chat-message-content.unknown');
 
   expect(textElement).toBeTruthy();
-  expect(textElement.textContent).toEqual('Cannot display message');
+  expect(textElement?.textContent).toEqual('Cannot display message');
 })
 

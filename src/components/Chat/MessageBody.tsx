@@ -1,7 +1,7 @@
 import { MessageContent } from "../../typings/goodchat";
 import {
   IonImg,
-  IonLabel
+  IonText
 } from "@ionic/react";
 
 
@@ -21,9 +21,9 @@ export const MessageBody: React.FC<MessageBodyProps> = ({ content }) => {
 
   if (content.type === 'text') {
     return (
-      <IonLabel class="chat-message-content text">
+      <IonText class="chat-message-content text" style={{ display: 'block' }}>
         { content.text }
-      </IonLabel>
+      </IonText>
     );
   }
 
@@ -34,9 +34,9 @@ export const MessageBody: React.FC<MessageBodyProps> = ({ content }) => {
   }
 
   return (
-    <IonLabel class="chat-message-content unknown">
+    <IonText class="chat-message-content unknown" style={{ display: 'block' }}>
       <i>Cannot display message</i>
-    </IonLabel>
+    </IonText>
   );
 };
 
