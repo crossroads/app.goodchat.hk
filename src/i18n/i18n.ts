@@ -1,19 +1,13 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import enTranslations from "./en.json";
 
 // the translations
 // (tip move them in a JSON file and import them,
 // or even better, manage them via a UI: https://react.i18next.com/guides/multiple-translation-files#manage-your-translations-with-a-management-gui)
 const resources = {
   en: {
-    translation: {
-      "Welcome to React": "Welcome to React and react-i18next",
-    },
-  },
-  fr: {
-    translation: {
-      "Welcome to React": "Bienvenue à React et react-i18next",
-    },
+    translation: enTranslations,
   },
 };
 
