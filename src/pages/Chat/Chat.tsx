@@ -28,7 +28,7 @@ import {
   IonContent,
 } from "@ionic/react";
 import { useTranslation } from "react-i18next";
-import i18n from "i18n/i18n";
+import { TFunction } from "i18next";
 
 // ---------------------------------
 // ~ TYPES
@@ -48,19 +48,17 @@ type MessageRecord = Definite<
 // ~ UTILS
 // ---------------------------------
 
-const getChatTitle = (details?: ConversationDetailsQuery) => {
+const getChatTitle = (t: TFunction, details?: ConversationDetailsQuery) => {
   const conversation = details?.conversation;
 
   if (!conversation) return "";
 
   if (conversation?.type === ConversationType.Customer) {
-    return `${
-      conversation.customer?.displayName || i18n.t("chat.anonymousTitle")
-    }`;
+    return `${conversation.customer?.displayName || t("chat.title.anonymous")}`;
   }
 
   const memberCount = conversation?.staffs.length ?? 0;
-  return i18n.t("chat.title.memberCount", {
+  return t("chat.title.memberCount", {
     memberCount,
     count: memberCount,
   });
@@ -185,7 +183,7 @@ const Chat: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/chats" />
           </IonButtons>
-          <IonTitle>{getChatTitle(details)}</IonTitle>
+          <IonTitle>{getChatTitle(t, details)}</IonTitle>
         </IonToolbar>
       </IonHeader>
 
