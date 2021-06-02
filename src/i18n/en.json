@@ -1,9 +1,32 @@
 {
-  "Home": "Home",
-  "Chat": "Chat",
-  "Chats": "Chats",
-  "Offers": "Offers",
-  "Login": "Login",
-  "Log out": "Log out",
-  "Get 4-digit SMS code": "Get 4-digit SMS code"
+  "home": {
+    "title": "Home"
+  },
+  "chat": {
+    "anonymousTitle": "Anonymous",
+    "nonTextLastMessagePreview": ""
+  },
+  "chats": {
+    "title": "Chats"
+  },
+  "offers": {
+    "title": "Offers"
+  },
+  "login": {
+    "title": "Login",
+    "pinButton": "Get 4-digit SMS code"
+  },
+  "authenticate": {
+    "title": "Authenticate",
+    "2FaLabel": "Please input your 2fa code",
+    "loginButton": "Login"
+  },
+  "header": {
+    "logout": "Log out"
+  },
+  "footer": {
+    "home": "Home",
+    "chats": "Chats",
+    "offers": "Offers"
+  }
 }

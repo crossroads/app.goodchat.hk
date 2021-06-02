@@ -13,12 +13,15 @@ import AuthenticationService from "lib/services/AuthenticationService/Authentica
 import React, { useState } from "react";
 import useAsync from "hooks/useAsync";
 import { useHistory, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 
 interface LocationState {
   from: string;
 }
 
 const Login: React.FC = () => {
+  const { t } = useTranslation();
+
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
   const [phoneInput, setPhoneInput] = useState("");
@@ -42,7 +45,7 @@ const Login: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Login</IonTitle>
+          <IonTitle>{t("login.title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -60,7 +63,7 @@ const Login: React.FC = () => {
           </div>
         )}
         <IonButton disabled={phoneInput.length < 8} onClick={handleClick}>
-          Get 4-digit SMS code
+          {t("login.pinButton")}
         </IonButton>
       </IonContent>
     </IonPage>

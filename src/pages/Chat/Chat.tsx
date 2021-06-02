@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState } from "react"
-import { AuthorType, ConversationType } from "typings/goodchat"
-import { MessageFooter } from 'components/Chat/MessageFooter'
-import { MessageBody } from 'components/Chat/MessageBody'
-import { Message } from 'components/Chat/Message'
-import { timeString } from "lib/utils/strings"
-import { useParams } from "react-router"
-import uniqBy from 'lodash/sortedUniqBy'
-import sortBy from 'lodash/sortBy'
+import React, { useEffect, useRef, useState } from "react";
+import { AuthorType, ConversationType } from "typings/goodchat";
+import { MessageFooter } from "components/Chat/MessageFooter";
+import { MessageBody } from "components/Chat/MessageBody";
+import { Message } from "components/Chat/Message";
+import { timeString } from "lib/utils/strings";
+import { useParams } from "react-router";
+import uniqBy from "lodash/sortedUniqBy";
+import sortBy from "lodash/sortBy";
 import {
   ConversationMessagesQuery,
   ConversationDetailsQuery,
   useConversationMessagesQuery,
   useNewMessagesSubSubscription,
-  useConversationDetailsQuery } from "../../generated/graphql";
+  useConversationDetailsQuery,
+} from "../../generated/graphql";
 import {
   IonBackButton,
   IonButtons,
@@ -24,41 +25,44 @@ import {
   IonItem,
   IonTitle,
   IonToolbar,
-  IonContent
+  IonContent,
 } from "@ionic/react";
+import { useTranslation } from "react-i18next";
 
 // ---------------------------------
 // ~ TYPES
 // ---------------------------------
 
-type Definite<T> = Exclude<T, null | undefined>
+type Definite<T> = Exclude<T, null | undefined>;
 
 type ChatPageParams = {
-  conversationId: string
-}
+  conversationId: string;
+};
 
-type MessageRecord = Definite<ConversationMessagesQuery['conversation']>['messages'][0]
+type MessageRecord = Definite<
+  ConversationMessagesQuery["conversation"]
+>["messages"][0];
 
 // ---------------------------------
 // ~ UTILS
 // ---------------------------------
 
-const getChatTitle = (details? : ConversationDetailsQuery) => {
-  const conversation = details?.conversation
+const getChatTitle = (details?: ConversationDetailsQuery) => {
+  const { t } = useTranslation();
+  const conversation = details?.conversation;
 
-  if (!conversation) return '';
+  if (!conversation) return "";
 
   if (conversation?.type === ConversationType.Customer) {
-    return `${conversation.customer?.displayName || 'Anonymous'}`
+    return `${conversation.customer?.displayName || t("chat.anonymousTitle")}`;
   }
 
-  return `${conversation?.staffs.length} members`
-}
+  return `${conversation?.staffs.length} members`;
+};
 
 const getMessageTime = (message: MessageRecord) => {
   return timeString(new Date(message.createdAt));
-}
-
+};
 
 // ---------------------------------
 // ~ CHAT
@@ -73,20 +77,21 @@ const Chat: React.FC = () => {
   const [requireScroll, setRequireScroll] = useState(false);
   const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
   const [messages, setMessages] = useState<MessageRecord[]>([]);
+  const { t } = useTranslation();
 
   // --- Helpers
 
-  const variables = (pageNumber : number) => ({
+  const variables = (pageNumber: number) => ({
     conversationId: Number(conversationId),
     limit: PAGE_SIZE,
-    offset: pageNumber * PAGE_SIZE
-  })
+    offset: pageNumber * PAGE_SIZE,
+  });
 
   const scrollToBottom = () => {
     if (ionContent.current?.scrollToBottom) {
       ionContent.current.scrollToBottom();
     }
-  }
+  };
 
   const addMessages = (newMessages?: MessageRecord[]) => {
     if (!newMessages || newMessages.length === 0) return;
@@ -97,21 +102,16 @@ const Chat: React.FC = () => {
 
     setMessages(
       uniqBy(
-        sortBy([
-          ...messages,
-          ...(newMessages || [])
-        ],
-        ['createdAt'],
-        ['desc']),
-        'id'
+        sortBy([...messages, ...(newMessages || [])], ["createdAt"], ["desc"]),
+        "id"
       )
     );
-  }
+  };
 
   const onPageLoaded = (pageData: ConversationMessagesQuery) => {
     addMessages(pageData?.conversation?.messages);
-    setPage(page + 1)
-  }
+    setPage(page + 1);
+  };
 
   // --- Data Fetching
 
@@ -122,13 +122,13 @@ const Chat: React.FC = () => {
       conversationId: Number(conversationId),
     },
     onCompleted: onPageLoaded,
-  })
+  });
 
-  const { data : details } = useConversationDetailsQuery({
+  const { data: details } = useConversationDetailsQuery({
     variables: {
-      conversationId: Number(conversationId)
-    }
-  })
+      conversationId: Number(conversationId),
+    },
+  });
 
   const { error: subError } = useNewMessagesSubSubscription({
     variables: { conversationId: Number(conversationId) },
@@ -137,19 +137,18 @@ const Chat: React.FC = () => {
         addMessages([subscriptionData.data?.messageEvent.message]);
         setRequireScroll(true);
       }
-    }
+    },
   });
 
   const nextPage = ($event: CustomEvent<void>) => {
     fetchMore({
       variables: variables(page),
       updateQuery(originalResult, { fetchMoreResult }) {
-
         if (!fetchMoreResult?.conversation?.messages.length) {
           //
           // We've reached the end, disable the scroll
           //
-          setDisableInfiniteScroll(true)
+          setDisableInfiniteScroll(true);
           return originalResult;
         }
 
@@ -159,9 +158,9 @@ const Chat: React.FC = () => {
         ($event.target as HTMLIonInfiniteScrollElement).complete();
 
         return originalResult;
-      }
-    })
-  }
+      },
+    });
+  };
 
   useEffect(() => {
     if (requireScroll || page <= 1) {
@@ -169,46 +168,45 @@ const Chat: React.FC = () => {
       scrollToBottom();
       setRequireScroll(false);
     }
-  }, [page, requireScroll])
+  }, [page, requireScroll]);
 
   // @TODO: Error messages
   return (
     <IonPage>
-
       {/* Page Header */}
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/chats" />
           </IonButtons>
-          <IonTitle>
-            { getChatTitle(details) }
-          </IonTitle>
+          <IonTitle>{getChatTitle(details)}</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       {/* Main Content */}
       <IonContent ref={ionContent}>
-
         {/* Infinite Scroll Spinner  */}
-        <IonInfiniteScroll threshold="100%" position="top"
+        <IonInfiniteScroll
+          threshold="100%"
+          position="top"
           disabled={disableInfiniteScroll}
-          onIonInfinite={nextPage}>
+          onIonInfinite={nextPage}
+        >
           <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 
         {/* List of messages */}
         <IonList>
-          {
-            messages.map(m => (
-              <IonItem key={m.id} lines={'none'}>
-                <Message slot={m.authorType === AuthorType.CUSTOMER ? 'start' : 'end'}>
-                  <MessageBody content={m.content}></MessageBody>
-                  <MessageFooter text={getMessageTime(m)} ></MessageFooter>
-                </Message>
-              </IonItem>
-            ))
-          }
+          {messages.map((m) => (
+            <IonItem key={m.id} lines={"none"}>
+              <Message
+                slot={m.authorType === AuthorType.CUSTOMER ? "start" : "end"}
+              >
+                <MessageBody content={m.content}></MessageBody>
+                <MessageFooter text={getMessageTime(m)}></MessageFooter>
+              </Message>
+            </IonItem>
+          ))}
         </IonList>
       </IonContent>
     </IonPage>
