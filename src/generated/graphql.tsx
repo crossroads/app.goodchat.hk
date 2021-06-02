@@ -164,12 +164,12 @@ export type Conversation = {
   customerId?: Maybe<Scalars['Int']>;
   customer?: Maybe<Customer>;
   source: Scalars['String'];
-  readByCustomer: Scalars['Boolean'];
   type: ConversationType;
   metadata: Scalars['JSON'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   messages: Array<Message>;
+  readReceipts: Array<ReadReceipt>;
   staffs: Array<Staff>;
 };
 
@@ -189,6 +189,7 @@ export enum ConversationType {
 export type Customer = {
   __typename?: 'Customer';
   id: Scalars['Int'];
+  externalId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   displayName: Scalars['String'];
   email?: Maybe<Scalars['String']>;
@@ -244,12 +245,30 @@ export type MessageEvent = {
 export type Mutation = {
   __typename?: 'Mutation';
   sendMessage: Message;
+  startTyping: Conversation;
+  stopTyping: Conversation;
+  markAsRead: ReadReceipt;
 };
 
 
 export type MutationSendMessageArgs = {
   conversationId: Scalars['Int'];
   text: Scalars['String'];
+};
+
+
+export type MutationStartTypingArgs = {
+  conversationId: Scalars['Int'];
+};
+
+
+export type MutationStopTypingArgs = {
+  conversationId: Scalars['Int'];
+};
+
+
+export type MutationMarkAsReadArgs = {
+  conversationId: Scalars['Int'];
 };
 
 
@@ -269,6 +288,7 @@ export type Query = {
   __typename?: 'Query';
   conversations: Array<Conversation>;
   conversation?: Maybe<Conversation>;
+  customers: Array<Customer>;
 };
 
 
@@ -284,6 +304,33 @@ export type QueryConversationArgs = {
 };
 
 
+export type QueryCustomersArgs = {
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  externalId?: Maybe<Array<Scalars['String']>>;
+  id?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+
+export type ReadReceipt = {
+  __typename?: 'ReadReceipt';
+  id: Scalars['Int'];
+  userId: Scalars['Int'];
+  userType: Scalars['String'];
+  conversationId: Scalars['Int'];
+  conversation: Conversation;
+  lastReadMessageId: Scalars['Int'];
+  lastReadMessage: Message;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ReadReceiptEvent = {
+  __typename?: 'ReadReceiptEvent';
+  action: SubscriptionAction;
+  readReceipt: ReadReceipt;
+};
 
 
 export type Staff = {
@@ -301,12 +348,18 @@ export type Staff = {
 export type Subscription = {
   __typename?: 'Subscription';
   messageEvent: MessageEvent;
+  readReceiptEvent: ReadReceiptEvent;
 };
 
 
 export type SubscriptionMessageEventArgs = {
   conversationId?: Maybe<Scalars['Int']>;
   actions?: Maybe<Array<Maybe<SubscriptionAction>>>;
+};
+
+
+export type SubscriptionReadReceiptEventArgs = {
+  conversationId: Scalars['Int'];
 };
 
 export enum SubscriptionAction {
@@ -323,6 +376,62 @@ export enum SubscriptionAction {
 
 
 
+
+export type ConversationDetailsQueryVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type ConversationDetailsQuery = (
+  { __typename?: 'Query' }
+  & { conversation?: Maybe<(
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id' | 'type' | 'source' | 'createdAt' | 'updatedAt' | 'customerId'>
+    & { customer?: Maybe<(
+      { __typename?: 'Customer' }
+      & Pick<Customer, 'id' | 'externalId' | 'createdAt' | 'displayName' | 'email' | 'avatarUrl' | 'locale' | 'metadata'>
+    )>, staffs: Array<(
+      { __typename?: 'Staff' }
+      & Pick<Staff, 'id' | 'createdAt' | 'updatedAt' | 'externalId' | 'displayName' | 'metadata'>
+    )> }
+  )> }
+);
+
+export type ConversationMessagesQueryVariables = Exact<{
+  conversationId: Scalars['Int'];
+  limit: Scalars['Int'];
+  offset: Scalars['Int'];
+}>;
+
+
+export type ConversationMessagesQuery = (
+  { __typename?: 'Query' }
+  & { conversation?: Maybe<(
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+    & { messages: Array<(
+      { __typename?: 'Message' }
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
+    )> }
+  )> }
+);
+
+export type NewMessagesSubSubscriptionVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type NewMessagesSubSubscription = (
+  { __typename?: 'Subscription' }
+  & { messageEvent: (
+    { __typename?: 'MessageEvent' }
+    & Pick<MessageEvent, 'action'>
+    & { message: (
+      { __typename?: 'Message' }
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
+    ) }
+  ) }
+);
 
 export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -343,6 +452,146 @@ export type CustomerConversationsListQuery = (
 );
 
 
+export const ConversationDetailsDocument = gql`
+    query ConversationDetails($conversationId: Int!) {
+  conversation(id: $conversationId) {
+    id
+    type
+    source
+    createdAt
+    updatedAt
+    customerId
+    customer {
+      id
+      externalId
+      createdAt
+      displayName
+      email
+      avatarUrl
+      locale
+      metadata
+    }
+    staffs {
+      id
+      createdAt
+      updatedAt
+      externalId
+      displayName
+      metadata
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationDetailsQuery__
+ *
+ * To run a query within a React component, call `useConversationDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConversationDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationDetailsQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useConversationDetailsQuery(baseOptions: Apollo.QueryHookOptions<ConversationDetailsQuery, ConversationDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConversationDetailsQuery, ConversationDetailsQueryVariables>(ConversationDetailsDocument, options);
+      }
+export function useConversationDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConversationDetailsQuery, ConversationDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConversationDetailsQuery, ConversationDetailsQueryVariables>(ConversationDetailsDocument, options);
+        }
+export type ConversationDetailsQueryHookResult = ReturnType<typeof useConversationDetailsQuery>;
+export type ConversationDetailsLazyQueryHookResult = ReturnType<typeof useConversationDetailsLazyQuery>;
+export type ConversationDetailsQueryResult = Apollo.QueryResult<ConversationDetailsQuery, ConversationDetailsQueryVariables>;
+export const ConversationMessagesDocument = gql`
+    query ConversationMessages($conversationId: Int!, $limit: Int!, $offset: Int!) {
+  conversation(id: $conversationId) {
+    id
+    messages(limit: $limit, offset: $offset) {
+      id
+      authorType
+      authorId
+      content
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationMessagesQuery__
+ *
+ * To run a query within a React component, call `useConversationMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useConversationMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationMessagesQuery({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useConversationMessagesQuery(baseOptions: Apollo.QueryHookOptions<ConversationMessagesQuery, ConversationMessagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ConversationMessagesQuery, ConversationMessagesQueryVariables>(ConversationMessagesDocument, options);
+      }
+export function useConversationMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ConversationMessagesQuery, ConversationMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ConversationMessagesQuery, ConversationMessagesQueryVariables>(ConversationMessagesDocument, options);
+        }
+export type ConversationMessagesQueryHookResult = ReturnType<typeof useConversationMessagesQuery>;
+export type ConversationMessagesLazyQueryHookResult = ReturnType<typeof useConversationMessagesLazyQuery>;
+export type ConversationMessagesQueryResult = Apollo.QueryResult<ConversationMessagesQuery, ConversationMessagesQueryVariables>;
+export const NewMessagesSubDocument = gql`
+    subscription NewMessagesSub($conversationId: Int!) {
+  messageEvent(conversationId: $conversationId, actions: [CREATE]) {
+    action
+    message {
+      id
+      authorType
+      authorId
+      conversationId
+      content
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewMessagesSubSubscription__
+ *
+ * To run a query within a React component, call `useNewMessagesSubSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessagesSubSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessagesSubSubscription({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useNewMessagesSubSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>(NewMessagesSubDocument, options);
+      }
+export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
+export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList {
   conversations(type: CUSTOMER) {

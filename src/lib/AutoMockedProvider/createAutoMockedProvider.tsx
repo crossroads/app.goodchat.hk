@@ -1,9 +1,9 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { SchemaLink } from "@apollo/client/link/schema";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import { addMocksToSchema, IMocks } from "@graphql-tools/mock";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import { ITypeDefinitions } from "@graphql-tools/utils";
 import { mergeResolvers } from "@graphql-tools/merge";
+import { SchemaLink } from "@apollo/client/link/schema";
 
 interface AutoMockedProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;

@@ -1,0 +1,13 @@
+subscription NewMessagesSub($conversationId: Int!) {
+  messageEvent(conversationId: $conversationId, actions: [CREATE]) {
+    action
+    message {
+      id
+      authorType
+      authorId
+      conversationId
+      content
+      createdAt
+    }
+  }
+}

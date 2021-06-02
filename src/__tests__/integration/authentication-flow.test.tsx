@@ -1,16 +1,23 @@
-import React from "react";
-import { render, screen, wait } from "@testing-library/react";
-import { expectToBeOnPage } from "test-utils/matchers";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import { IonApp } from "@ionic/react";
-import AuthProvider from "components/AuthProvider/AuthProvider";
+import { render, screen, wait } from "@testing-library/react";
 import { createMemoryHistory } from "history";
-import { Router } from "react-router";
-import MainRouter from "components/MainRouter/MainRouter";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 import setupMockIntegrationServer from "test-utils/setupMockIntegrationServer";
+import AuthProvider from "components/AuthProvider/AuthProvider";
+import MainRouter from "components/MainRouter/MainRouter";
+import { IonApp } from "@ionic/react";
+import { Router } from "react-router";
+import { rest } from "msw";
+
+const expectToBeOnPage = (
+  myPath: string,
+  expectedPage: string,
+  expectedPath?: string
+) => {
+  expect(myPath).toEqual(expectedPath ?? `/${expectedPage}`);
+};
 
 beforeAll(() => {
   setupMockIntegrationServer(mockServer);
@@ -40,7 +47,7 @@ const setup = ({ initialEntries }: { initialEntries: string[] }) => {
 test("User is able to login and logout with correct routing", async () => {
   const { history, container } = setup({ initialEntries: ["/login"] });
 
-  expectToBeOnPage(container, history.location.pathname, "login");
+  expectToBeOnPage(history.location.pathname, "login");
 
   const mobileInput = container.querySelector("ion-input");
   ionFireEvent.ionChange(mobileInput!, "91111111");
@@ -49,7 +56,7 @@ test("User is able to login and logout with correct routing", async () => {
   userEvent.click(goToAuthenticateButton as TargetElement);
 
   await wait(() =>
-    expectToBeOnPage(container, history.location.pathname, "authenticate")
+    expectToBeOnPage(history.location.pathname, "authenticate")
   );
 
   const inputVal = "1234";
@@ -59,30 +66,25 @@ test("User is able to login and logout with correct routing", async () => {
   userEvent.click(loginButton as TargetElement);
 
   await wait(() =>
-    expectToBeOnPage(container, history.location.pathname, "home")
+    expectToBeOnPage(history.location.pathname, "home")
   );
 
   const logoutButton = screen.getByText(/log out/i);
   userEvent.click(logoutButton as TargetElement);
 
-  expectToBeOnPage(container, history.location.pathname, "login");
+  expectToBeOnPage(history.location.pathname, "login");
 });
 
 [
   { initialPath: "/home", expectedPage: "home" },
   { initialPath: "/offers", expectedPage: "offers" },
   { initialPath: "/chats", expectedPage: "chats" },
-  { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" },
-  {
-    initialPath: "/chats/bad-route",
-    expectedPage: "chat",
-    expectedPath: "/chats/bad-route",
-  },
+  { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" }
 ].map(({ initialPath, expectedPage, expectedPath }) => {
   test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPage} after login`, async () => {
     const { history, container } = setup({ initialEntries: [initialPath] });
 
-    expectToBeOnPage(container, history.location.pathname, "login");
+    expectToBeOnPage(history.location.pathname, "login");
 
     const mobileInput = container.querySelector("ion-input");
     ionFireEvent.ionChange(mobileInput!, "91111111");
@@ -91,7 +93,7 @@ test("User is able to login and logout with correct routing", async () => {
     userEvent.click(goToAuthenticateButton as TargetElement);
 
     await wait(() =>
-      expectToBeOnPage(container, history.location.pathname, "authenticate")
+      expectToBeOnPage(history.location.pathname, "authenticate")
     );
 
     const inputVal = "1234";
@@ -102,7 +104,6 @@ test("User is able to login and logout with correct routing", async () => {
 
     await wait(() =>
       expectToBeOnPage(
-        container,
         history.location.pathname,
         expectedPage,
         expectedPath
