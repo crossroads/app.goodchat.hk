@@ -1,0 +1,35 @@
+{
+  "home": {
+    "title": "Home"
+  },
+  "chat": {
+    "title": {
+      "anonymous": "Anonymous",
+      "memberCount": "{{memberCount}} member",
+      "memberCount_plural": "{{memberCount}} members"
+    }
+  },
+  "chats": {
+    "title": "Chats"
+  },
+  "offers": {
+    "title": "Offers"
+  },
+  "login": {
+    "title": "Login",
+    "pinButton": "Get 4-digit SMS code"
+  },
+  "authenticate": {
+    "title": "Authenticate",
+    "2FaLabel": "Please input your 2fa code",
+    "loginButton": "Login"
+  },
+  "header": {
+    "logout": "Log out"
+  },
+  "footer": {
+    "home": "Home",
+    "chats": "Chats",
+    "offers": "Offers"
+  }
+}

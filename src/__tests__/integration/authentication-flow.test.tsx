@@ -9,7 +9,8 @@ import AuthProvider from "components/AuthProvider/AuthProvider";
 import MainRouter from "components/MainRouter/MainRouter";
 import { IonApp } from "@ionic/react";
 import { Router } from "react-router";
-import { rest } from "msw";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18n/i18n";
 
 const expectToBeOnPage = (
   myPath: string,
@@ -32,13 +33,15 @@ const setup = ({ initialEntries }: { initialEntries: string[] }) => {
     history,
     ...render(
       <IonApp>
-        <AuthProvider>
-          <GoodChatProvider>
-            <Router history={history}>
-              <MainRouter />
-            </Router>
-          </GoodChatProvider>
-        </AuthProvider>
+        <I18nextProvider i18n={i18n}>
+          <AuthProvider>
+            <GoodChatProvider>
+              <Router history={history}>
+                <MainRouter />
+              </Router>
+            </GoodChatProvider>
+          </AuthProvider>
+        </I18nextProvider>
       </IonApp>
     ),
   };

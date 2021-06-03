@@ -23,11 +23,13 @@
     "cordova-plugin-whitelist": "^1.3.4",
     "graphql": "^15.5.0",
     "history": "^4.10.1",
+    "i18next": "^20.3.1",
     "ionicons": "^5.0.0",
     "kankyo": "^1.6.1",
     "lodash": "^4.17.21",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-i18next": "^11.10.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^4.0.2",
@@ -40,7 +42,6 @@
     "test": "NODE_ENV=test kankyo exec -- react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
-    "format": "prettier --ignore-path .gitignore --write .",
     "codegen": "graphql-codegen --config codegen.yml dotenv_config_path=.env.codegen --require dotenv/config",
     "codegen:watch": "npm run codegen -- --watch"
   },
@@ -79,7 +80,6 @@
     "fishery": "^1.3.1",
     "husky": "^4.3.5",
     "msw": "^0.25.0",
-    "prettier": "2.2.0",
     "typescript": "^4.1.3"
   },
   "husky": {

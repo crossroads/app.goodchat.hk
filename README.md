@@ -103,18 +103,6 @@ You can use Mock Service Worker to define mock responses. According to the [MSW 
 
 A quick way to get this is by inspecting the graphql request on the Network tab in your browser developer tools and looking at the response.
 
-### Code formatting
-
-This project uses [Prettier](https://prettier.io) for code formatting.
-You can either
-
-1. download the editor extension for it and configure it to format on save or
-2. run the command below which formats all files except for the ones specified in `.gitignore`
-
-```
-npm run format
-```
-
 ### Testing
 
 **Test isolation**

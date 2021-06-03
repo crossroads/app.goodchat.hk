@@ -13,38 +13,43 @@ import {
   IonTabButton,
   IonTabs,
 } from "@ionic/react";
+import { useTranslation } from "react-i18next";
 
-const MainTabs = () => (
-  <IonTabs>
-    <IonRouterOutlet>
-      <Route exact path="/:tab(offers)">
-        <Offers />
-      </Route>
-      <Route exact path="/:tab(chats)">
-        <Chats />
-      </Route>
-      <Route exact path="/:tab(chats)/:conversationId">
-        <Chat />
-      </Route>
-      <Route exact path="/:tab(home)">
-        <Home />
-      </Route>
-    </IonRouterOutlet>
-    <IonTabBar slot="bottom">
-      <IonTabButton tab="home" href="/home">
-        <IonIcon icon={home} />
-        <IonLabel>Home</IonLabel>
-      </IonTabButton>
-      <IonTabButton tab="chats" href="/chats">
-        <IonIcon icon={chatbubbleOutline} />
-        <IonLabel>Chats</IonLabel>
-      </IonTabButton>
-      <IonTabButton tab="offers" href="/offers">
-        <IonIcon icon={listOutline} />
-        <IonLabel>Offers</IonLabel>
-      </IonTabButton>
-    </IonTabBar>
-  </IonTabs>
-);
+const MainTabs = () => {
+  const { t } = useTranslation();
+
+  return (
+    <IonTabs>
+      <IonRouterOutlet>
+        <Route exact path="/:tab(offers)">
+          <Offers />
+        </Route>
+        <Route exact path="/:tab(chats)">
+          <Chats />
+        </Route>
+        <Route exact path="/:tab(chats)/:conversationId">
+          <Chat />
+        </Route>
+        <Route exact path="/:tab(home)">
+          <Home />
+        </Route>
+      </IonRouterOutlet>
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="home" href="/home">
+          <IonIcon icon={home} />
+          <IonLabel>{t("footer.home")}</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="chats" href="/chats">
+          <IonIcon icon={chatbubbleOutline} />
+          <IonLabel>{t("footer.chats")}</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="offers" href="/offers">
+          <IonIcon icon={listOutline} />
+          <IonLabel>{t("footer.offers")}</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
+  );
+};
 
 export default MainTabs;

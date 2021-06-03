@@ -14,6 +14,7 @@ import {
 import useAsync from "hooks/useAsync";
 import useAuth from "hooks/useAuth/useAuth";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router";
 
 interface LocationState {
@@ -21,6 +22,7 @@ interface LocationState {
 }
 
 const Authenticate: React.FC = () => {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const history = useHistory();
   const location = useLocation<LocationState | undefined>();
@@ -41,12 +43,12 @@ const Authenticate: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/login" />
           </IonButtons>
-          <IonTitle>Authenticate</IonTitle>
+          <IonTitle>{t("authenticate.title")}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
         <IonItem>
-          <IonLabel position="floating">Please input your 2fa code</IonLabel>
+          <IonLabel position="floating">{t("authenticate.2FaLabel")}</IonLabel>
           <IonInput
             placeholder="XXXX"
             value={twoFaInput}
@@ -60,7 +62,7 @@ const Authenticate: React.FC = () => {
           </div>
         )}
         <IonButton disabled={twoFaInput.length < 4} onClick={loginAndNavigate}>
-          Login
+          {t("authenticate.loginButton")}
         </IonButton>
       </IonContent>
     </IonPage>

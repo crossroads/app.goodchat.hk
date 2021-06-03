@@ -18,6 +18,7 @@ import {
 } from "../../generated/graphql";
 import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface MessagePreview {
   message: Pick<Message, "content"> | undefined;
@@ -61,14 +62,15 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 const Chats: React.FC = () => {
   const { logout } = useAuth();
   const { data } = useCustomerConversationsListQuery();
+  const { t } = useTranslation();
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Chats</IonTitle>
+          <IonTitle>{t("chats.title")}</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={logout}>Log out</IonButton>
+            <IonButton onClick={logout}>{t("header.logout")}</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
