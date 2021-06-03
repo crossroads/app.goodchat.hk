@@ -69,13 +69,13 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange }
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState<MessageInputContent>("");
 
-  const clear = () => {
-    setText("");
-  }
-
   const applyChange = (text: string) => {
     setText(text);
     onChange && onChange(text);
+  }
+
+  const clear = () => {
+    applyChange("");
   }
 
   const trySubmit = async () => {

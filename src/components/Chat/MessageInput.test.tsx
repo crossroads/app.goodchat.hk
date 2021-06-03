@@ -31,10 +31,7 @@ test('it calls the onSubmit callback when button is pressed', async () => {
 
   ionFireEvent.ionChange(textarea!, "some text");
 
-  act(() => {
-    console.log(textarea)
-    button!.click();
-  });
+  act(() => { button!.click(); });
 
   await wait(() => called);
 
@@ -95,5 +92,7 @@ test('text is cleared when the clear() callback is used', async () => {
     button!.click();
   });
 
-  expect(called).toEqual(true);
+  await wait(() => expect(called).toEqual(true));
+
+  expect(value).toEqual("")
 })
