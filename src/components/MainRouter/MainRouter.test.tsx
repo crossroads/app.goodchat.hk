@@ -1,34 +1,6 @@
-import React from "react";
-import MainRouter from "components/MainRouter/MainRouter";
-import { createMemoryHistory } from "history";
-import { Router } from "react-router";
-import AuthProvider from "components/AuthProvider/AuthProvider";
-import GoodChatMockedProvider from "test-utils/components/GoodChatMockedProvider/GoodChatMockedProvider";
-import { renderWithAct } from "test-utils/renderers";
-
-const renderComponent = (initialAuthState: boolean) => async (
-  initialPath: string
-) => {
-  const history = createMemoryHistory({ initialEntries: [initialPath] });
-  const renderResult = await renderWithAct(
-    <AuthProvider initialAuthState={initialAuthState}>
-      <GoodChatMockedProvider>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </GoodChatMockedProvider>
-    </AuthProvider>
-  );
-
-  return {
-    history,
-    ...renderResult,
-  };
-};
+import { renderPage } from "test-utils/renderers";
 
 describe("Unauthenticated User", () => {
-  const renderUnauthenticatedComponent = renderComponent(false);
-
   [
     { initialPath: "/home",                    expectedPath: "/login" },
     { initialPath: "/chats",                   expectedPath: "/login" },
@@ -46,15 +18,13 @@ describe("Unauthenticated User", () => {
     { initialPath: "/authenticate/bad-route",  expectedPath: "/login" },
   ].map(({ initialPath, expectedPath }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPath}`, async () => {
-      const { history } = await renderUnauthenticatedComponent(initialPath);
+      const { history } = await renderPage(initialPath, {authenticated: false})
       expect(history.location.pathname).toEqual(expectedPath);
     });
   });
 });
 
 describe("Authenticated User", () => {
-  const renderAuthenticatedComponent = renderComponent(true);
-
   [
     { initialPath: "/home",                    expectedPath: "/home" },
     { initialPath: "/chats",                   expectedPath: "/chats" },
@@ -70,7 +40,7 @@ describe("Authenticated User", () => {
     { initialPath: "/authenticate/bad-route",  expectedPath: "/home" },
   ].map(({ initialPath, expectedPath }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPath}`, async () => {
-      const { history } = await renderAuthenticatedComponent(initialPath);
+      const { history } = await renderPage(initialPath)
       expect(history.location.pathname).toEqual(expectedPath);
     });
   });
