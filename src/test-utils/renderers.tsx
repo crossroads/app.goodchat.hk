@@ -6,6 +6,8 @@ import { createMemoryHistory } from "history";
 import { IMocks } from "@graphql-tools/mock";
 import { act } from "react-dom/test-utils";
 import { Router } from "react-router";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18n/i18n";
 
 /**
  * Waits for promises to resolve and state
@@ -46,13 +48,15 @@ export async function renderPage(path: string, opts : RenderPageOptions = {}) {
   });
 
   const renderResult = await renderWithAct(
-    <AuthProvider initialAuthState={opts.authenticated ?? true}>
-      <GoodChatMockedProvider mockResolvers={opts.mocks || {}}>
-        <Router history={history}>
-          <MainRouter />
-        </Router>
-      </GoodChatMockedProvider>
-    </AuthProvider>
+    <I18nextProvider i18n={i18n}>
+      <AuthProvider initialAuthState={opts.authenticated ?? true}>
+        <GoodChatMockedProvider mockResolvers={opts.mocks || {}}>
+          <Router history={history}>
+            <MainRouter />
+          </Router>
+        </GoodChatMockedProvider>
+      </AuthProvider>
+    </I18nextProvider>
   );
 
   return {

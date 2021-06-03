@@ -3,15 +3,19 @@ import { render } from "@testing-library/react";
 import MainTabs from "components/MainTabs/MainTabs";
 import { createMemoryHistory } from "history";
 import { Router } from "react-router";
+import { I18nextProvider } from "react-i18next";
+import i18n from "i18n/i18n";
 
 const renderComponent = (initialPath = "/home") => {
   const history = createMemoryHistory({ initialEntries: [initialPath] });
   return {
     history,
     ...render(
-      <Router history={history}>
-        <MainTabs />
-      </Router>
+      <I18nextProvider i18n={i18n}>
+        <Router history={history}>
+          <MainTabs />
+        </Router>
+      </I18nextProvider>
     ),
   };
 };
