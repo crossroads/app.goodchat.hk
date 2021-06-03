@@ -67,11 +67,9 @@ const createGoodChatClient = () =>
          *
          * Source: Source: https://www.apollographql.com/docs/react/data/queries/
          *
-         * This is the default policy. Data consistency with the server is key, however
-         * some apollo features seem to require this to work properly.
-         * This might require change in the future if we find it prevents us from keeping data fresh
+         * We use this strategy to ensure data consistency.
          */
-        fetchPolicy: "cache-first"
+        fetchPolicy: "no-cache"
       },
       query: {
         /**
@@ -80,10 +78,9 @@ const createGoodChatClient = () =>
          *
          * Source: https://www.apollographql.com/docs/react/data/queries/
          *
-         * We use this strategy to ensure data consistency. We keep it in cache as it seems to allow
-         * other apollo features to work properly (fetchMore & watch query behaviours)
+         * We use this strategy to ensure data consistency.
          */
-        fetchPolicy: "network-only",
+        fetchPolicy: "no-cache",
       },
     },
   });
