@@ -28,6 +28,7 @@ export type MessageInputCallback = (
 export type MessageInputProps = {
   onSubmit: MessageInputCallback
   onChange?: (content: MessageInputContent) => any
+  submitOnEnter?: boolean
 }
 
 
@@ -65,13 +66,15 @@ const inputStyle = style({
 // ~ MESSAGE INPUT
 // ---------------------------------
 
-export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange, submitOnEnter }) => {
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState<MessageInputContent>("");
 
   const applyChange = (text: string) => {
     setText(text);
-    onChange && onChange(text);
+    if (onChange) {
+      onChange(text);
+    }
   }
 
   const clear = () => {
@@ -79,6 +82,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange }
   }
 
   const trySubmit = async () => {
+    if (loading) return;
+
     const trimmed = text.trim();
     if (trimmed.length > 0) {
       setLoading(true);
@@ -93,11 +98,19 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange }
     }
   }
 
+  const keyListener = (e : React.KeyboardEvent<HTMLIonTextareaElement>) => {
+    if (submitOnEnter && /enter/i.test(e.key)) {
+      trySubmit();
+      e.preventDefault();
+    }
+  }
+
   return (
     <IonGrid className={classnames('chat-message-input', inputStyle)}>
       <IonRow>
         <IonCol className="grow">
           <IonTextarea
+            onKeyDown={keyListener}
             autoGrow={true}
             inputmode='text'
             enterkeyhint='enter'

@@ -261,7 +261,7 @@ const Chat: React.FC = () => {
 
         {/* Input Message Box */}
         <Sticky position="bottom">
-          <MessageInput onSubmit={onInputSubmit}></MessageInput>
+          <MessageInput onSubmit={onInputSubmit} submitOnEnter={true}></MessageInput>
         </Sticky>
       </IonContent>
     </IonPage>
