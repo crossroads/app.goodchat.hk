@@ -1,6 +1,6 @@
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { ionFireEvent } from "@ionic/react-test-utils";
-import { render, wait } from "@testing-library/react";
+import { render, wait, screen } from "@testing-library/react";
 import MessageInput from "./MessageInput"
 import { act } from "react-dom/test-utils";
 
@@ -105,16 +105,16 @@ it('doesnt call onSubmit if the string is empty of characters', async () => {
 })
 
 it('only calls onSubmit once if the user spams the button during an async operation', async () => {
-  let callCount = 0;
-  let promises = [] as Promise<any>[];
+  let finished = false;
+
+  const onSubmit = jest.fn((arg) => {
+    return new Promise((r) => setTimeout(r, 10)).then(() => {
+      finished = true;
+    })
+  });
 
   const { container } = render(
-    <MessageInput onSubmit={(arg) => {
-      callCount++;
-      const promise = new Promise((r) => setTimeout(r, 10));
-      promises.push(promise)
-      return promise;
-    }}></MessageInput>
+    <MessageInput onSubmit={onSubmit}></MessageInput>
   )
 
   const textarea = container.querySelector('.chat-message-input ion-textarea');
@@ -131,40 +131,39 @@ it('only calls onSubmit once if the user spams the button during an async operat
     userEvent.click(button as TargetElement);
   });
 
-  await wait(() => Promise.all(promises));
+  await wait(() => expect(finished).toBeTruthy());
 
-  expect(callCount).toEqual(1);
+  expect(onSubmit).toHaveBeenCalledTimes(1);
 })
 
 
 it('supports an onChange event', async () => {
-  let called = false;
-  let value = "";
+  const myMock = jest.fn();
 
   const { container } = render(
-    <MessageInput onChange={(v) => value = v} onSubmit={() => {}}></MessageInput>
+    <MessageInput onChange={myMock} onSubmit={() => {}}></MessageInput>
   )
 
   const textarea = container.querySelector('.chat-message-input ion-textarea');
   expect(textarea).toBeInTheDocument();
 
   ionFireEvent.ionChange(textarea!, "some text");
-  expect(value).toEqual("some text")
+  expect(myMock).toHaveBeenCalledWith('some text');
 
   ionFireEvent.ionChange(textarea!, "some other text");
-  expect(value).toEqual("some other text")
+  expect(myMock).toHaveBeenCalledWith('some text');
 })
 
 
 it('clears the text when the clear() callback is used', async () => {
   let called = false;
-  let value = "";
+
+  const onSubmit = jest.fn(({ clear }) => {
+    clear()
+  });
 
   const { container } = render(
-    <MessageInput onChange={(v) => value = v} onSubmit={({ clear }) => {
-      clear()
-      called = true;
-    }}></MessageInput>
+    <MessageInput  onSubmit={onSubmit}></MessageInput>
   )
 
   const textarea = container.querySelector('.chat-message-input ion-textarea');
@@ -175,15 +174,15 @@ it('clears the text when the clear() callback is used', async () => {
 
   ionFireEvent.ionChange(textarea!, "some text");
 
-  expect(value).toEqual("some text")
+  expect(textarea?.getAttribute('value')).toEqual("some text")
 
   act(() => {
     userEvent.click(button as TargetElement);
   });
 
   await wait(() => {
-    expect(called).toEqual(true);
+    expect(onSubmit).toHaveBeenCalled();
   });
 
-  expect(value).toEqual("")
+  expect(textarea?.getAttribute('value')).toEqual("")
 })
