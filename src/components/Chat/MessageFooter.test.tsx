@@ -1,9 +1,6 @@
-import { MessageImageContent, MessageTextContent } from "../../typings/goodchat";
-import { render } from "@testing-library/react";
-import Message from "./Message"
 import MessageFooter from "./MessageFooter"
-import faker from "faker"
-import React from "react";
+import { render } from "@testing-library/react"
+import Message from "./Message"
 
 test('it renders the footer text', () => {
   const { container } = render(
@@ -15,5 +12,5 @@ test('it renders the footer text', () => {
   const footerElement = container.querySelector('ion-note.chat-message-footer');
 
   expect(footerElement).toBeTruthy();
-  expect(footerElement.textContent).toEqual("hello");
+  expect(footerElement?.textContent).toEqual("hello");
 })

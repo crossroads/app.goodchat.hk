@@ -1,15 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AuthorType, ConversationType } from "typings/goodchat";
-import { MessageFooter } from "components/Chat/MessageFooter";
-import { MessageBody } from "components/Chat/MessageBody";
-import { Message } from "components/Chat/Message";
-import { timeString } from "lib/utils/strings";
-import { useParams } from "react-router";
-import uniqBy from "lodash/sortedUniqBy";
-import sortBy from "lodash/sortBy";
+import React, { useEffect, useRef, useState } from "react"
+import { MessageInput, MessageInputCallback } from 'components/Chat/MessageInput'
+import { AuthorType, ConversationType } from "typings/goodchat"
+import { useSafeSetState } from "hooks/useSafeSetState"
+import { MessageFooter } from 'components/Chat/MessageFooter'
+import { MessageBody } from 'components/Chat/MessageBody'
+import { timeString } from "lib/utils/strings"
+import { useParams } from "react-router"
+import { Message } from 'components/Chat/Message'
+import { Sticky } from 'components/Layout/Sticky'
+import { style } from 'typestyle'
+import uniqBy from 'lodash/sortedUniqBy'
+import sortBy from 'lodash/sortBy'
 import {
   ConversationMessagesQuery,
   ConversationDetailsQuery,
+  useSendMessageMutation,
   useConversationMessagesQuery,
   useNewMessagesSubSubscription,
   useConversationDetailsQuery,
@@ -66,7 +71,19 @@ const getChatTitle = (t: TFunction, details?: ConversationDetailsQuery) => {
 
 const getMessageTime = (message: MessageRecord) => {
   return timeString(new Date(message.createdAt));
-};
+}
+
+// ---------------------------------
+// ~ STYLE
+// ---------------------------------
+
+const chatStyle = style({
+  '$nest': {
+    'ion-list': {
+      minHeight: '100%'
+    }
+  }
+})
 
 // ---------------------------------
 // ~ CHAT
@@ -82,8 +99,12 @@ const Chat: React.FC = () => {
   const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
   const [messages, setMessages] = useState<MessageRecord[]>([]);
   const { t } = useTranslation();
+  const [sendMessage] = useSendMessageMutation();
+  const safeSetState = useSafeSetState();
 
-  // --- Helpers
+  // ---------------------------------
+  // ~ HELPERS
+  // ---------------------------------
 
   const variables = (pageNumber: number) => ({
     conversationId: Number(conversationId),
@@ -91,19 +112,16 @@ const Chat: React.FC = () => {
     offset: pageNumber * PAGE_SIZE,
   });
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (opts : { animate?: boolean } = {}) => {
     if (ionContent.current?.scrollToBottom) {
-      ionContent.current.scrollToBottom();
+      ionContent.current.scrollToBottom(opts.animate ? 500 : 0);
     }
   };
 
   const addMessages = (newMessages?: MessageRecord[]) => {
     if (!newMessages || newMessages.length === 0) return;
 
-    //
     // @todo: improve to avoid flickering
-    //
-
     setMessages(
       uniqBy(
         sortBy([...messages, ...(newMessages || [])], ["createdAt"], ["desc"]),
@@ -117,9 +135,11 @@ const Chat: React.FC = () => {
     setPage(page + 1);
   };
 
-  // --- Data Fetching
+  // ---------------------------------
+  // ~ QUERIES
+  // ---------------------------------
 
-  const { fetchMore, error } = useConversationMessagesQuery({
+  const { fetchMore } = useConversationMessagesQuery({
     variables: {
       offset: 0,
       limit: PAGE_SIZE,
@@ -143,6 +163,10 @@ const Chat: React.FC = () => {
       }
     },
   });
+
+  // ---------------------------------
+  // ~ PAGINATION
+  // ---------------------------------
 
   const nextPage = ($event: CustomEvent<void>) => {
     fetchMore({
@@ -174,9 +198,33 @@ const Chat: React.FC = () => {
     }
   }, [page, requireScroll]);
 
-  // @TODO: Error messages
+  // ---------------------------------
+  // ~ EVENT HANDLERS
+  // ---------------------------------
+
+  const onInputSubmit : MessageInputCallback = async ({ content, clear }) => {
+    const { data, errors } = await sendMessage({
+      variables: {
+        conversationId: Number(conversationId),
+        text: content
+      }
+    })
+
+    if (!errors?.length && data?.sendMessage) {
+      clear();
+      safeSetState(() => {
+        addMessages([data.sendMessage])
+      })
+    }
+  }
+
+  // ---------------------------------
+  // ~ TEMPLATE
+  // ---------------------------------
+
   return (
-    <IonPage>
+    <IonPage className={chatStyle}>
+
       {/* Page Header */}
       <IonHeader>
         <IonToolbar>
@@ -190,9 +238,7 @@ const Chat: React.FC = () => {
       {/* Main Content */}
       <IonContent ref={ionContent}>
         {/* Infinite Scroll Spinner  */}
-        <IonInfiniteScroll
-          threshold="100%"
-          position="top"
+        <IonInfiniteScroll threshold="50%" position="top"
           disabled={disableInfiniteScroll}
           onIonInfinite={nextPage}
         >
@@ -212,6 +258,11 @@ const Chat: React.FC = () => {
             </IonItem>
           ))}
         </IonList>
+
+        {/* Input Message Box */}
+        <Sticky position="bottom">
+          <MessageInput onSubmit={onInputSubmit} submitOnEnter={true}></MessageInput>
+        </Sticky>
       </IonContent>
     </IonPage>
   );

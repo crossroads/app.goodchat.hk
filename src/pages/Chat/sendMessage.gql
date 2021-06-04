@@ -1,0 +1,9 @@
+mutation sendMessage($conversationId: Int!, $text: String!) {
+  sendMessage(conversationId: $conversationId, text: $text) {
+    id
+    authorType
+    authorId
+    content
+    createdAt
+  }
+}
