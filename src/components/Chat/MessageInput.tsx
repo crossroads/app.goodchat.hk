@@ -1,4 +1,5 @@
 import { paperPlane } from 'ionicons/icons'
+import { throttle } from 'lib/utils/async';
 import { useState } from 'react'
 import classnames from 'classnames';
 import { style } from 'typestyle'
@@ -11,7 +12,6 @@ import {
   IonIcon,
   IonButton
 } from '@ionic/react';
-import { throttle } from 'lib/utils/async';
 
 // ---------------------------------
 // ~ TYPES
