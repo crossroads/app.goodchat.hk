@@ -125,9 +125,11 @@ it('only calls onSubmit once if the user spams the button during an async operat
 
   ionFireEvent.ionChange(textarea!, "some text");
 
-  await act(async () => { userEvent.click(button as TargetElement); });
-  await act(async () => { userEvent.click(button as TargetElement); });
-  await act(async () => { userEvent.click(button as TargetElement); });
+  await act(async () => {
+    userEvent.click(button as TargetElement);
+    userEvent.click(button as TargetElement);
+    userEvent.click(button as TargetElement);
+  });
 
   await wait(() => Promise.all(promises));
 

@@ -11,6 +11,7 @@ import {
   IonIcon,
   IonButton
 } from '@ionic/react';
+import { throttle } from 'lib/utils/async';
 
 // ---------------------------------
 // ~ TYPES
@@ -81,7 +82,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange, 
     applyChange("");
   }
 
-  const trySubmit = async () => {
+  const trySubmit = throttle(async () => {
     if (loading) return;
 
     const trimmed = text.trim();
@@ -96,7 +97,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSubmit, onChange, 
         setLoading(false);
       }
     }
-  }
+  })
 
   const keyListener = (e : React.KeyboardEvent<HTMLIonTextareaElement>) => {
     if (submitOnEnter && /enter/i.test(e.key)) {
