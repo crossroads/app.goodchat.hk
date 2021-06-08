@@ -47,8 +47,19 @@ describe('Content', () => {
   // Helpers
 
   const paginator = (list: any[]) => (paginationArgs: any) => {
-    const { offset = 0, limit = list.length } = paginationArgs;
-    return list.slice(offset, offset + limit);
+    const { after = 0, limit = list.length } = paginationArgs;
+
+    expect(after).toBeGreaterThanOrEqual(0)
+
+    if (after <= 0) {
+      return list.slice(0, limit);
+    }
+
+    const idx = list.findIndex((r : any) => r.id === after);
+
+    expect(idx).toBeGreaterThanOrEqual(0)
+
+    return list.slice(idx, idx + limit);
   }
 
   const renderChat = async () => {
@@ -111,7 +122,7 @@ describe('Content', () => {
           variables: {
             conversationId: conversation.id, // id matching
             limit: PAGE_SIZE,
-            offset: 0
+            after: 0
           }
         })
       )

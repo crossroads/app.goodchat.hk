@@ -1,7 +1,7 @@
-query ConversationMessages($conversationId: Int!, $limit: Int!, $offset: Int!) {
+query ConversationMessages($conversationId: Int!, $limit: Int!, $after: Int!) {
   conversation(id: $conversationId) {
     id
-    messages(limit: $limit, offset: $offset) {
+    messages(limit: $limit, after: $after) {
       id
       authorType
       authorId

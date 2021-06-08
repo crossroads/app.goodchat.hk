@@ -92,25 +92,32 @@ const chatStyle = style({
 const PAGE_SIZE = 25;
 
 const Chat: React.FC = () => {
+  const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
+  const [requireScroll, setRequireScroll] = useState(false);
+  const [messages, setMessages] = useState<MessageRecord[]>([]);
   const { conversationId } = useParams<ChatPageParams>();
   const [page, setPage] = useState(0);
-  const ionContent = useRef<HTMLIonContentElement>(null);
-  const [requireScroll, setRequireScroll] = useState(false);
-  const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
-  const [messages, setMessages] = useState<MessageRecord[]>([]);
-  const { t } = useTranslation();
   const [sendMessage] = useSendMessageMutation();
   const safeSetState = useSafeSetState();
+  const ionContent = useRef<HTMLIonContentElement>(null);
+  const { t } = useTranslation();
 
   // ---------------------------------
   // ~ HELPERS
   // ---------------------------------
 
-  const variables = (pageNumber: number) => ({
-    conversationId: Number(conversationId),
-    limit: PAGE_SIZE,
-    offset: pageNumber * PAGE_SIZE,
-  });
+  const getCursor = () => {
+    // Oldest message is a the top
+    return messages[0]?.id || 0;
+  }
+
+  const variables = (cursor = 0) => {
+    return {
+      conversationId: Number(conversationId),
+      limit: PAGE_SIZE,
+      after: cursor
+    }
+};
 
   const scrollToBottom = (opts : { animate?: boolean } = {}) => {
     if (ionContent.current?.scrollToBottom) {
@@ -140,11 +147,7 @@ const Chat: React.FC = () => {
   // ---------------------------------
 
   const { fetchMore } = useConversationMessagesQuery({
-    variables: {
-      offset: 0,
-      limit: PAGE_SIZE,
-      conversationId: Number(conversationId),
-    },
+    variables: variables(0),
     onCompleted: onPageLoaded,
   });
 
@@ -170,7 +173,7 @@ const Chat: React.FC = () => {
 
   const nextPage = ($event: CustomEvent<void>) => {
     fetchMore({
-      variables: variables(page),
+      variables: variables(getCursor()),
       updateQuery(originalResult, { fetchMoreResult }) {
         if (!fetchMoreResult?.conversation?.messages.length) {
           //
