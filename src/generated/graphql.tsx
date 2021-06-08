@@ -176,7 +176,7 @@ export type Conversation = {
 
 export type ConversationMessagesArgs = {
   limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Int']>;
 };
 
 export enum ConversationType {
@@ -286,6 +286,7 @@ export type MutationMarkAsReadArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  goodchatProfile: Staff;
   conversations: Array<Conversation>;
   conversation?: Maybe<Conversation>;
   customers: Array<Customer>;
@@ -294,7 +295,7 @@ export type Query = {
 
 export type QueryConversationsArgs = {
   limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Int']>;
   type?: Maybe<ConversationType>;
 };
 
@@ -306,7 +307,7 @@ export type QueryConversationArgs = {
 
 export type QueryCustomersArgs = {
   limit?: Maybe<Scalars['Int']>;
-  offset?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Int']>;
   externalId?: Maybe<Array<Scalars['String']>>;
   id?: Maybe<Array<Scalars['Int']>>;
 };
@@ -400,7 +401,7 @@ export type ConversationDetailsQuery = (
 export type ConversationMessagesQueryVariables = Exact<{
   conversationId: Scalars['Int'];
   limit: Scalars['Int'];
-  offset: Scalars['Int'];
+  after: Scalars['Int'];
 }>;
 
 
@@ -525,10 +526,10 @@ export type ConversationDetailsQueryHookResult = ReturnType<typeof useConversati
 export type ConversationDetailsLazyQueryHookResult = ReturnType<typeof useConversationDetailsLazyQuery>;
 export type ConversationDetailsQueryResult = Apollo.QueryResult<ConversationDetailsQuery, ConversationDetailsQueryVariables>;
 export const ConversationMessagesDocument = gql`
-    query ConversationMessages($conversationId: Int!, $limit: Int!, $offset: Int!) {
+    query ConversationMessages($conversationId: Int!, $limit: Int!, $after: Int!) {
   conversation(id: $conversationId) {
     id
-    messages(limit: $limit, offset: $offset) {
+    messages(limit: $limit, after: $after) {
       id
       authorType
       authorId
@@ -553,7 +554,7 @@ export const ConversationMessagesDocument = gql`
  *   variables: {
  *      conversationId: // value for 'conversationId'
  *      limit: // value for 'limit'
- *      offset: // value for 'offset'
+ *      after: // value for 'after'
  *   },
  * });
  */
