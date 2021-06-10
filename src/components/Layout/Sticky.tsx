@@ -6,7 +6,8 @@ import { style } from 'typestyle'
 // ---------------------------------
 
 export type StickyProps = {
-  position: "top" | "bottom"
+  position: "top" | "bottom",
+  zIndex?: number
 }
 
 // ---------------------------------
@@ -29,9 +30,11 @@ const stickyStyle = style({
 // ~ FLOATING STICKY COMPONENT
 // ---------------------------------
 
-export const Sticky: React.FC<StickyProps> = ({ children, position }) => {
+export const Sticky: React.FC<StickyProps> = ({ children, position, zIndex }) => {
+  const zStyle = zIndex ? { zIndex } : {}
+
   return (
-    <div className={classNames(stickyStyle, position)}>
+    <div className={classNames(stickyStyle, position)} style={zStyle}>
       { children }
     </div>
   );

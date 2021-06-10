@@ -1,4 +1,6 @@
 import { renderPage } from "test-utils/renderers";
+import * as factories from 'test-utils/factories'
+import { ConversationType } from "generated/graphql";
 
 describe("Unauthenticated User", () => {
   [
@@ -40,7 +42,14 @@ describe("Authenticated User", () => {
     { initialPath: "/authenticate/bad-route",  expectedPath: "/home" },
   ].map(({ initialPath, expectedPath }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPath}`, async () => {
-      const { history } = await renderPage(initialPath)
+      const { history } = await renderPage(initialPath, {
+        disableGlobalResolvers: true,
+        mocks: {
+          Conversation: () => factories.conversationFactory.build({
+            type: ConversationType.Customer
+          })
+        }
+      })
       expect(history.location.pathname).toEqual(expectedPath);
     });
   });

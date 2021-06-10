@@ -1,5 +1,5 @@
-mutation sendMessage($conversationId: Int!, $text: String!) {
-  sendMessage(conversationId: $conversationId, text: $text) {
+mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
+  sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {
     id
     authorType
     authorId

@@ -1,6 +1,6 @@
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { ionFireEvent } from "@ionic/react-test-utils";
-import { render, wait, screen } from "@testing-library/react";
+import { render, wait } from "@testing-library/react";
 import MessageInput from "./MessageInput"
 import { act } from "react-dom/test-utils";
 

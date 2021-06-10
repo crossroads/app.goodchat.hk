@@ -1,5 +1,8 @@
+import { wait, waitForDomChange, waitForElement } from "@testing-library/dom"
 import { Conversation, ConversationType } from "typings/goodchat"
-import { wait, waitForElement } from "@testing-library/dom"
+import userEvent, { TargetElement } from "@testing-library/user-event";
+import { ionFireEvent } from "@ionic/react-test-utils"
+import { ApolloError } from "@apollo/client";
 import { renderPage } from "test-utils/renderers"
 import * as factories from 'test-utils/factories'
 import * as Apollo from '@apollo/client'
@@ -11,41 +14,21 @@ afterEach(() => {
   jest.restoreAllMocks();
 })
 
-describe('Smoke', () => {
-  test("renders without crashing", async () => {
-    const { container } = await renderPage('/chats/1');
-    expect(container).toBeInTheDocument();
-  });
-});
-
-describe('Navigation', () => {
-  test("should contain a back button", async () => {
-    const { container } = await renderPage('/chats/1');
-    expect(
-      container!.querySelector("ion-header ion-back-button")
-    ).toBeInTheDocument();
-  });
-
-  test("back button should default to /chats", async () => {
-    const { container } = await renderPage('/chats/1');
-
-    expect(container.querySelector("ion-header ion-back-button")).toHaveAttribute(
-      "default-href",
-      "/chats"
-    );
-  })
-})
-
 describe('Content', () => {
   const MESSAGE_COUNT = 55;
   const PAGE_SIZE = 25;
 
-  // Context
+  // --- Data
 
   let conversation : Conversation
 
-  // Helpers
+  // --- Helpers
 
+  /**
+   * Creates a function that slices the list based on the argument it receives
+   *
+   * @param {any[]} list
+   */
   const paginator = (list: any[]) => (paginationArgs: any) => {
     const { after = 0, limit = list.length } = paginationArgs;
 
@@ -62,8 +45,14 @@ describe('Content', () => {
     return list.slice(idx, idx + limit);
   }
 
+  /**
+   * Renders the chat page with pre-defined data
+   *
+   * @returns
+   */
   const renderChat = async () => {
     const result = await renderPage('/chats/' + conversation.id, {
+      disableGlobalResolvers: true,
       mocks: {
         Conversation: () => ({
           ...conversation,
@@ -77,18 +66,26 @@ describe('Content', () => {
     return result;
   };
 
-  // Hooks
+  // --- Hooks
 
   beforeEach(async () => {
     const now = Date.now();
     const hour = 1000 * 60 * 60;
 
+    // Create all the data needed for the test
     conversation = factories.conversationFactory.build({
       type: ConversationType.Customer,
       messages: range(MESSAGE_COUNT).map((i) => factories.messageFactory.build({
         createdAt: new Date(now - i * hour)
       }))
     });
+  });
+
+  // --- Tests
+
+  test("renders without crashing", async () => {
+    const { container } = await renderChat();
+    expect(container).toBeInTheDocument();
   });
 
   describe('Header', () => {
@@ -99,11 +96,34 @@ describe('Content', () => {
       expect(customerName.length).toBeGreaterThan(0)
       expect(container!.querySelector("ion-header ion-title")).toHaveTextContent(customerName)
     });
+
+    test("should contain a back button", async () => {
+      const { container } = await renderChat();
+      expect(
+        container!.querySelector("ion-header ion-back-button")
+      ).toBeInTheDocument();
+    });
+
+    test("back button should default to /chats", async () => {
+      const { container } = await renderChat();
+
+      expect(container.querySelector("ion-header ion-back-button")).toHaveAttribute(
+        "default-href",
+        "/chats"
+      );
+    })
   })
 
   describe('Message list', () => {
     it('loads the messages of the correct conversation', async () => {
-      const spy = jest.spyOn(Apollo, 'useQuery')
+      let refetch : any;
+
+      const original = Apollo.useQuery as any;
+      const spy = jest.spyOn(Apollo, 'useQuery').mockImplementationOnce((...args: any[]) => {
+        const res = original(...args);
+        refetch = jest.spyOn(res, 'refetch');
+        return res;
+      })
 
       await renderChat();
 
@@ -119,13 +139,17 @@ describe('Content', () => {
           ])
         }),
         expect.objectContaining({
-          variables: {
-            conversationId: conversation.id, // id matching
-            limit: PAGE_SIZE,
-            after: 0
-          }
+          skip: true
         })
       )
+
+      await wait(() => expect(refetch).toBeCalledTimes(1))
+
+      expect(refetch).toBeCalledWith({
+        after: 0,
+        conversationId: conversation.id,
+        limit: PAGE_SIZE
+      })
     })
 
     it('displays the messages on the page', async () => {
@@ -150,6 +174,132 @@ describe('Content', () => {
           .reverse()
           .map(m => m.content.text)
       )
+    })
+
+    describe('Sending messages', () => {
+
+      /**
+       * Fills in the input box and presses the send button
+       *
+       * @param {HTMLElement} container
+       * @param {string} text
+       */
+      const submitText = (container: HTMLElement, text: string) => {
+        const textarea = container.querySelector('.chat-message-input ion-textarea');
+        const button = container.querySelector('ion-button');
+
+        expect(textarea).toBeInTheDocument();
+        expect(button).toBeInTheDocument();
+
+        ionFireEvent.ionChange(textarea!, text);
+
+        act(() => { userEvent.click(button as TargetElement); });
+      }
+
+      /**
+       * Mocks the Apollo useMutation
+       *
+       */
+      const mockPostMessage = (opts : { success: boolean, delay: number }) => {
+        const postMessageMock = jest.fn().mockImplementation(async ({ variables }) => {
+
+          await new Promise((r) => setTimeout(r, opts.delay));
+
+          if (!opts.success) {
+            const error = new ApolloError({ errorMessage: 'oh noes' })
+            return { data: null, errors: [error] }
+          }
+
+          return {
+            data: {
+              sendMessage: factories.messageFactory.build({
+                conversationId: variables.conversationId,
+                content: {
+                  type: 'text',
+                  text: variables.text
+                }
+              })
+            }
+          }
+        });
+
+        jest.spyOn(Apollo, 'useMutation').mockReturnValue([
+          postMessageMock, {} as any
+        ])
+
+        return postMessageMock;
+      }
+
+      it('renders processing messages immediatly as pending', async () => {
+        const postMessageMock = mockPostMessage({ delay: 100, success: true });
+        const { container } = await renderChat();
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE);
+
+        submitText(container, 'new message')
+
+        await waitForDomChange()
+
+        expect(postMessageMock).toBeCalledTimes(1)
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE + 1);
+
+        expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Pending');
+      })
+
+      it('removes the Pending status and sets the timestamp on success', async () => {
+        const postMessageMock = mockPostMessage({ delay: 100, success: true });
+        const { container } = await renderChat();
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE);
+
+        submitText(container, 'new message')
+
+        await waitForDomChange()
+
+        expect(postMessageMock).toBeCalledTimes(1)
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE + 1);
+
+        expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Pending');
+
+        await wait(() => {
+          expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent(/\d\d:\d\d/);
+        })
+      })
+
+      it('sets Failed status on error', async () => {
+        const postMessageMock = mockPostMessage({ delay: 100, success: false });
+        const { container } = await renderChat();
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE);
+
+        submitText(container, 'new message')
+
+        await waitForDomChange()
+
+        expect(postMessageMock).toBeCalledTimes(1)
+
+        expect(
+          container.querySelectorAll('.chat-message')
+        ).toHaveLength(PAGE_SIZE + 1);
+
+        expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Pending');
+
+        await wait(() => {
+          expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Failed');
+        })
+      })
     })
   })
 

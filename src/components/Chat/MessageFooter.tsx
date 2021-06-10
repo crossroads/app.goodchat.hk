@@ -1,4 +1,5 @@
 
+import { IonColor } from "typings/style"
 import { IonNote } from "@ionic/react";
 
 // ---------------------------------
@@ -7,6 +8,7 @@ import { IonNote } from "@ionic/react";
 
 export type MessageFooterProps = {
   align?: 'left' | 'right'
+  color?: IonColor
   text: string
 }
 
@@ -14,7 +16,7 @@ export type MessageFooterProps = {
 // ~ MESSAGE FOOTER
 // ---------------------------------
 
-export const MessageFooter : React.FC<MessageFooterProps> = ({ text, align }) => {
+export const MessageFooter : React.FC<MessageFooterProps> = ({ text, align, color = "light" }) => {
   align = align ?? 'left';
 
   const style = {
@@ -22,7 +24,7 @@ export const MessageFooter : React.FC<MessageFooterProps> = ({ text, align }) =>
   }
 
   return (
-    <IonNote class="chat-message-footer" style={style}>
+    <IonNote class="chat-message-footer" color={color} style={style}>
       <small>{ text }</small>
     </IonNote>
   );

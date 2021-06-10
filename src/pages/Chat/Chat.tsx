@@ -1,53 +1,45 @@
-import React, { useEffect, useRef, useState } from "react"
 import { MessageInput, MessageInputCallback } from 'components/Chat/MessageInput'
 import { AuthorType, ConversationType } from "typings/goodchat"
-import { useSafeSetState } from "hooks/useSafeSetState"
+import { WrappedMessage, useMessages } from "hooks/useMessages"
+import React, { useRef, useState } from "react"
+import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
+import { useTranslation } from "react-i18next"
 import { MessageFooter } from 'components/Chat/MessageFooter'
 import { MessageBody } from 'components/Chat/MessageBody'
 import { timeString } from "lib/utils/strings"
+import { TFunction } from "i18next";
 import { useParams } from "react-router"
 import { Message } from 'components/Chat/Message'
 import { Sticky } from 'components/Layout/Sticky'
 import { style } from 'typestyle'
-import uniqBy from 'lodash/sortedUniqBy'
-import sortBy from 'lodash/sortBy'
 import {
-  ConversationMessagesQuery,
   ConversationDetailsQuery,
-  useSendMessageMutation,
-  useConversationMessagesQuery,
-  useNewMessagesSubSubscription,
   useConversationDetailsQuery,
 } from "../../generated/graphql";
 import {
   IonBackButton,
   IonButtons,
+  IonButton,
+  IonContent,
   IonHeader,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  IonPage,
-  IonList,
   IonItem,
+  IonList,
+  IonPage,
   IonTitle,
-  IonToolbar,
-  IonContent,
+  IonToolbar
 } from "@ionic/react";
-import { useTranslation } from "react-i18next";
-import { TFunction } from "i18next";
 
 // ---------------------------------
 // ~ TYPES
 // ---------------------------------
 
-type Definite<T> = Exclude<T, null | undefined>;
 
 type ChatPageParams = {
   conversationId: string;
 };
 
-type MessageRecord = Definite<
-  ConversationMessagesQuery["conversation"]
->["messages"][0];
 
 // ---------------------------------
 // ~ UTILS
@@ -63,14 +55,15 @@ const getChatTitle = (t: TFunction, details?: ConversationDetailsQuery) => {
   }
 
   const memberCount = conversation?.staffs.length ?? 0;
+
   return t("chat.title.memberCount", {
     memberCount,
     count: memberCount,
   });
 };
 
-const getMessageTime = (message: MessageRecord) => {
-  return timeString(new Date(message.createdAt));
+const getMessageTime = (message: WrappedMessage) => {
+  return timeString(new Date(message.timestamp));
 }
 
 // ---------------------------------
@@ -89,67 +82,40 @@ const chatStyle = style({
 // ~ CHAT
 // ---------------------------------
 
-const PAGE_SIZE = 25;
-
 const Chat: React.FC = () => {
   const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
-  const [requireScroll, setRequireScroll] = useState(false);
-  const [messages, setMessages] = useState<MessageRecord[]>([]);
   const { conversationId } = useParams<ChatPageParams>();
-  const [page, setPage] = useState(0);
-  const [sendMessage] = useSendMessageMutation();
-  const safeSetState = useSafeSetState();
   const ionContent = useRef<HTMLIonContentElement>(null);
   const { t } = useTranslation();
 
   // ---------------------------------
-  // ~ HELPERS
+  // ~ LAYOUT EFFECTS
   // ---------------------------------
 
-  const getCursor = () => {
-    // Oldest message is a the top
-    return messages[0]?.id || 0;
-  }
-
-  const variables = (cursor = 0) => {
-    return {
-      conversationId: Number(conversationId),
-      limit: PAGE_SIZE,
-      after: cursor
-    }
-};
-
-  const scrollToBottom = (opts : { animate?: boolean } = {}) => {
+  const [triggerScroll] = useLayoutTrigger(() => {
     if (ionContent.current?.scrollToBottom) {
-      ionContent.current.scrollToBottom(opts.animate ? 500 : 0);
+      ionContent.current.scrollToBottom(500);
     }
-  };
-
-  const addMessages = (newMessages?: MessageRecord[]) => {
-    if (!newMessages || newMessages.length === 0) return;
-
-    // @todo: improve to avoid flickering
-    setMessages(
-      uniqBy(
-        sortBy([...messages, ...(newMessages || [])], ["createdAt"], ["desc"]),
-        "id"
-      )
-    );
-  };
-
-  const onPageLoaded = (pageData: ConversationMessagesQuery) => {
-    addMessages(pageData?.conversation?.messages);
-    setPage(page + 1);
-  };
+  })
 
   // ---------------------------------
-  // ~ QUERIES
+  // ~ DATA
   // ---------------------------------
 
-  const { fetchMore } = useConversationMessagesQuery({
-    variables: variables(0),
-    onCompleted: onPageLoaded,
-  });
+  const {
+    messages,
+    createMessage,
+    loadMore,
+    error
+  } = useMessages({
+    conversationId: Number(conversationId),
+    onComplete: () => {
+      setDisableInfiniteScroll(true)
+    },
+    onNewMessage: () => {
+      triggerScroll();
+    }
+  })
 
   const { data: details } = useConversationDetailsQuery({
     variables: {
@@ -157,68 +123,25 @@ const Chat: React.FC = () => {
     },
   });
 
-  const { error: subError } = useNewMessagesSubSubscription({
-    variables: { conversationId: Number(conversationId) },
-    onSubscriptionData: ({ subscriptionData }) => {
-      if (subscriptionData.data?.messageEvent) {
-        addMessages([subscriptionData.data?.messageEvent.message]);
-        setRequireScroll(true);
-      }
-    },
-  });
-
   // ---------------------------------
   // ~ PAGINATION
   // ---------------------------------
 
-  const nextPage = ($event: CustomEvent<void>) => {
-    fetchMore({
-      variables: variables(getCursor()),
-      updateQuery(originalResult, { fetchMoreResult }) {
-        if (!fetchMoreResult?.conversation?.messages.length) {
-          //
-          // We've reached the end, disable the scroll
-          //
-          setDisableInfiniteScroll(true);
-          return originalResult;
-        }
-
-        onPageLoaded(fetchMoreResult);
-
-        // Toggle the spinner off
-        ($event.target as HTMLIonInfiniteScrollElement).complete();
-
-        return originalResult;
-      },
-    });
-  };
-
-  useEffect(() => {
-    if (requireScroll || page <= 1) {
-      // On the first page load, we start at the bottom of the list
-      scrollToBottom();
-      setRequireScroll(false);
+  const nextPage = async ($event: CustomEvent<void>) => {
+    try {
+      await loadMore();
+    } finally {
+      ($event.target as HTMLIonInfiniteScrollElement).complete();
     }
-  }, [page, requireScroll]);
+  };
 
   // ---------------------------------
   // ~ EVENT HANDLERS
   // ---------------------------------
 
   const onInputSubmit : MessageInputCallback = async ({ content, clear }) => {
-    const { data, errors } = await sendMessage({
-      variables: {
-        conversationId: Number(conversationId),
-        text: content
-      }
-    })
-
-    if (!errors?.length && data?.sendMessage) {
-      clear();
-      safeSetState(() => {
-        addMessages([data.sendMessage])
-      })
-    }
+    clear();
+    createMessage(content);
   }
 
   // ---------------------------------
@@ -238,8 +161,22 @@ const Chat: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
+      {
+        /* Error Banner */
+        error &&
+          <IonItem color="danger">
+            <span className="ion-margin"> { t('error.generic') }</span>
+            <IonButton
+              fill="outline"
+              color="dark"
+              onClick={() => window.location.reload()}
+            >{ t('error.actions.reload') }</IonButton>
+          </IonItem>
+      }
+
       {/* Main Content */}
       <IonContent ref={ionContent}>
+
         {/* Infinite Scroll Spinner  */}
         <IonInfiniteScroll threshold="50%" position="top"
           disabled={disableInfiniteScroll}
@@ -248,22 +185,25 @@ const Chat: React.FC = () => {
           <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 
-        {/* List of messages */}
         <IonList>
-          {messages.map((m) => (
-            <IonItem key={m.id} lines={"none"}>
-              <Message
-                slot={m.authorType === AuthorType.CUSTOMER ? "start" : "end"}
-              >
-                <MessageBody content={m.content}></MessageBody>
-                <MessageFooter text={getMessageTime(m)}></MessageFooter>
-              </Message>
-            </IonItem>
-          ))}
+          {/* List of messages */}
+          {messages.map((m) => {
+            const side = m.record?.authorType === AuthorType.CUSTOMER ? "start" : "end"
+            const footer = m.status === 'saved' ? getMessageTime(m) : t(`chat.message.status.${m.status}`)
+
+            return (
+              <IonItem key={m.uid} lines={"none"}>
+                <Message slot={side}>
+                  <MessageBody content={m.content}></MessageBody>
+                  <MessageFooter text={footer}></MessageFooter>
+                </Message>
+              </IonItem>
+            )
+          })}
         </IonList>
 
         {/* Input Message Box */}
-        <Sticky position="bottom">
+        <Sticky position="bottom" zIndex={9999}>
           <MessageInput onSubmit={onInputSubmit} submitOnEnter={true}></MessageInput>
         </Sticky>
       </IonContent>
