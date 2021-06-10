@@ -163,7 +163,7 @@ const Chat: React.FC = () => {
 
       {
         /* Error Banner */
-        error &&
+        error && (
           <IonItem color="danger">
             <span className="ion-margin"> { t('error.generic') }</span>
             <IonButton
@@ -172,6 +172,7 @@ const Chat: React.FC = () => {
               onClick={() => window.location.reload()}
             >{ t('error.actions.reload') }</IonButton>
           </IonItem>
+        )
       }
 
       {/* Main Content */}
@@ -190,12 +191,13 @@ const Chat: React.FC = () => {
           {messages.map((m) => {
             const side = m.record?.authorType === AuthorType.CUSTOMER ? "start" : "end"
             const footer = m.status === 'saved' ? getMessageTime(m) : t(`chat.message.status.${m.status}`)
+            const failed = m.status === 'failed';
 
             return (
               <IonItem key={m.uid} lines={"none"}>
                 <Message slot={side}>
                   <MessageBody content={m.content}></MessageBody>
-                  <MessageFooter text={footer}></MessageFooter>
+                  <MessageFooter text={footer} color={failed ? 'danger' : 'light'}></MessageFooter>
                 </Message>
               </IonItem>
             )
