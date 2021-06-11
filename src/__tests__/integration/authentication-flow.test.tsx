@@ -1,16 +1,11 @@
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import { render, screen, wait } from "@testing-library/react";
-import { createMemoryHistory } from "history";
+import { screen, wait } from "@testing-library/react";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
-import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
 import setupMockIntegrationServer from "test-utils/setupMockIntegrationServer";
-import AuthProvider from "components/AuthProvider/AuthProvider";
-import MainRouter from "components/MainRouter/MainRouter";
-import { IonApp } from "@ionic/react";
-import { Router } from "react-router";
-import { I18nextProvider } from "react-i18next";
-import i18n from "i18n/i18n";
+import { renderPage } from "test-utils/renderers";
+import * as factories from 'test-utils/factories'
+import { ConversationType } from "generated/graphql"
 
 const expectToBeOnPage = (
   myPath: string,
@@ -27,28 +22,8 @@ beforeAll(() => {
 
 afterAll(() => mockServer.close());
 
-const setup = ({ initialEntries }: { initialEntries: string[] }) => {
-  const history = createMemoryHistory({ initialEntries });
-  return {
-    history,
-    ...render(
-      <IonApp>
-        <I18nextProvider i18n={i18n}>
-          <AuthProvider>
-            <GoodChatProvider>
-              <Router history={history}>
-                <MainRouter />
-              </Router>
-            </GoodChatProvider>
-          </AuthProvider>
-        </I18nextProvider>
-      </IonApp>
-    ),
-  };
-};
-
 test("User is able to login and logout with correct routing", async () => {
-  const { history, container } = setup({ initialEntries: ["/login"] });
+  const { history, container } = await renderPage("/login");
 
   expectToBeOnPage(history.location.pathname, "login");
 
@@ -85,7 +60,15 @@ test("User is able to login and logout with correct routing", async () => {
   { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" }
 ].map(({ initialPath, expectedPage, expectedPath }) => {
   test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPage} after login`, async () => {
-    const { history, container } = setup({ initialEntries: [initialPath] });
+    const { history, container } = await renderPage(initialPath, {
+      authenticated: false,
+      disableGlobalResolvers: true,
+      mocks: {
+        Conversation: () => factories.conversationFactory.build({
+          type: ConversationType.Customer
+        })
+      }
+    })
 
     expectToBeOnPage(history.location.pathname, "login");
 

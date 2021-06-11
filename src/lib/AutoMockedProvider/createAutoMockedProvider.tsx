@@ -8,6 +8,7 @@ import { SchemaLink } from "@apollo/client/link/schema";
 interface AutoMockedProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;
   mockResolvers?: IMocks;
+  disableGlobalResolvers?: boolean
 }
 
 const createAutoMockedProvider = (
@@ -17,12 +18,18 @@ const createAutoMockedProvider = (
   const AutoMockedProvider: React.FC<AutoMockedProviderProps> = ({
     children,
     mockResolvers = {},
+    disableGlobalResolvers = false,
   }) => {
-    const schema = makeExecutableSchema({ typeDefs });
+    const schema = makeExecutableSchema({
+      typeDefs
+    });
     const schemaWithMocks = addMocksToSchema({
       schema,
       // Merge global and local mock resolvers
-      mocks: mergeResolvers([globalMockResolvers, mockResolvers]),
+      mocks: mergeResolvers([
+        disableGlobalResolvers ? {} : globalMockResolvers,
+        mockResolvers
+      ])
     });
 
     const client = new ApolloClient({

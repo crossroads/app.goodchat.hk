@@ -1,4 +1,10 @@
 {
+  "error": {
+    "generic": "Something went wrong",
+    "actions": {
+      "reload": "Reload"
+    }
+  },
   "home": {
     "title": "Home"
   },
@@ -7,6 +13,13 @@
       "anonymous": "Anonymous",
       "memberCount": "{{memberCount}} member",
       "memberCount_plural": "{{memberCount}} members"
+    },
+    "message": {
+      "status": {
+        "pending": "Pending",
+        "failed": "Failed",
+        "unsent": "Unsent"
+      }
     }
   },
   "chats": {

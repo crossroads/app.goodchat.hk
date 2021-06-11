@@ -11,7 +11,7 @@ type UseAsyncReturnTuple<T, A extends unknown[]> = [
   execute: (...args: A) => Promise<void>
 ];
 
-const useAsync = <T, A extends unknown[]>(
+export const useAsync = <T, A extends unknown[]>(
   asyncCallback: AsyncCallback<T, A>
 ): UseAsyncReturnTuple<T, A> => {
   const [data, setData] = useState<T | null>(null);

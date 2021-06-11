@@ -254,6 +254,8 @@ export type Mutation = {
 export type MutationSendMessageArgs = {
   conversationId: Scalars['Int'];
   text: Scalars['String'];
+  timestamp?: Maybe<Scalars['DateTime']>;
+  metadata?: Maybe<Scalars['JSON']>;
 };
 
 
@@ -437,6 +439,7 @@ export type NewMessagesSubSubscription = (
 export type SendMessageMutationVariables = Exact<{
   conversationId: Scalars['Int'];
   text: Scalars['String'];
+  timestamp: Scalars['DateTime'];
 }>;
 
 
@@ -608,8 +611,8 @@ export function useNewMessagesSubSubscription(baseOptions: Apollo.SubscriptionHo
 export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
 export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
 export const SendMessageDocument = gql`
-    mutation sendMessage($conversationId: Int!, $text: String!) {
-  sendMessage(conversationId: $conversationId, text: $text) {
+    mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
+  sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {
     id
     authorType
     authorId
@@ -635,6 +638,7 @@ export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation,
  *   variables: {
  *      conversationId: // value for 'conversationId'
  *      text: // value for 'text'
+ *      timestamp: // value for 'timestamp'
  *   },
  * });
  */
