@@ -63,7 +63,7 @@
   },
   "description": "An Ionic project",
   "devDependencies": {
-    "@capacitor/cli": "^3.0.0",
+    "@capacitor/cli": "^3.0.2",
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/introspection": "1.18.1",
     "@graphql-codegen/typescript": "1.21.1",
@@ -73,6 +73,7 @@
     "@graphql-tools/mock": "^7.0.0",
     "@graphql-tools/schema": "^7.1.5",
     "@graphql-tools/utils": "^7.10.0",
+    "@ionic/cli": "^6.16.3",
     "@ionic/react-test-utils": "0.0.3",
     "@types/faker": "^5.5.5",
     "@types/lodash": "^4.14.170",
