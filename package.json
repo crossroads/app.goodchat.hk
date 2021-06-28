@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.12",
-    "@capacitor/android": "^2.4.2",
-    "@capacitor/core": "2.4.2",
-    "@capacitor/ios": "^2.4.2",
+    "@capacitor/android": "^3.0.0",
+    "@capacitor/core": "^3.0.0",
+    "@capacitor/ios": "^3.0.0",
     "@ionic/react": "^5.0.7",
     "@ionic/react-router": "^5.0.7",
     "@testing-library/jest-dom": "^4.2.4",
@@ -43,6 +43,8 @@
     "test": "NODE_ENV=test kankyo exec -- react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "cap sync",
+    "ios": "kankyo exec -- ionic capacitor run ios -l --external",
+    "android": "kankyo exec -- ionic capacitor run android -l --external",
     "codegen": "graphql-codegen --config codegen.yml dotenv_config_path=.env.codegen --require dotenv/config",
     "codegen:watch": "npm run codegen -- --watch"
   },
@@ -63,7 +65,7 @@
   },
   "description": "An Ionic project",
   "devDependencies": {
-    "@capacitor/cli": "2.4.2",
+    "@capacitor/cli": "^3.0.2",
     "@graphql-codegen/cli": "1.21.3",
     "@graphql-codegen/introspection": "1.18.1",
     "@graphql-codegen/typescript": "1.21.1",
@@ -73,6 +75,7 @@
     "@graphql-tools/mock": "^7.0.0",
     "@graphql-tools/schema": "^7.1.5",
     "@graphql-tools/utils": "^7.10.0",
+    "@ionic/cli": "^6.16.3",
     "@ionic/react-test-utils": "0.0.3",
     "@types/faker": "^5.5.5",
     "@types/lodash": "^4.14.170",
