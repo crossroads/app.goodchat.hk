@@ -91,7 +91,7 @@ commands:
 orbs:
   node: circleci/node@4.1.0
   azure-cli: circleci/azure-cli@1.1.0
-  ruby: circleci/ruby@1.1.2
+  ruby: circleci/ruby@1.1.4
   android: circleci/android@0.2.3
 
 # -----------------------------
