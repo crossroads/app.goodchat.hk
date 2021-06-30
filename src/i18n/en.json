@@ -28,6 +28,10 @@
   "offers": {
     "title": "Offers"
   },
+  "menu": {
+    "title": "Menu",
+    "logout": "Log out"
+  },
   "login": {
     "title": "Login",
     "pinButton": "Get 4-digit SMS code"
@@ -37,12 +41,10 @@
     "2FaLabel": "Please input your 2fa code",
     "loginButton": "Login"
   },
-  "header": {
-    "logout": "Log out"
-  },
   "footer": {
     "home": "Home",
     "chats": "Chats",
-    "offers": "Offers"
+    "offers": "Offers",
+    "menu": "Menu"
   }
 }
