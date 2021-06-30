@@ -1,6 +1,10 @@
 import { renderPage } from "test-utils/renderers";
 import * as factories from 'test-utils/factories'
 import { ConversationType } from "generated/graphql";
+import * as Chat from "pages/Chat/Chat";
+
+// prevents not wrapped in act warning
+jest.spyOn(Chat, 'default').mockImplementation(() => null);
 
 describe("Unauthenticated User", () => {
   [
