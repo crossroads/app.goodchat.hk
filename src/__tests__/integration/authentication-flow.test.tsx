@@ -9,10 +9,9 @@ import { ConversationType } from "generated/graphql"
 
 const expectToBeOnPage = (
   myPath: string,
-  expectedPage: string,
-  expectedPath?: string
+  expectedPath: string
 ) => {
-  expect(myPath).toEqual(expectedPath ?? `/${expectedPage}`);
+  expect(myPath).toEqual(expectedPath);
 };
 
 beforeAll(() => {
@@ -25,7 +24,7 @@ afterAll(() => mockServer.close());
 test("User is able to login with correct routing", async () => {
   const { history, container } = await renderPage("/login");
 
-  expectToBeOnPage(history.location.pathname, "login");
+  expectToBeOnPage(history.location.pathname, "/login");
 
   const mobileInput = container.querySelector("ion-input");
   ionFireEvent.ionChange(mobileInput!, "91111111");
@@ -34,7 +33,7 @@ test("User is able to login with correct routing", async () => {
   userEvent.click(goToAuthenticateButton as TargetElement);
 
   await wait(() =>
-    expectToBeOnPage(history.location.pathname, "authenticate")
+    expectToBeOnPage(history.location.pathname, "/authenticate")
   );
 
   const inputVal = "1234";
@@ -44,16 +43,17 @@ test("User is able to login with correct routing", async () => {
   userEvent.click(loginButton as TargetElement);
 
   await wait(() =>
-    expectToBeOnPage(history.location.pathname, "home")
+    expectToBeOnPage(history.location.pathname, "/home")
   );
 });
 
 [
-  { initialPath: "/home", expectedPage: "home" },
-  { initialPath: "/chats", expectedPage: "chats" },
-  { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" }
-].map(({ initialPath, expectedPage, expectedPath }) => {
-  test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPage} after login`, async () => {
+  { initialPath: "/home",      expectedPath: "/home" },
+  { initialPath: "/chats",     expectedPath: "/chats" },
+  { initialPath: "/chats/1",   expectedPath: "/chats/1" },
+  { initialPath: "/menu",      expectedPath: "/menu" }
+].map(({ initialPath, expectedPath }) => {
+  test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPath} after login`, async () => {
     const { history, container } = await renderPage(initialPath, {
       authenticated: false,
       disableGlobalResolvers: true,
@@ -64,7 +64,7 @@ test("User is able to login with correct routing", async () => {
       }
     })
 
-    expectToBeOnPage(history.location.pathname, "login");
+    expectToBeOnPage(history.location.pathname, "/login");
 
     const mobileInput = container.querySelector("ion-input");
     ionFireEvent.ionChange(mobileInput!, "91111111");
@@ -73,7 +73,7 @@ test("User is able to login with correct routing", async () => {
     userEvent.click(goToAuthenticateButton as TargetElement);
 
     await wait(() =>
-      expectToBeOnPage(history.location.pathname, "authenticate")
+      expectToBeOnPage(history.location.pathname, "/authenticate")
     );
 
     const inputVal = "1234";
@@ -85,7 +85,6 @@ test("User is able to login with correct routing", async () => {
     await wait(() =>
       expectToBeOnPage(
         history.location.pathname,
-        expectedPage,
         expectedPath
       )
     );
