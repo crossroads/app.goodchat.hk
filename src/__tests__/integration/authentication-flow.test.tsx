@@ -1,5 +1,5 @@
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import { screen, wait } from "@testing-library/react";
+import { wait } from "@testing-library/react";
 import { ionFireEvent } from "@ionic/react-test-utils";
 import { mockServer } from "mockServer";
 import setupMockIntegrationServer from "test-utils/setupMockIntegrationServer";
@@ -22,7 +22,7 @@ beforeAll(() => {
 
 afterAll(() => mockServer.close());
 
-test("User is able to login and logout with correct routing", async () => {
+test("User is able to login with correct routing", async () => {
   const { history, container } = await renderPage("/login");
 
   expectToBeOnPage(history.location.pathname, "login");
@@ -46,11 +46,6 @@ test("User is able to login and logout with correct routing", async () => {
   await wait(() =>
     expectToBeOnPage(history.location.pathname, "home")
   );
-
-  const logoutButton = screen.getByText(/log out/i);
-  userEvent.click(logoutButton as TargetElement);
-
-  expectToBeOnPage(history.location.pathname, "login");
 });
 
 [

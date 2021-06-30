@@ -20,7 +20,6 @@ test("should render without crashing", async () => {
 describe("Chats page header", () => {
   testPageHeader({
     title: "Chats",
-    privatePage: true,
     withBackButton: false,
     element: (
       <GoodChatMockedProvider>
