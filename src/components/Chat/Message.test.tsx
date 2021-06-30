@@ -20,7 +20,7 @@ test('allows creating a left-styled message bubble', () => {
   const imageElement = container.querySelector('.chat-message');
 
   expect(imageElement).toBeTruthy();
-  expect(imageElement.classList).toContain('start')
+  expect(imageElement!.classList).toContain('start')
 })
 
 test('allows creating a right-styled message bubble', () => {
@@ -33,5 +33,5 @@ test('allows creating a right-styled message bubble', () => {
   const imageElement = container.querySelector('.chat-message');
 
   expect(imageElement).toBeTruthy();
-  expect(imageElement.classList).toContain('end')
+  expect(imageElement!.classList).toContain('end')
 })
