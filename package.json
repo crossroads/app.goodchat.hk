@@ -24,6 +24,7 @@
     "graphql": "^15.5.0",
     "history": "^4.10.1",
     "i18next": "^20.3.1",
+    "i18next-browser-languagedetector": "^6.1.2",
     "immutability-helper": "^3.1.1",
     "ionicons": "^5.0.0",
     "kankyo": "^1.6.1",
