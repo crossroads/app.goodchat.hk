@@ -50,7 +50,6 @@ test("User is able to login with correct routing", async () => {
 
 [
   { initialPath: "/home", expectedPage: "home" },
-  { initialPath: "/offers", expectedPage: "offers" },
   { initialPath: "/chats", expectedPage: "chats" },
   { initialPath: "/chats/1", expectedPage: "chat", expectedPath: "/chats/1" }
 ].map(({ initialPath, expectedPage, expectedPath }) => {

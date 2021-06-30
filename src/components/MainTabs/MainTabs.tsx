@@ -1,6 +1,5 @@
 import React from "react";
 import Home from "pages/Home/Home";
-import Offers from "pages/Offers/Offers";
 import { Route } from "react-router";
 import { 
   home, 
@@ -27,17 +26,14 @@ const MainTabs = () => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route exact path="/:tab(offers)">
-          <Offers />
+        <Route exact path="/:tab(home)">
+          <Home />
         </Route>
         <Route exact path="/:tab(chats)">
           <Chats />
         </Route>
         <Route exact path="/:tab(chats)/:conversationId">
           <Chat />
-        </Route>
-        <Route exact path="/:tab(home)">
-          <Home />
         </Route>
         <Route exact path="/:tab(menu)">
           <Menu />
@@ -51,10 +47,6 @@ const MainTabs = () => {
         <IonTabButton tab="chats" href="/chats">
           <IonIcon icon={chatbubbleOutline} />
           <IonLabel>{t("footer.chats")}</IonLabel>
-        </IonTabButton>
-        <IonTabButton tab="offers" href="/offers">
-          <IonIcon icon={listOutline} />
-          <IonLabel>{t("footer.offers")}</IonLabel>
         </IonTabButton>
         <IonTabButton tab="menu" href="/menu">
           <IonIcon icon={menu} />

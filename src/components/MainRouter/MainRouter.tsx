@@ -17,7 +17,7 @@ const MainRouter: React.FC = () => {
       <Route exact path="/authenticate">
         <Authenticate />
       </Route>
-      <PrivateRoute exact path={["/home", "/offers", "/menu"]}>
+      <PrivateRoute exact path={["/home", "/menu"]}>
         <MainTabs />
       </PrivateRoute>
       <PrivateRoute path={["/chats"]}>
