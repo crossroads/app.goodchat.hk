@@ -7,6 +7,13 @@ const resources = {
   en: {
     translation: enTranslations,
   },
+  tc: {
+    translation: {
+      "menu": {
+        "logout": "登出"
+      }
+    },
+  }
 };
 
 i18n
