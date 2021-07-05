@@ -27,14 +27,14 @@ exports[`renders footer correctly 1`] = `
     </ion-label>
   </ion-tab-button>
   <ion-tab-button
-    href="/offers"
-    tab="offers"
+    href="/menu"
+    tab="menu"
   >
     <ion-icon
-      icon="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>List</title><path stroke-linecap='round' stroke-linejoin='round' d='M160 144h288M160 256h288M160 368h288' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='80' cy='144' r='16' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='80' cy='256' r='16' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/><circle cx='80' cy='368' r='16' stroke-linecap='round' stroke-linejoin='round' class='ionicon-fill-none ionicon-stroke-width'/></svg>"
+      icon="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 512 512'><title>Menu</title><path stroke-linecap='round' stroke-miterlimit='10' stroke-width='48' d='M88 152h336M88 256h336M88 360h336' class='ionicon-fill-none'/></svg>"
     />
     <ion-label>
-      Offers
+      Menu
     </ion-label>
   </ion-tab-button>
 </ion-tab-bar>

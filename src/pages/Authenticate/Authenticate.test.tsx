@@ -18,7 +18,6 @@ test("renders without crashing", () => {
 describe("Authenticate page header", () =>
   testPageHeader({
     title: "Authenticate",
-    privatePage: false,
     withBackButton: true,
     element: (
       <MemoryRouter>

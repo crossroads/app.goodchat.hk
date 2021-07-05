@@ -25,8 +25,10 @@
   "chats": {
     "title": "Chats"
   },
-  "offers": {
-    "title": "Offers"
+  "menu": {
+    "title": "Menu",
+    "logout": "Log out",
+    "selectLang": "Select language"
   },
   "login": {
     "title": "Login",
@@ -37,12 +39,9 @@
     "2FaLabel": "Please input your 2fa code",
     "loginButton": "Login"
   },
-  "header": {
-    "logout": "Log out"
-  },
   "footer": {
     "home": "Home",
     "chats": "Chats",
-    "offers": "Offers"
+    "menu": "Menu"
   }
 }

@@ -23,7 +23,6 @@ function clickButton(container: HTMLElement) {
 describe("Login page header", () =>
   testPageHeader({
     title: "Login",
-    privatePage: false,
     withBackButton: false,
     element: (
       <MemoryRouter>

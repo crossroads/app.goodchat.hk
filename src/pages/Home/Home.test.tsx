@@ -12,7 +12,6 @@ test("renders without crashing", () => {
 describe("Home page header", () =>
   testPageHeader({
     title: "Home",
-    privatePage: true,
     withBackButton: false,
     element: <Home />,
   }));

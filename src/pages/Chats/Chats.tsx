@@ -1,6 +1,4 @@
 import {
-  IonButton,
-  IonButtons,
   IonContent,
   IonHeader,
   IonItem,
@@ -16,7 +14,6 @@ import {
   Message,
   useCustomerConversationsListQuery,
 } from "../../generated/graphql";
-import useAuth from "hooks/useAuth/useAuth";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -60,7 +57,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 };
 
 const Chats: React.FC = () => {
-  const { logout } = useAuth();
   const { data } = useCustomerConversationsListQuery();
   const { t } = useTranslation();
 
@@ -69,9 +65,6 @@ const Chats: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>{t("chats.title")}</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={logout}>{t("header.logout")}</IonButton>
-          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent>
