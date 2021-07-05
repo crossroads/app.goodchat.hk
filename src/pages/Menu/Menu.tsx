@@ -32,7 +32,7 @@ const Menu: React.FC = () => {
             onIonChange={(e) => i18n.changeLanguage(e.detail.value)}
           >
             <IonSelectOption value='en'>English</IonSelectOption>
-            <IonSelectOption value='tc'>中文</IonSelectOption>
+            <IonSelectOption value='zh-TW'>中文</IonSelectOption>
           </IonSelect>
         </IonItem>
         <IonButton onClick={logout}>

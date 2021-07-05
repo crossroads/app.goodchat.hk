@@ -7,12 +7,12 @@ const resources = {
   en: {
     translation: enTranslations,
   },
-  tc: {
+  "zh-TW": {
     translation: {
       "menu": {
         "logout": "登出"
       }
-    },
+    }
   }
 };
 
@@ -22,7 +22,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'tc'],
+    supportedLngs: ['en', 'zh-TW'],
 
     interpolation: {
       escapeValue: false, // react already safes from xss

@@ -71,11 +71,11 @@ describe('language selector', () => {
 
     ionFireEvent.ionChange(
       container.querySelector('ion-select') as TargetElement,  
-      'tc'
+      'zh-TW'
     )
 
     expect(container.querySelector('ion-select'))
-      .toHaveAttribute('value', "tc")
+      .toHaveAttribute('value', "zh-TW")
   })
 
   it('should allow the user to change the language', async () => {
@@ -86,10 +86,10 @@ describe('language selector', () => {
 
     ionFireEvent.ionChange(
       container.querySelector('ion-select') as TargetElement, 
-      'tc'
+      'zh-TW'
     )
 
     expect(container.querySelector('ion-select'))
-      .toHaveAttribute('value', "tc")
+      .toHaveAttribute('value', "zh-TW")
   });
 });
