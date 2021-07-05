@@ -2,17 +2,14 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslations from "./en.json";
+import zhTWTranslations from "./zhTW.json";
 
 const resources = {
   en: {
     translation: enTranslations,
   },
   "zh-TW": {
-    translation: {
-      "menu": {
-        "logout": "登出"
-      }
-    }
+    translation: zhTWTranslations
   }
 };
 
