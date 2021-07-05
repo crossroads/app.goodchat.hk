@@ -27,7 +27,8 @@
   },
   "menu": {
     "title": "Menu",
-    "logout": "Log out"
+    "logout": "Log out",
+    "selectLang": "Select language"
   },
   "login": {
     "title": "Login",
