@@ -161,6 +161,7 @@ export const useMessages = (props: UseMessagesProps) => {
 
       addMessages([wrapper]);
       onNewMessage(wrapper)
+      markAsRead()
     }
   });
 
