@@ -58,6 +58,14 @@ describe('Content', () => {
         Conversation: () => ({
           ...conversation,
           messages: paginator(conversation.messages)
+        }),
+        Mutation: () => ({
+          markAsRead: () => {
+            const latestMessage = conversation.messages[0]
+            return {
+              lastReadMessageId: latestMessage.id
+            }
+          }
         })
       }
     })
@@ -96,6 +104,18 @@ describe('Content', () => {
     const { container } = await renderChat();
     expect(container).toBeInTheDocument();
   });
+
+  test('fires markAsRead event on mount', async () => {
+    const mockMarkAsRead = jest.fn()
+    jest.spyOn(GeneratedTypes,'useMarkAsReadMutation').mockReturnValue([
+      mockMarkAsRead,
+      {} as any
+    ])
+
+    await renderChat();
+
+    expect(mockMarkAsRead).toHaveBeenCalledTimes(1)
+  })
 
   describe('Header', () => {
     test(`customer chats should have the customer name as title`, async () => {
