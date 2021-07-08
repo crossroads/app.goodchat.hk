@@ -1,7 +1,7 @@
 import { MessageInput, MessageInputCallback } from 'components/Chat/MessageInput'
 import { AuthorType, ConversationType } from "typings/goodchat"
 import { WrappedMessage, useMessages } from "hooks/useMessages"
-import React, { useRef, useState, useEffect } from "react"
+import React, { useRef, useState } from "react"
 import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
 import { useTranslation } from "react-i18next"
 import { MessageFooter } from 'components/Chat/MessageFooter'
@@ -15,7 +15,6 @@ import { style } from 'typestyle'
 import {
   ConversationDetailsQuery,
   useConversationDetailsQuery,
-  useMarkAsReadMutation,
 } from "../../generated/graphql";
 import {
   IonBackButton,
@@ -117,16 +116,6 @@ const Chat: React.FC = () => {
       triggerScroll();
     }
   })
-
-  const [markAsRead] =  useMarkAsReadMutation({
-    variables: {
-      conversationId: Number(conversationId)
-    }
-  })
-
-  useEffect(() => {
-    markAsRead()
-  }, [])
 
   const { data: details } = useConversationDetailsQuery({
     variables: {
