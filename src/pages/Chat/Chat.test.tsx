@@ -1,5 +1,6 @@
 import { wait, waitForDomChange, waitForElement } from "@testing-library/dom"
 import { Conversation, ConversationType } from "typings/goodchat"
+import * as GeneratedTypes from "generated/graphql"
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { ionFireEvent } from "@ionic/react-test-utils"
 import { ApolloError } from "@apollo/client";
@@ -231,7 +232,7 @@ describe('Content', () => {
           }
         });
 
-        jest.spyOn(Apollo, 'useMutation').mockReturnValue([
+        jest.spyOn(GeneratedTypes,'useSendMessageMutation').mockReturnValue([
           postMessageMock, {} as any
         ])
 
