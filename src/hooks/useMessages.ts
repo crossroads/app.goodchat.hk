@@ -10,6 +10,7 @@ import {
   ConversationMessagesQuery,
   SendMessageMutation,
   useConversationMessagesQuery,
+  useMarkAsReadMutation,
   useNewMessagesSubSubscription,
   useSendMessageMutation,
 } from "../generated/graphql";
@@ -77,6 +78,16 @@ export const useMessages = (props: UseMessagesProps) => {
   const [messages, setMessages] = useState<WrappedMessage[]>([]);
   const [complete, setComplete] = useState(false);
   const safeSetState = useSafeSetState();
+
+  const [markAsRead] =  useMarkAsReadMutation({
+    variables: {
+      conversationId: Number(conversationId)
+    }
+  })
+
+  useEffect(() => {
+    markAsRead()
+  }, [])
 
   const addMessages = (newMessages?: WrappedMessage[]) => {
     if (!newMessages || newMessages.length === 0) return;
@@ -150,6 +161,7 @@ export const useMessages = (props: UseMessagesProps) => {
 
       addMessages([wrapper]);
       onNewMessage(wrapper)
+      markAsRead()
     }
   });
 

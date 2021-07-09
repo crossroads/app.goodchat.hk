@@ -201,6 +201,13 @@ export type Customer = {
 
 
 
+export enum DeliveryStatus {
+  Unsent = 'UNSENT',
+  Sent = 'SENT',
+  Delivered = 'DELIVERED',
+  Failed = 'FAILED'
+}
+
 
 
 
@@ -234,6 +241,8 @@ export type Message = {
   authorId: Scalars['Int'];
   content: Scalars['JSON'];
   metadata: Scalars['JSON'];
+  customerDeliveryStatus: DeliveryStatus;
+  customerDeliveryError?: Maybe<Scalars['String']>;
 };
 
 export type MessageEvent = {
@@ -248,6 +257,7 @@ export type Mutation = {
   startTyping: Conversation;
   stopTyping: Conversation;
   markAsRead: ReadReceipt;
+  createConversation: Conversation;
 };
 
 
@@ -271,6 +281,13 @@ export type MutationStopTypingArgs = {
 
 export type MutationMarkAsReadArgs = {
   conversationId: Scalars['Int'];
+};
+
+
+export type MutationCreateConversationArgs = {
+  type: ConversationType;
+  memberIds: Array<Scalars['Int']>;
+  metadata?: Maybe<Scalars['JSON']>;
 };
 
 
@@ -433,6 +450,19 @@ export type NewMessagesSubSubscription = (
       { __typename?: 'Message' }
       & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
     ) }
+  ) }
+);
+
+export type MarkAsReadMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type MarkAsReadMutation = (
+  { __typename?: 'Mutation' }
+  & { markAsRead: (
+    { __typename?: 'ReadReceipt' }
+    & Pick<ReadReceipt, 'lastReadMessageId'>
   ) }
 );
 
@@ -610,6 +640,39 @@ export function useNewMessagesSubSubscription(baseOptions: Apollo.SubscriptionHo
       }
 export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
 export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
+export const MarkAsReadDocument = gql`
+    mutation markAsRead($conversationId: Int!) {
+  markAsRead(conversationId: $conversationId) {
+    lastReadMessageId
+  }
+}
+    `;
+export type MarkAsReadMutationFn = Apollo.MutationFunction<MarkAsReadMutation, MarkAsReadMutationVariables>;
+
+/**
+ * __useMarkAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAsReadMutation, { data, loading, error }] = useMarkAsReadMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useMarkAsReadMutation(baseOptions?: Apollo.MutationHookOptions<MarkAsReadMutation, MarkAsReadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MarkAsReadMutation, MarkAsReadMutationVariables>(MarkAsReadDocument, options);
+      }
+export type MarkAsReadMutationHookResult = ReturnType<typeof useMarkAsReadMutation>;
+export type MarkAsReadMutationResult = Apollo.MutationResult<MarkAsReadMutation>;
+export type MarkAsReadMutationOptions = Apollo.BaseMutationOptions<MarkAsReadMutation, MarkAsReadMutationVariables>;
 export const SendMessageDocument = gql`
     mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
   sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {

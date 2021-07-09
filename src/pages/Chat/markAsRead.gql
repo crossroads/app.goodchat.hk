@@ -1,0 +1,5 @@
+mutation markAsRead($conversationId: Int!) {
+  markAsRead(conversationId: $conversationId) {
+    lastReadMessageId
+  }
+}

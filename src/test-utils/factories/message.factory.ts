@@ -5,7 +5,8 @@ import {
   Conversation,
   MessageTextContent,
   MessageImageContent,
-  AuthorType
+  AuthorType,
+  DeliveryStatus
 } from '../../typings/goodchat'
 import { conversationFactory } from './conversation.factory';
 import { generatePartialFactory } from './helpers';
@@ -45,7 +46,8 @@ export const messageFactory = Factory.define<Message>(({ sequence, params }) => 
     authorId: 0,
     conversation: {} as Conversation,
     content: textContentFactory.build(),
-    metadata: {}
+    metadata: {},
+    customerDeliveryStatus: DeliveryStatus.Unsent
   }
 
   const conversation = conversationFactory.build({

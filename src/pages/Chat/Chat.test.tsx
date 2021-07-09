@@ -1,8 +1,9 @@
 import { wait, waitForDomChange, waitForElement } from "@testing-library/dom"
 import { Conversation, ConversationType } from "typings/goodchat"
+import * as GeneratedTypes from "generated/graphql"
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { ionFireEvent } from "@ionic/react-test-utils"
-import { ApolloError } from "@apollo/client";
+import { ApolloError, OnSubscriptionDataOptions } from "@apollo/client";
 import { renderPage } from "test-utils/renderers"
 import * as factories from 'test-utils/factories'
 import * as Apollo from '@apollo/client'
@@ -57,6 +58,14 @@ describe('Content', () => {
         Conversation: () => ({
           ...conversation,
           messages: paginator(conversation.messages)
+        }),
+        Mutation: () => ({
+          markAsRead: () => {
+            const latestMessage = conversation.messages[0]
+            return {
+              lastReadMessageId: latestMessage.id
+            }
+          }
         })
       }
     })
@@ -87,6 +96,62 @@ describe('Content', () => {
     const { container } = await renderChat();
     expect(container).toBeInTheDocument();
   });
+
+  test('fires markAsRead event on mount', async () => {
+    const mockMarkAsRead = jest.fn()
+    jest.spyOn(GeneratedTypes,'useMarkAsReadMutation').mockReturnValue([
+      mockMarkAsRead,
+      {} as any
+    ])
+
+    await renderChat();
+
+    expect(mockMarkAsRead).toHaveBeenCalledTimes(1)
+  })
+
+  test('fires markAsRead event whenever a new message comes in', async () => {
+    const mockMarkAsRead = jest.fn()
+    jest.spyOn(GeneratedTypes,'useMarkAsReadMutation').mockReturnValue([
+      mockMarkAsRead,
+      {} as any
+    ])
+
+    let onSubscriptionData: (options: OnSubscriptionDataOptions<GeneratedTypes.NewMessagesSubSubscription>) => any;
+    const original = GeneratedTypes.useNewMessagesSubSubscription;
+    jest.spyOn(GeneratedTypes, 'useNewMessagesSubSubscription')
+      .mockImplementation(({...args}) => {
+        onSubscriptionData = args.onSubscriptionData!
+        return original({...args})
+      })
+
+    await renderChat();
+
+    mockMarkAsRead.mockClear()
+    expect(mockMarkAsRead).not.toHaveBeenCalled()
+
+    act(() => {
+      onSubscriptionData({
+        client: {} as any,
+        subscriptionData: {
+          loading: false,
+          error: undefined,
+          data: {
+            messageEvent: {
+              action: GeneratedTypes.SubscriptionAction.Create,
+              message: factories.messageFactory.build({
+                content: {
+                  type: 'text',
+                  text: 'a subscription message'
+                }
+              })
+            }
+          }
+        }
+      })
+    })
+
+    expect(mockMarkAsRead).toHaveBeenCalledTimes(1)
+  })
 
   describe('Header', () => {
     test(`customer chats should have the customer name as title`, async () => {
@@ -223,7 +288,7 @@ describe('Content', () => {
           }
         });
 
-        jest.spyOn(Apollo, 'useMutation').mockReturnValue([
+        jest.spyOn(GeneratedTypes,'useSendMessageMutation').mockReturnValue([
           postMessageMock, {} as any
         ])
 
