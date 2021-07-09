@@ -82,19 +82,11 @@ describe('Content', () => {
     const hour = 1000 * 60 * 60;
 
     // Create all the data needed for the test
-    /**
-     * [0, 1, 2, ... , MESSAGE_COUNT - 1]
-     * past                 now
-     * 
-     * now = past + hour * (MESSAGE_COUNT - 1)
-     * ∴ past = now - hour * (MESSAGE_COUNT - 1)
-     */
-    const earliestMsgTimestamp = now - (MESSAGE_COUNT - 1) * hour
     conversation = factories.conversationFactory.build({
       type: ConversationType.Customer,
       messages: range(MESSAGE_COUNT).map((i) => factories.messageFactory.build({
-        createdAt: new Date(earliestMsgTimestamp + i * hour)
-      })).reverse()
+        createdAt: new Date(now - i * hour)
+      }))
     });
   });
 
