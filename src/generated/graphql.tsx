@@ -397,6 +397,19 @@ export enum SubscriptionAction {
 
 
 
+export type StartTypingMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type StartTypingMutation = (
+  { __typename?: 'Mutation' }
+  & { startTyping: (
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+  ) }
+);
+
 export type ConversationDetailsQueryVariables = Exact<{
   conversationId: Scalars['Int'];
 }>;
@@ -500,6 +513,39 @@ export type CustomerConversationsListQuery = (
 );
 
 
+export const StartTypingDocument = gql`
+    mutation startTyping($conversationId: Int!) {
+  startTyping(conversationId: $conversationId) {
+    id
+  }
+}
+    `;
+export type StartTypingMutationFn = Apollo.MutationFunction<StartTypingMutation, StartTypingMutationVariables>;
+
+/**
+ * __useStartTypingMutation__
+ *
+ * To run a mutation, you first call `useStartTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startTypingMutation, { data, loading, error }] = useStartTypingMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useStartTypingMutation(baseOptions?: Apollo.MutationHookOptions<StartTypingMutation, StartTypingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartTypingMutation, StartTypingMutationVariables>(StartTypingDocument, options);
+      }
+export type StartTypingMutationHookResult = ReturnType<typeof useStartTypingMutation>;
+export type StartTypingMutationResult = Apollo.MutationResult<StartTypingMutation>;
+export type StartTypingMutationOptions = Apollo.BaseMutationOptions<StartTypingMutation, StartTypingMutationVariables>;
 export const ConversationDetailsDocument = gql`
     query ConversationDetails($conversationId: Int!) {
   conversation(id: $conversationId) {
