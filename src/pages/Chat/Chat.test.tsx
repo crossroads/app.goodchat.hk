@@ -258,7 +258,7 @@ describe('Content', () => {
 
         ionFireEvent.ionChange(textarea!, text);
 
-        act(() => { userEvent.click(button as TargetElement); });
+        userEvent.click(button as TargetElement);
       }
 
       /**
