@@ -15,6 +15,7 @@ import { style } from 'typestyle'
 import {
   ConversationDetailsQuery,
   useConversationDetailsQuery,
+  useStartTypingMutation,
 } from "../../generated/graphql";
 import {
   IonBackButton,
@@ -123,6 +124,12 @@ const Chat: React.FC = () => {
     },
   });
 
+  const [startTyping] =  useStartTypingMutation({
+    variables: {
+      conversationId: Number(conversationId)
+    }
+  })
+
   // ---------------------------------
   // ~ PAGINATION
   // ---------------------------------
@@ -206,7 +213,11 @@ const Chat: React.FC = () => {
 
         {/* Input Message Box */}
         <Sticky position="bottom" zIndex={9999}>
-          <MessageInput onSubmit={onInputSubmit} submitOnEnter={true}></MessageInput>
+          <MessageInput 
+            onSubmit={onInputSubmit} 
+            submitOnEnter={true}
+            onChange={() => startTyping()}
+          />
         </Sticky>
       </IonContent>
     </IonPage>

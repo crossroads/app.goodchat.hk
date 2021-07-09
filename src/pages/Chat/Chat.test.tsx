@@ -385,6 +385,21 @@ describe('Content', () => {
     })
   })
 
+  describe('Message input', () => {
+    it('should fire start typing mutation onChange', async () => {
+      const startTypingMock = jest.fn()
+      jest.spyOn(GeneratedTypes, 'useStartTypingMutation')
+        .mockReturnValue([startTypingMock, {} as any])
+
+      const { container } = await renderChat()
+
+      const textArea = container.querySelector('.chat-message-input ion-textarea');
+      ionFireEvent.ionChange(textArea!, '1')
+
+      expect(startTypingMock).toHaveBeenCalledTimes(1)
+    })
+  });
+
   describe('Subscriptions', () => {
 
     it('subscribes to new messages', async () => {
