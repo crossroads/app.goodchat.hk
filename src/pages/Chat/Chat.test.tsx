@@ -365,6 +365,23 @@ describe('Content', () => {
           expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Failed');
         })
       })
+
+      it('clears text input on submit', async () => {
+        const postMessageMock = mockPostMessage({ delay: 100, success: true });
+        const { container } = await renderChat();
+
+        act(() => submitText(container, '1'))
+
+        const textArea = container.querySelector('.chat-message-input ion-textarea')
+        expect(textArea).toHaveAttribute('value', '1');
+
+        const submitButton = container.querySelector('.chat-message-input ion-button')
+        ionFireEvent.click(submitButton!)
+
+        await wait(() => expect(postMessageMock).toHaveBeenCalledTimes(1))
+        
+        expect(textArea).toHaveAttribute('value', '')
+      });
     })
   })
 
