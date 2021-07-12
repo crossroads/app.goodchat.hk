@@ -398,6 +398,20 @@ describe('Content', () => {
 
       expect(startTypingMock).toHaveBeenCalledTimes(1)
     })
+
+    it('should throttle firing startTyping mutations', async () => {
+      const startTypingMock = jest.fn()
+      jest.spyOn(GeneratedTypes, 'useStartTypingMutation')
+        .mockReturnValue([startTypingMock, {} as any])
+
+      const { container } = await renderChat()
+
+      const textArea = container.querySelector('.chat-message-input ion-textarea');
+      ionFireEvent.ionChange(textArea!, '1')
+      ionFireEvent.ionChange(textArea!, '2')
+
+      expect(startTypingMock).toHaveBeenCalledTimes(1)
+    })
   });
 
   describe('Subscriptions', () => {

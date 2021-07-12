@@ -1,7 +1,7 @@
 import { MessageInput, MessageInputCallback } from 'components/Chat/MessageInput'
 import { AuthorType, ConversationType } from "typings/goodchat"
 import { WrappedMessage, useMessages } from "hooks/useMessages"
-import React, { useRef, useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
 import { useTranslation } from "react-i18next"
 import { MessageFooter } from 'components/Chat/MessageFooter'
@@ -31,6 +31,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
+import { throttle } from 'lodash'
 
 // ---------------------------------
 // ~ TYPES
@@ -124,11 +125,12 @@ const Chat: React.FC = () => {
     },
   });
 
-  const [startTyping] =  useStartTypingMutation({
+  const [startTyping] = useStartTypingMutation({
     variables: {
       conversationId: Number(conversationId)
     }
   })
+  const throttledStartTyping = useCallback(throttle(startTyping, 2000), [startTyping]);
 
   // ---------------------------------
   // ~ PAGINATION
@@ -216,7 +218,7 @@ const Chat: React.FC = () => {
           <MessageInput 
             onSubmit={onInputSubmit} 
             submitOnEnter={true}
-            onChange={() => startTyping()}
+            onChange={() => throttledStartTyping()}
           />
         </Sticky>
       </IonContent>
