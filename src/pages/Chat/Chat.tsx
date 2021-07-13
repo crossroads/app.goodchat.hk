@@ -31,7 +31,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
-import { throttle } from 'lodash'
+import throttle from 'lodash/throttle'
 
 // ---------------------------------
 // ~ TYPES
