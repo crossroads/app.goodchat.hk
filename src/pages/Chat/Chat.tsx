@@ -1,7 +1,7 @@
 import { MessageInput, MessageInputCallback } from 'components/Chat/MessageInput'
 import { AuthorType, ConversationType } from "typings/goodchat"
 import { WrappedMessage, useMessages } from "hooks/useMessages"
-import React, { useCallback, useRef, useState } from "react"
+import React, { useRef, useState } from "react"
 import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
 import { useTranslation } from "react-i18next"
 import { MessageFooter } from 'components/Chat/MessageFooter'
@@ -15,8 +15,6 @@ import { style } from 'typestyle'
 import {
   ConversationDetailsQuery,
   useConversationDetailsQuery,
-  useStartTypingMutation,
-  useStopTypingMutation,
 } from "../../generated/graphql";
 import {
   IonBackButton,
@@ -32,8 +30,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
-import throttle from 'lodash/throttle'
-import debounce from 'lodash/debounce'
+import useTypingActivity from 'hooks/useTypingActivity'
 
 // ---------------------------------
 // ~ TYPES
@@ -127,31 +124,6 @@ const Chat: React.FC = () => {
     },
   });
 
-  const [startTyping] = useStartTypingMutation({
-    variables: {
-      conversationId: Number(conversationId)
-    }
-  })
-  const throttledStartTyping = useCallback(
-    throttle(startTyping, 1500), 
-    [startTyping]
-  );
-
-  const [stopTyping] = useStopTypingMutation({
-    variables: {
-      conversationId: Number(conversationId)
-    }
-  })
-  const debouncedStopTyping = useCallback(
-    debounce(stopTyping, 2000), 
-    [stopTyping]
-  );
-
-  const type = () => {
-    throttledStartTyping();
-    debouncedStopTyping();
-  }
-
   // ---------------------------------
   // ~ PAGINATION
   // ---------------------------------
@@ -172,6 +144,8 @@ const Chat: React.FC = () => {
     clear();
     createMessage(content);
   }
+
+  const type = useTypingActivity(Number(conversationId))
 
   // ---------------------------------
   // ~ TEMPLATE
@@ -238,7 +212,7 @@ const Chat: React.FC = () => {
           <MessageInput 
             onSubmit={onInputSubmit} 
             submitOnEnter={true}
-            onChange={() => type()}
+            onChange={type}
           />
         </Sticky>
       </IonContent>
