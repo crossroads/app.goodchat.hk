@@ -16,6 +16,7 @@ import {
   ConversationDetailsQuery,
   useConversationDetailsQuery,
   useStartTypingMutation,
+  useStopTypingMutation,
 } from "../../generated/graphql";
 import {
   IonBackButton,
@@ -32,6 +33,7 @@ import {
   IonToolbar
 } from "@ionic/react";
 import throttle from 'lodash/throttle'
+import debounce from 'lodash/debounce'
 
 // ---------------------------------
 // ~ TYPES
@@ -130,7 +132,25 @@ const Chat: React.FC = () => {
       conversationId: Number(conversationId)
     }
   })
-  const throttledStartTyping = useCallback(throttle(startTyping, 2000), [startTyping]);
+  const throttledStartTyping = useCallback(
+    throttle(startTyping, 1500), 
+    [startTyping]
+  );
+
+  const [stopTyping] = useStopTypingMutation({
+    variables: {
+      conversationId: Number(conversationId)
+    }
+  })
+  const debouncedStopTyping = useCallback(
+    debounce(stopTyping, 2000), 
+    [stopTyping]
+  );
+
+  const type = () => {
+    throttledStartTyping();
+    debouncedStopTyping();
+  }
 
   // ---------------------------------
   // ~ PAGINATION
@@ -218,7 +238,7 @@ const Chat: React.FC = () => {
           <MessageInput 
             onSubmit={onInputSubmit} 
             submitOnEnter={true}
-            onChange={() => throttledStartTyping()}
+            onChange={() => type()}
           />
         </Sticky>
       </IonContent>
