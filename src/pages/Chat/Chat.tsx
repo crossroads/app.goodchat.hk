@@ -30,6 +30,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
+import useTypingActivity from 'hooks/useTypingActivity'
 
 // ---------------------------------
 // ~ TYPES
@@ -144,6 +145,8 @@ const Chat: React.FC = () => {
     createMessage(content);
   }
 
+  const type = useTypingActivity(Number(conversationId))
+
   // ---------------------------------
   // ~ TEMPLATE
   // ---------------------------------
@@ -206,7 +209,11 @@ const Chat: React.FC = () => {
 
         {/* Input Message Box */}
         <Sticky position="bottom" zIndex={9999}>
-          <MessageInput onSubmit={onInputSubmit} submitOnEnter={true}></MessageInput>
+          <MessageInput 
+            onSubmit={onInputSubmit} 
+            submitOnEnter={true}
+            onChange={type}
+          />
         </Sticky>
       </IonContent>
     </IonPage>

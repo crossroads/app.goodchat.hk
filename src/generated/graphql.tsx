@@ -481,6 +481,32 @@ export type SendMessageMutation = (
   ) }
 );
 
+export type StartTypingMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type StartTypingMutation = (
+  { __typename?: 'Mutation' }
+  & { startTyping: (
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+  ) }
+);
+
+export type StopTypingMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type StopTypingMutation = (
+  { __typename?: 'Mutation' }
+  & { stopTyping: (
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+  ) }
+);
+
 export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -712,6 +738,72 @@ export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<
 export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
 export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
 export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
+export const StartTypingDocument = gql`
+    mutation startTyping($conversationId: Int!) {
+  startTyping(conversationId: $conversationId) {
+    id
+  }
+}
+    `;
+export type StartTypingMutationFn = Apollo.MutationFunction<StartTypingMutation, StartTypingMutationVariables>;
+
+/**
+ * __useStartTypingMutation__
+ *
+ * To run a mutation, you first call `useStartTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startTypingMutation, { data, loading, error }] = useStartTypingMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useStartTypingMutation(baseOptions?: Apollo.MutationHookOptions<StartTypingMutation, StartTypingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartTypingMutation, StartTypingMutationVariables>(StartTypingDocument, options);
+      }
+export type StartTypingMutationHookResult = ReturnType<typeof useStartTypingMutation>;
+export type StartTypingMutationResult = Apollo.MutationResult<StartTypingMutation>;
+export type StartTypingMutationOptions = Apollo.BaseMutationOptions<StartTypingMutation, StartTypingMutationVariables>;
+export const StopTypingDocument = gql`
+    mutation stopTyping($conversationId: Int!) {
+  stopTyping(conversationId: $conversationId) {
+    id
+  }
+}
+    `;
+export type StopTypingMutationFn = Apollo.MutationFunction<StopTypingMutation, StopTypingMutationVariables>;
+
+/**
+ * __useStopTypingMutation__
+ *
+ * To run a mutation, you first call `useStopTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopTypingMutation, { data, loading, error }] = useStopTypingMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useStopTypingMutation(baseOptions?: Apollo.MutationHookOptions<StopTypingMutation, StopTypingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopTypingMutation, StopTypingMutationVariables>(StopTypingDocument, options);
+      }
+export type StopTypingMutationHookResult = ReturnType<typeof useStopTypingMutation>;
+export type StopTypingMutationResult = Apollo.MutationResult<StopTypingMutation>;
+export type StopTypingMutationOptions = Apollo.BaseMutationOptions<StopTypingMutation, StopTypingMutationVariables>;
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList {
   conversations(type: CUSTOMER) {

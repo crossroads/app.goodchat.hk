@@ -258,7 +258,7 @@ describe('Content', () => {
 
         ionFireEvent.ionChange(textarea!, text);
 
-        act(() => { userEvent.click(button as TargetElement); });
+        userEvent.click(button as TargetElement);
       }
 
       /**
@@ -365,8 +365,68 @@ describe('Content', () => {
           expect(container.querySelector('ion-item:last-child .chat-message .chat-message-footer')).toHaveTextContent('Failed');
         })
       })
+
+      it('clears text input on submit', async () => {
+        const postMessageMock = mockPostMessage({ delay: 100, success: true });
+        const { container } = await renderChat();
+
+        act(() => submitText(container, '1'))
+
+        const textArea = container.querySelector('.chat-message-input ion-textarea')
+        expect(textArea).toHaveAttribute('value', '1');
+
+        const submitButton = container.querySelector('.chat-message-input ion-button')
+        ionFireEvent.click(submitButton!)
+
+        await wait(() => expect(postMessageMock).toHaveBeenCalledTimes(1))
+        
+        expect(textArea).toHaveAttribute('value', '')
+      });
     })
   })
+
+  describe('Message input', () => {
+    it('should fire start typing mutation onChange', async () => {
+      const startTypingMock = jest.fn()
+      jest.spyOn(GeneratedTypes, 'useStartTypingMutation')
+        .mockReturnValue([startTypingMock, {} as any])
+
+      const { container } = await renderChat()
+
+      const textArea = container.querySelector('.chat-message-input ion-textarea');
+      ionFireEvent.ionChange(textArea!, '1')
+
+      expect(startTypingMock).toHaveBeenCalledTimes(1)
+    })
+
+    it('should throttle firing startTyping mutations', async () => {
+      const startTypingMock = jest.fn()
+      jest.spyOn(GeneratedTypes, 'useStartTypingMutation')
+        .mockReturnValue([startTypingMock, {} as any])
+
+      const { container } = await renderChat()
+
+      const textArea = container.querySelector('.chat-message-input ion-textarea');
+      ionFireEvent.ionChange(textArea!, '1')
+      ionFireEvent.ionChange(textArea!, '2')
+
+      expect(startTypingMock).toHaveBeenCalledTimes(1)
+    })
+
+    it('should fire stopTyping mutation after a delay', async () => {
+      const stopTypingMock = jest.fn()
+      jest.spyOn(GeneratedTypes, 'useStopTypingMutation')
+        .mockReturnValue([stopTypingMock, {} as any])
+
+      const { container } = await renderChat()
+
+      const textArea = container.querySelector('.chat-message-input ion-textarea');
+      ionFireEvent.ionChange(textArea!, '1')
+
+      expect(stopTypingMock).not.toHaveBeenCalled()
+      await wait(() => expect(stopTypingMock).toHaveBeenCalledTimes(1))
+    })
+  });
 
   describe('Subscriptions', () => {
 
