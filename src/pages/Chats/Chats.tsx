@@ -12,9 +12,7 @@ import {
   IonBadge
 } from "@ionic/react";
 import {
-  Conversation,
   ConversationType,
-  Customer,
   Message
 } from "../../generated/graphql";
 import { useConversations, ConversationRecord } from '../../hooks/useConversations'
@@ -60,7 +58,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 };
 
 const Chats: React.FC = () => {
-  const { conversations } = useConversations({ type: ConversationType.Customer });
+  const { conversations } = useConversations({
+    type: ConversationType.Customer,
+    pageSize: 100
+  });
   const { t } = useTranslation();
 
   return (
