@@ -47,7 +47,6 @@ describe("Authenticated User", () => {
   ].map(({ initialPath, expectedPath }) => {
     it(`visiting ${initialPath} should be taken to ${expectedPath}`, async () => {
       const { history } = await renderPage(initialPath, {
-        disableGlobalResolvers: true,
         mocks: {
           Query: {
             conversation: () => factories.conversationFactory.build({

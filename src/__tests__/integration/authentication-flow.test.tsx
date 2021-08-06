@@ -56,7 +56,6 @@ test("User is able to login with correct routing", async () => {
   test(`Unauthenticated user visiting private route ${initialPath} is redirected to ${expectedPath} after login`, async () => {
     const { history, container } = await renderPage(initialPath, {
       authenticated: false,
-      disableGlobalResolvers: true,
       mocks: {
         Query: {
           conversation: () => factories.conversationFactory.build({

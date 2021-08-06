@@ -30,8 +30,7 @@ export async function renderWithAct(
 export type RenderPageOptions = {
   mocks? : IResolvers
   authenticated?: boolean,
-  history?: string[],
-  disableGlobalResolvers?: boolean
+  history?: string[]
 }
 
 /**
@@ -53,7 +52,6 @@ export async function renderPage(path: string, opts : RenderPageOptions = {}) {
       <AuthProvider initialAuthState={opts.authenticated ?? true}>
         <GoodChatMockedProvider
           mockResolvers={opts.mocks || {}}
-          disableGlobalResolvers={opts.disableGlobalResolvers}
         >
           <Router history={history}>
             <MainRouter />

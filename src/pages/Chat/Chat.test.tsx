@@ -53,7 +53,6 @@ describe('Content', () => {
    */
   const renderChat = async () => {
     const result = await renderPage('/chats/' + conversation.id, {
-      disableGlobalResolvers: true,
       mocks: {
         Query: {
           conversation: () => ({
