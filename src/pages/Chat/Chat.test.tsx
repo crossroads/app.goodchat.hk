@@ -55,18 +55,20 @@ describe('Content', () => {
     const result = await renderPage('/chats/' + conversation.id, {
       disableGlobalResolvers: true,
       mocks: {
-        Conversation: () => ({
-          ...conversation,
-          messages: paginator(conversation.messages)
-        }),
-        Mutation: () => ({
+        Query: {
+          conversation: () => ({
+            ...conversation,
+            messages: paginator(conversation.messages)
+          }),
+        },
+        Mutation: {
           markAsRead: () => {
             const latestMessage = conversation.messages[0]
             return {
               lastReadMessageId: latestMessage.id
             }
           }
-        })
+        }
       }
     })
 

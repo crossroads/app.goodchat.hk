@@ -29,9 +29,10 @@ export const conversationFactory = Factory.define<Conversation, ConversationFact
   const messages : Message[] = (
     params.messages ||
     messageFactory.buildList(transientParams.messageCount || 3)
-  ).map(m => ({
+  ).map((m, idx) => ({
     ...m,
-    conversationId: id
+    conversationId: id,
+    createdAt: new Date(Date.now() - idx * 1000)
   }));
 
   const conversation : Conversation = {
@@ -46,7 +47,12 @@ export const conversationFactory = Factory.define<Conversation, ConversationFact
     updatedAt: date,
     messages: messages,
     readReceipts: [],
-    staffs: []
+    staffs: [],
+    _computed: {
+      conversationId: id,
+      totalMessageCount: 0,
+      unreadMessageCount: 0
+    }
   }
 
   if (conversation.type === ConversationType.Customer) {

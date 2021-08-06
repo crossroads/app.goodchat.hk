@@ -1,3 +1,5 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   IonContent,
   IonHeader,
@@ -7,15 +9,15 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
+  IonBadge
 } from "@ionic/react";
 import {
   Conversation,
+  ConversationType,
   Customer,
-  Message,
-  useCustomerConversationsListQuery,
+  Message
 } from "../../generated/graphql";
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { useConversations, ConversationRecord } from '../../hooks/useConversations'
 
 interface MessagePreview {
   message: Pick<Message, "content"> | undefined;
@@ -33,15 +35,13 @@ const MessagePreview: React.FC<MessagePreview> = ({ message }) => {
 };
 
 interface ConversationItemProps {
-  conversation: {
-    id: Conversation["id"];
-    customer: Pick<Customer, "displayName">;
-    messages: Pick<Message, "content">[];
-  };
+  conversation: ConversationRecord
 }
 const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
 }) => {
+  const unreadCount = conversation._computed.unreadMessageCount;
+
   return (
     <IonItem
       className="conversation-item"
@@ -49,15 +49,18 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       routerLink={`/chats/${conversation.id}`}
     >
       <IonLabel>
-        <h2>{conversation.customer.displayName}</h2>
+        <h2>{conversation.customer?.displayName}</h2>
         <MessagePreview message={conversation.messages[0]} />
       </IonLabel>
+      {
+        unreadCount > 0 && <IonBadge slot="end" color="danger">{unreadCount}</IonBadge>
+      }
     </IonItem>
   );
 };
 
 const Chats: React.FC = () => {
-  const { data } = useCustomerConversationsListQuery();
+  const { conversations } = useConversations({ type: ConversationType.Customer });
   const { t } = useTranslation();
 
   return (
@@ -68,22 +71,16 @@ const Chats: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        {data && (
+        {
           <IonList>
-            {data.conversations.map((conversation) => (
+            {conversations.map((conversation) => (
               <ConversationItem
                 key={conversation.id}
-                conversation={{
-                  // We know customer exists because we queried
-                  // by conversation type customer in the first place
-                  id: conversation.id,
-                  customer: conversation.customer!,
-                  messages: conversation.messages,
-                }}
+                conversation={conversation}
               />
             ))}
           </IonList>
-        )}
+        }
       </IonContent>
     </IonPage>
   );

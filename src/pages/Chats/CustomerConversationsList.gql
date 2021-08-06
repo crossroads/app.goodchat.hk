@@ -1,11 +1,37 @@
-query CustomerConversationsList {
-  conversations(type: CUSTOMER) {
+query CustomerConversationsList($type: ConversationType, $limit: Int, $after: Int) {
+  conversations(type: $type, limit: $limit, after: $after) {
     id
+    createdAt
+    updatedAt
     customer {
       displayName
     }
     messages(limit: 1) {
       content
+    },
+    _computed {
+      unreadMessageCount
     }
   }
 }
+
+subscription conversations($type: ConversationType) {
+  conversationEvent(type: $type) {
+    action
+    conversation {
+      id
+      createdAt
+      updatedAt
+      customer {
+        displayName
+      }
+      messages(limit: 1) {
+        content
+      }
+      _computed {
+        unreadMessageCount
+      }
+    }
+  }
+}
+

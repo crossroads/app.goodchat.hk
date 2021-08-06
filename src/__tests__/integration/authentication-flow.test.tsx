@@ -58,9 +58,11 @@ test("User is able to login with correct routing", async () => {
       authenticated: false,
       disableGlobalResolvers: true,
       mocks: {
-        Conversation: () => factories.conversationFactory.build({
-          type: ConversationType.Customer
-        })
+        Query: {
+          conversation: () => factories.conversationFactory.build({
+            type: ConversationType.Customer
+          })
+        }
       }
     })
 
