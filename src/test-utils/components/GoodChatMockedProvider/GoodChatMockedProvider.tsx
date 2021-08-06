@@ -1,20 +1,11 @@
-import { printSchema, buildClientSchema } from "graphql/utilities";
+import { buildClientSchema } from "graphql";
 import createAutoMockedProvider from "lib/AutoMockedProvider/createAutoMockedProvider"
-import introspectionResult from "../../../../graphql.schema.json"
+import * as introspectionResult from "../../../../graphql.schema.json"
 
-const typeDefs = printSchema(buildClientSchema(introspectionResult as any));
-
-const globalMockResolvers = {
-  JSON: () => ({
-    type: "text",
-    text: "I want to donate",
-  }),
-  DateTime: () => new Date()
-};
+const schema = buildClientSchema(introspectionResult as any);
 
 const GoodChatMockedProvider = createAutoMockedProvider(
-  typeDefs,
-  globalMockResolvers
+  schema
 );
 
 export default GoodChatMockedProvider;

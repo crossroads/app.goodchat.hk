@@ -1,36 +1,37 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { addMocksToSchema, IMocks } from "@graphql-tools/mock";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { ITypeDefinitions } from "@graphql-tools/utils";
-import { mergeResolvers } from "@graphql-tools/merge";
+import { addMocksToSchema, createMockStore, IMockStore } from "@graphql-tools/mock"
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client"
+import { GraphQLSchema } from "graphql";
+import { IResolvers } from "@graphql-tools/utils";
 import { SchemaLink } from "@apollo/client/link/schema";
 
 interface AutoMockedProviderProps {
-  children: React.ReactNode | React.ReactNode[] | null;
-  mockResolvers?: IMocks;
-  disableGlobalResolvers?: boolean
+  mockResolvers?: IResolvers
+  populateStore?: (store: IMockStore) => any
 }
 
 const createAutoMockedProvider = (
-  typeDefs: ITypeDefinitions,
-  globalMockResolvers: IMocks = {}
+  schema: GraphQLSchema
 ) => {
   const AutoMockedProvider: React.FC<AutoMockedProviderProps> = ({
     children,
     mockResolvers = {},
-    disableGlobalResolvers = false,
+    populateStore = () => {}
   }) => {
-    const schema = makeExecutableSchema({
-      typeDefs
+
+    const store = createMockStore({
+      schema,
+      mocks: mockResolvers
     });
+
+    populateStore(store);
+
     const schemaWithMocks = addMocksToSchema({
       schema,
-      // Merge global and local mock resolvers
-      mocks: mergeResolvers([
-        disableGlobalResolvers ? {} : globalMockResolvers,
-        mockResolvers
-      ])
+      store,
+      resolvers: mockResolvers,
+      preserveResolvers: true
     });
+
 
     const client = new ApolloClient({
       /**

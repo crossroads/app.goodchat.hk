@@ -4,7 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
-.envrc 
+.envrc
+
+ios/App/public
 
 fastlane/.byebug_history
 fastlane/report.xml

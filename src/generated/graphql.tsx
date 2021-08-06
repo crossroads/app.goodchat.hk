@@ -171,12 +171,26 @@ export type Conversation = {
   messages: Array<Message>;
   readReceipts: Array<ReadReceipt>;
   staffs: Array<Staff>;
+  _computed: ConversationAggregates;
 };
 
 
 export type ConversationMessagesArgs = {
   limit?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['Int']>;
+};
+
+export type ConversationAggregates = {
+  __typename?: 'ConversationAggregates';
+  conversationId: Scalars['Int'];
+  unreadMessageCount: Scalars['Int'];
+  totalMessageCount: Scalars['Int'];
+};
+
+export type ConversationEvent = {
+  __typename?: 'ConversationEvent';
+  action: SubscriptionAction;
+  conversation: Conversation;
 };
 
 export enum ConversationType {
@@ -369,6 +383,7 @@ export type Subscription = {
   __typename?: 'Subscription';
   messageEvent: MessageEvent;
   readReceiptEvent: ReadReceiptEvent;
+  conversationEvent: ConversationEvent;
 };
 
 
@@ -380,6 +395,12 @@ export type SubscriptionMessageEventArgs = {
 
 export type SubscriptionReadReceiptEventArgs = {
   conversationId: Scalars['Int'];
+};
+
+
+export type SubscriptionConversationEventArgs = {
+  conversationId?: Maybe<Scalars['Int']>;
+  type?: Maybe<ConversationType>;
 };
 
 export enum SubscriptionAction {
@@ -507,22 +528,56 @@ export type StopTypingMutation = (
   ) }
 );
 
-export type CustomerConversationsListQueryVariables = Exact<{ [key: string]: never; }>;
+export type CustomerConversationsListQueryVariables = Exact<{
+  type?: Maybe<ConversationType>;
+  limit?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Int']>;
+}>;
 
 
 export type CustomerConversationsListQuery = (
   { __typename?: 'Query' }
   & { conversations: Array<(
     { __typename?: 'Conversation' }
-    & Pick<Conversation, 'id'>
+    & Pick<Conversation, 'id' | 'createdAt' | 'updatedAt'>
     & { customer?: Maybe<(
       { __typename?: 'Customer' }
       & Pick<Customer, 'displayName'>
     )>, messages: Array<(
       { __typename?: 'Message' }
       & Pick<Message, 'content'>
-    )> }
+    )>, _computed: (
+      { __typename?: 'ConversationAggregates' }
+      & Pick<ConversationAggregates, 'unreadMessageCount'>
+    ) }
   )> }
+);
+
+export type ConversationsSubscriptionVariables = Exact<{
+  type?: Maybe<ConversationType>;
+}>;
+
+
+export type ConversationsSubscription = (
+  { __typename?: 'Subscription' }
+  & { conversationEvent: (
+    { __typename?: 'ConversationEvent' }
+    & Pick<ConversationEvent, 'action'>
+    & { conversation: (
+      { __typename?: 'Conversation' }
+      & Pick<Conversation, 'id' | 'createdAt' | 'updatedAt'>
+      & { customer?: Maybe<(
+        { __typename?: 'Customer' }
+        & Pick<Customer, 'displayName'>
+      )>, messages: Array<(
+        { __typename?: 'Message' }
+        & Pick<Message, 'content'>
+      )>, _computed: (
+        { __typename?: 'ConversationAggregates' }
+        & Pick<ConversationAggregates, 'unreadMessageCount'>
+      ) }
+    ) }
+  ) }
 );
 
 
@@ -805,14 +860,19 @@ export type StopTypingMutationHookResult = ReturnType<typeof useStopTypingMutati
 export type StopTypingMutationResult = Apollo.MutationResult<StopTypingMutation>;
 export type StopTypingMutationOptions = Apollo.BaseMutationOptions<StopTypingMutation, StopTypingMutationVariables>;
 export const CustomerConversationsListDocument = gql`
-    query CustomerConversationsList {
-  conversations(type: CUSTOMER) {
+    query CustomerConversationsList($type: ConversationType, $limit: Int, $after: Int) {
+  conversations(type: $type, limit: $limit, after: $after) {
     id
+    createdAt
+    updatedAt
     customer {
       displayName
     }
     messages(limit: 1) {
       content
+    }
+    _computed {
+      unreadMessageCount
     }
   }
 }
@@ -830,6 +890,9 @@ export const CustomerConversationsListDocument = gql`
  * @example
  * const { data, loading, error } = useCustomerConversationsListQuery({
  *   variables: {
+ *      type: // value for 'type'
+ *      limit: // value for 'limit'
+ *      after: // value for 'after'
  *   },
  * });
  */
@@ -844,3 +907,47 @@ export function useCustomerConversationsListLazyQuery(baseOptions?: Apollo.LazyQ
 export type CustomerConversationsListQueryHookResult = ReturnType<typeof useCustomerConversationsListQuery>;
 export type CustomerConversationsListLazyQueryHookResult = ReturnType<typeof useCustomerConversationsListLazyQuery>;
 export type CustomerConversationsListQueryResult = Apollo.QueryResult<CustomerConversationsListQuery, CustomerConversationsListQueryVariables>;
+export const ConversationsDocument = gql`
+    subscription conversations($type: ConversationType) {
+  conversationEvent(type: $type) {
+    action
+    conversation {
+      id
+      createdAt
+      updatedAt
+      customer {
+        displayName
+      }
+      messages(limit: 1) {
+        content
+      }
+      _computed {
+        unreadMessageCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useConversationsSubscription__
+ *
+ * To run a query within a React component, call `useConversationsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useConversationsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useConversationsSubscription({
+ *   variables: {
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useConversationsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<ConversationsSubscription, ConversationsSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<ConversationsSubscription, ConversationsSubscriptionVariables>(ConversationsDocument, options);
+      }
+export type ConversationsSubscriptionHookResult = ReturnType<typeof useConversationsSubscription>;
+export type ConversationsSubscriptionResult = Apollo.SubscriptionResult<ConversationsSubscription>;

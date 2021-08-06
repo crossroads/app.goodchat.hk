@@ -49,9 +49,11 @@ describe("Authenticated User", () => {
       const { history } = await renderPage(initialPath, {
         disableGlobalResolvers: true,
         mocks: {
-          Conversation: () => factories.conversationFactory.build({
-            type: ConversationType.Customer
-          })
+          Query: {
+            conversation: () => factories.conversationFactory.build({
+              type: ConversationType.Customer
+            })
+          }
         }
       })
       expect(history.location.pathname).toEqual(expectedPath);

@@ -3,11 +3,11 @@ import { render, RenderOptions, RenderResult } from "@testing-library/react";
 import AuthProvider from "components/AuthProvider/AuthProvider";
 import MainRouter from "components/MainRouter/MainRouter";
 import { createMemoryHistory } from "history";
-import { IMocks } from "@graphql-tools/mock";
 import { act } from "react-dom/test-utils";
 import { Router } from "react-router";
 import { I18nextProvider } from "react-i18next";
 import i18n from "i18n/i18n";
+import { IResolvers } from "@graphql-tools/utils";
 
 /**
  * Waits for promises to resolve and state
@@ -28,7 +28,7 @@ export async function renderWithAct(
 }
 
 export type RenderPageOptions = {
-  mocks? : IMocks
+  mocks? : IResolvers
   authenticated?: boolean,
   history?: string[],
   disableGlobalResolvers?: boolean
