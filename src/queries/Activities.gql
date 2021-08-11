@@ -1,0 +1,17 @@
+mutation markAsRead($conversationId: Int!) {
+  markAsRead(conversationId: $conversationId) {
+    lastReadMessageId
+  }
+}
+
+mutation startTyping($conversationId: Int!) {
+  startTyping(conversationId: $conversationId) {
+    id
+  }
+}
+
+mutation stopTyping($conversationId: Int!) {
+  stopTyping(conversationId: $conversationId) {
+    id
+  }
+}

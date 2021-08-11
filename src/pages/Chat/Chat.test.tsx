@@ -1,9 +1,10 @@
 import { wait, waitForDomChange, waitForElement } from "@testing-library/dom"
-import { Conversation, ConversationType } from "typings/goodchat"
+import { Conversation, ConversationType, QueryTypes } from "typings/goodchat"
 import * as GeneratedTypes from "generated/graphql"
+import * as UseNotificationsMod from "../../hooks/useNotifications"
 import userEvent, { TargetElement } from "@testing-library/user-event";
 import { ionFireEvent } from "@ionic/react-test-utils"
-import { ApolloError, OnSubscriptionDataOptions } from "@apollo/client";
+import { ApolloError } from "@apollo/client";
 import { renderPage } from "test-utils/renderers"
 import * as factories from 'test-utils/factories'
 import * as Apollo from '@apollo/client'
@@ -117,11 +118,11 @@ describe('Content', () => {
       {} as any
     ])
 
-    let onSubscriptionData: (options: OnSubscriptionDataOptions<GeneratedTypes.NewMessagesSubSubscription>) => any;
-    const original = GeneratedTypes.useNewMessagesSubSubscription;
-    jest.spyOn(GeneratedTypes, 'useNewMessagesSubSubscription')
+    let onNewMessage: (message: QueryTypes.MessageRecord) => any;
+    const original = UseNotificationsMod.useNotifications;
+    jest.spyOn(UseNotificationsMod, 'useNotifications')
       .mockImplementation(({...args}) => {
-        onSubscriptionData = args.onSubscriptionData!
+        onNewMessage = args.onNewMessage!
         return original({...args})
       })
 
@@ -131,24 +132,14 @@ describe('Content', () => {
     expect(mockMarkAsRead).not.toHaveBeenCalled()
 
     act(() => {
-      onSubscriptionData({
-        client: {} as any,
-        subscriptionData: {
-          loading: false,
-          error: undefined,
-          data: {
-            messageEvent: {
-              action: GeneratedTypes.SubscriptionAction.Create,
-              message: factories.messageFactory.build({
-                content: {
-                  type: 'text',
-                  text: 'a subscription message'
-                }
-              })
-            }
+      onNewMessage(
+        factories.messageFactory.build({
+          content: {
+            type: 'text',
+            text: 'a subscription message'
           }
-        }
-      })
+        })
+      );
     })
 
     expect(mockMarkAsRead).toHaveBeenCalledTimes(1)
@@ -432,71 +423,47 @@ describe('Content', () => {
   describe('Subscriptions', () => {
 
     it('subscribes to new messages', async () => {
-      const spy = jest.spyOn(Apollo, 'useSubscription')
+      const spy = jest.spyOn(UseNotificationsMod, 'useNotifications')
 
       await renderChat();
 
       expect(spy).toBeCalledWith(
         expect.objectContaining({
-          definitions: expect.arrayContaining([
-            expect.objectContaining({
-              operation: "subscription",
-              name: {
-                kind: 'Name',
-                value: 'NewMessagesSub'
-              }
-            })
-          ])
-        }),
-        expect.objectContaining({
-          variables: {
-            conversationId: conversation.id, // id matching
-          }
+          onNewMessage: expect.any(Function)
         })
       )
     })
 
     it('appends new messages to the bottom of the chat', async () => {
-      let onSubscriptionData : any= null;
+      let onNewMessage: any = null
 
-      const original = Apollo.useSubscription
-      const spy = jest.spyOn(Apollo, 'useSubscription').mockImplementation((...args) => {
-        // Catch the callback in order to trigger subscriptions ourselves
-        onSubscriptionData = (args[1]?.onSubscriptionData || null)
-        return original(...args);
-      });
+      const original = UseNotificationsMod.useNotifications;
+      const spy = jest.spyOn(UseNotificationsMod, 'useNotifications')
+        .mockImplementation(({...args}) => {
+          onNewMessage = args.onNewMessage!
+          return original({...args})
+        })
 
       const { container } = await renderChat();
 
       expect(spy).toBeCalledWith(
-        expect.any(Object),
         expect.objectContaining({
-          onSubscriptionData: expect.any(Function)
+          onNewMessage: expect.any(Function)
         })
       )
 
       expect(container.querySelectorAll('ion-item')).toHaveLength(PAGE_SIZE)
-      expect(onSubscriptionData).not.toBeNull();
+      expect(onNewMessage).not.toBeNull();
 
       act(() => {
-        onSubscriptionData({
-          client: {} as any,
-          subscriptionData: {
-            loading: false,
-            error: undefined,
-            data: {
-              messageEvent: {
-                action: 'CREATE',
-                message: factories.messageFactory.build({
-                  content: {
-                    type: 'text',
-                    text: 'a subscription message'
-                  }
-                })
-              }
+        onNewMessage(
+          factories.messageFactory.build({
+            content: {
+              type: 'text',
+              text: 'a subscription message'
             }
-          }
-        })
+          })
+        )
       })
 
       await wait(() => {

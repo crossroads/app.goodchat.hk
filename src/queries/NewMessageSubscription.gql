@@ -1,5 +1,5 @@
-subscription NewMessagesSub($conversationId: Int!) {
-  messageEvent(conversationId: $conversationId, actions: [CREATE]) {
+subscription NewMessagesSub {
+  messageEvent(actions: [CREATE]) {
     action
     message {
       id

@@ -1,5 +1,0 @@
-mutation stopTyping($conversationId: Int!) {
-  stopTyping(conversationId: $conversationId) {
-    id
-  }
-}

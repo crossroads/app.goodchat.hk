@@ -418,6 +418,45 @@ export enum SubscriptionAction {
 
 
 
+export type MarkAsReadMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type MarkAsReadMutation = (
+  { __typename?: 'Mutation' }
+  & { markAsRead: (
+    { __typename?: 'ReadReceipt' }
+    & Pick<ReadReceipt, 'lastReadMessageId'>
+  ) }
+);
+
+export type StartTypingMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type StartTypingMutation = (
+  { __typename?: 'Mutation' }
+  & { startTyping: (
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+  ) }
+);
+
+export type StopTypingMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+}>;
+
+
+export type StopTypingMutation = (
+  { __typename?: 'Mutation' }
+  & { stopTyping: (
+    { __typename?: 'Conversation' }
+    & Pick<Conversation, 'id'>
+  ) }
+);
+
 export type ConversationDetailsQueryVariables = Exact<{
   conversationId: Scalars['Int'];
 }>;
@@ -455,77 +494,6 @@ export type ConversationMessagesQuery = (
       & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
     )> }
   )> }
-);
-
-export type NewMessagesSubSubscriptionVariables = Exact<{
-  conversationId: Scalars['Int'];
-}>;
-
-
-export type NewMessagesSubSubscription = (
-  { __typename?: 'Subscription' }
-  & { messageEvent: (
-    { __typename?: 'MessageEvent' }
-    & Pick<MessageEvent, 'action'>
-    & { message: (
-      { __typename?: 'Message' }
-      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
-    ) }
-  ) }
-);
-
-export type MarkAsReadMutationVariables = Exact<{
-  conversationId: Scalars['Int'];
-}>;
-
-
-export type MarkAsReadMutation = (
-  { __typename?: 'Mutation' }
-  & { markAsRead: (
-    { __typename?: 'ReadReceipt' }
-    & Pick<ReadReceipt, 'lastReadMessageId'>
-  ) }
-);
-
-export type SendMessageMutationVariables = Exact<{
-  conversationId: Scalars['Int'];
-  text: Scalars['String'];
-  timestamp: Scalars['DateTime'];
-}>;
-
-
-export type SendMessageMutation = (
-  { __typename?: 'Mutation' }
-  & { sendMessage: (
-    { __typename?: 'Message' }
-    & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
-  ) }
-);
-
-export type StartTypingMutationVariables = Exact<{
-  conversationId: Scalars['Int'];
-}>;
-
-
-export type StartTypingMutation = (
-  { __typename?: 'Mutation' }
-  & { startTyping: (
-    { __typename?: 'Conversation' }
-    & Pick<Conversation, 'id'>
-  ) }
-);
-
-export type StopTypingMutationVariables = Exact<{
-  conversationId: Scalars['Int'];
-}>;
-
-
-export type StopTypingMutation = (
-  { __typename?: 'Mutation' }
-  & { stopTyping: (
-    { __typename?: 'Conversation' }
-    & Pick<Conversation, 'id'>
-  ) }
 );
 
 export type CustomerConversationsListQueryVariables = Exact<{
@@ -580,7 +548,136 @@ export type ConversationsSubscription = (
   ) }
 );
 
+export type NewMessagesSubSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
+
+export type NewMessagesSubSubscription = (
+  { __typename?: 'Subscription' }
+  & { messageEvent: (
+    { __typename?: 'MessageEvent' }
+    & Pick<MessageEvent, 'action'>
+    & { message: (
+      { __typename?: 'Message' }
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
+    ) }
+  ) }
+);
+
+export type SendMessageMutationVariables = Exact<{
+  conversationId: Scalars['Int'];
+  text: Scalars['String'];
+  timestamp: Scalars['DateTime'];
+}>;
+
+
+export type SendMessageMutation = (
+  { __typename?: 'Mutation' }
+  & { sendMessage: (
+    { __typename?: 'Message' }
+    & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
+  ) }
+);
+
+
+export const MarkAsReadDocument = gql`
+    mutation markAsRead($conversationId: Int!) {
+  markAsRead(conversationId: $conversationId) {
+    lastReadMessageId
+  }
+}
+    `;
+export type MarkAsReadMutationFn = Apollo.MutationFunction<MarkAsReadMutation, MarkAsReadMutationVariables>;
+
+/**
+ * __useMarkAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAsReadMutation, { data, loading, error }] = useMarkAsReadMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useMarkAsReadMutation(baseOptions?: Apollo.MutationHookOptions<MarkAsReadMutation, MarkAsReadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MarkAsReadMutation, MarkAsReadMutationVariables>(MarkAsReadDocument, options);
+      }
+export type MarkAsReadMutationHookResult = ReturnType<typeof useMarkAsReadMutation>;
+export type MarkAsReadMutationResult = Apollo.MutationResult<MarkAsReadMutation>;
+export type MarkAsReadMutationOptions = Apollo.BaseMutationOptions<MarkAsReadMutation, MarkAsReadMutationVariables>;
+export const StartTypingDocument = gql`
+    mutation startTyping($conversationId: Int!) {
+  startTyping(conversationId: $conversationId) {
+    id
+  }
+}
+    `;
+export type StartTypingMutationFn = Apollo.MutationFunction<StartTypingMutation, StartTypingMutationVariables>;
+
+/**
+ * __useStartTypingMutation__
+ *
+ * To run a mutation, you first call `useStartTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startTypingMutation, { data, loading, error }] = useStartTypingMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useStartTypingMutation(baseOptions?: Apollo.MutationHookOptions<StartTypingMutation, StartTypingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartTypingMutation, StartTypingMutationVariables>(StartTypingDocument, options);
+      }
+export type StartTypingMutationHookResult = ReturnType<typeof useStartTypingMutation>;
+export type StartTypingMutationResult = Apollo.MutationResult<StartTypingMutation>;
+export type StartTypingMutationOptions = Apollo.BaseMutationOptions<StartTypingMutation, StartTypingMutationVariables>;
+export const StopTypingDocument = gql`
+    mutation stopTyping($conversationId: Int!) {
+  stopTyping(conversationId: $conversationId) {
+    id
+  }
+}
+    `;
+export type StopTypingMutationFn = Apollo.MutationFunction<StopTypingMutation, StopTypingMutationVariables>;
+
+/**
+ * __useStopTypingMutation__
+ *
+ * To run a mutation, you first call `useStopTypingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopTypingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopTypingMutation, { data, loading, error }] = useStopTypingMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useStopTypingMutation(baseOptions?: Apollo.MutationHookOptions<StopTypingMutation, StopTypingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopTypingMutation, StopTypingMutationVariables>(StopTypingDocument, options);
+      }
+export type StopTypingMutationHookResult = ReturnType<typeof useStopTypingMutation>;
+export type StopTypingMutationResult = Apollo.MutationResult<StopTypingMutation>;
+export type StopTypingMutationOptions = Apollo.BaseMutationOptions<StopTypingMutation, StopTypingMutationVariables>;
 export const ConversationDetailsDocument = gql`
     query ConversationDetails($conversationId: Int!) {
   conversation(id: $conversationId) {
@@ -683,182 +780,6 @@ export function useConversationMessagesLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type ConversationMessagesQueryHookResult = ReturnType<typeof useConversationMessagesQuery>;
 export type ConversationMessagesLazyQueryHookResult = ReturnType<typeof useConversationMessagesLazyQuery>;
 export type ConversationMessagesQueryResult = Apollo.QueryResult<ConversationMessagesQuery, ConversationMessagesQueryVariables>;
-export const NewMessagesSubDocument = gql`
-    subscription NewMessagesSub($conversationId: Int!) {
-  messageEvent(conversationId: $conversationId, actions: [CREATE]) {
-    action
-    message {
-      id
-      authorType
-      authorId
-      conversationId
-      content
-      createdAt
-    }
-  }
-}
-    `;
-
-/**
- * __useNewMessagesSubSubscription__
- *
- * To run a query within a React component, call `useNewMessagesSubSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNewMessagesSubSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useNewMessagesSubSubscription({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *   },
- * });
- */
-export function useNewMessagesSubSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>(NewMessagesSubDocument, options);
-      }
-export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
-export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
-export const MarkAsReadDocument = gql`
-    mutation markAsRead($conversationId: Int!) {
-  markAsRead(conversationId: $conversationId) {
-    lastReadMessageId
-  }
-}
-    `;
-export type MarkAsReadMutationFn = Apollo.MutationFunction<MarkAsReadMutation, MarkAsReadMutationVariables>;
-
-/**
- * __useMarkAsReadMutation__
- *
- * To run a mutation, you first call `useMarkAsReadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useMarkAsReadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [markAsReadMutation, { data, loading, error }] = useMarkAsReadMutation({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *   },
- * });
- */
-export function useMarkAsReadMutation(baseOptions?: Apollo.MutationHookOptions<MarkAsReadMutation, MarkAsReadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<MarkAsReadMutation, MarkAsReadMutationVariables>(MarkAsReadDocument, options);
-      }
-export type MarkAsReadMutationHookResult = ReturnType<typeof useMarkAsReadMutation>;
-export type MarkAsReadMutationResult = Apollo.MutationResult<MarkAsReadMutation>;
-export type MarkAsReadMutationOptions = Apollo.BaseMutationOptions<MarkAsReadMutation, MarkAsReadMutationVariables>;
-export const SendMessageDocument = gql`
-    mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
-  sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {
-    id
-    authorType
-    authorId
-    content
-    createdAt
-  }
-}
-    `;
-export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
-
-/**
- * __useSendMessageMutation__
- *
- * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSendMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *      text: // value for 'text'
- *      timestamp: // value for 'timestamp'
- *   },
- * });
- */
-export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
-      }
-export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
-export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
-export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;
-export const StartTypingDocument = gql`
-    mutation startTyping($conversationId: Int!) {
-  startTyping(conversationId: $conversationId) {
-    id
-  }
-}
-    `;
-export type StartTypingMutationFn = Apollo.MutationFunction<StartTypingMutation, StartTypingMutationVariables>;
-
-/**
- * __useStartTypingMutation__
- *
- * To run a mutation, you first call `useStartTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useStartTypingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [startTypingMutation, { data, loading, error }] = useStartTypingMutation({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *   },
- * });
- */
-export function useStartTypingMutation(baseOptions?: Apollo.MutationHookOptions<StartTypingMutation, StartTypingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StartTypingMutation, StartTypingMutationVariables>(StartTypingDocument, options);
-      }
-export type StartTypingMutationHookResult = ReturnType<typeof useStartTypingMutation>;
-export type StartTypingMutationResult = Apollo.MutationResult<StartTypingMutation>;
-export type StartTypingMutationOptions = Apollo.BaseMutationOptions<StartTypingMutation, StartTypingMutationVariables>;
-export const StopTypingDocument = gql`
-    mutation stopTyping($conversationId: Int!) {
-  stopTyping(conversationId: $conversationId) {
-    id
-  }
-}
-    `;
-export type StopTypingMutationFn = Apollo.MutationFunction<StopTypingMutation, StopTypingMutationVariables>;
-
-/**
- * __useStopTypingMutation__
- *
- * To run a mutation, you first call `useStopTypingMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useStopTypingMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [stopTypingMutation, { data, loading, error }] = useStopTypingMutation({
- *   variables: {
- *      conversationId: // value for 'conversationId'
- *   },
- * });
- */
-export function useStopTypingMutation(baseOptions?: Apollo.MutationHookOptions<StopTypingMutation, StopTypingMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<StopTypingMutation, StopTypingMutationVariables>(StopTypingDocument, options);
-      }
-export type StopTypingMutationHookResult = ReturnType<typeof useStopTypingMutation>;
-export type StopTypingMutationResult = Apollo.MutationResult<StopTypingMutation>;
-export type StopTypingMutationOptions = Apollo.BaseMutationOptions<StopTypingMutation, StopTypingMutationVariables>;
 export const CustomerConversationsListDocument = gql`
     query CustomerConversationsList($type: ConversationType, $limit: Int, $after: Int) {
   conversations(type: $type, limit: $limit, after: $after) {
@@ -951,3 +872,79 @@ export function useConversationsSubscription(baseOptions?: Apollo.SubscriptionHo
       }
 export type ConversationsSubscriptionHookResult = ReturnType<typeof useConversationsSubscription>;
 export type ConversationsSubscriptionResult = Apollo.SubscriptionResult<ConversationsSubscription>;
+export const NewMessagesSubDocument = gql`
+    subscription NewMessagesSub {
+  messageEvent(actions: [CREATE]) {
+    action
+    message {
+      id
+      authorType
+      authorId
+      conversationId
+      content
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewMessagesSubSubscription__
+ *
+ * To run a query within a React component, call `useNewMessagesSubSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessagesSubSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessagesSubSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewMessagesSubSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewMessagesSubSubscription, NewMessagesSubSubscriptionVariables>(NewMessagesSubDocument, options);
+      }
+export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
+export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
+export const SendMessageDocument = gql`
+    mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
+  sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {
+    id
+    authorType
+    authorId
+    content
+    createdAt
+  }
+}
+    `;
+export type SendMessageMutationFn = Apollo.MutationFunction<SendMessageMutation, SendMessageMutationVariables>;
+
+/**
+ * __useSendMessageMutation__
+ *
+ * To run a mutation, you first call `useSendMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendMessageMutation, { data, loading, error }] = useSendMessageMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *      text: // value for 'text'
+ *      timestamp: // value for 'timestamp'
+ *   },
+ * });
+ */
+export function useSendMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendMessageMutation, SendMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument, options);
+      }
+export type SendMessageMutationHookResult = ReturnType<typeof useSendMessageMutation>;
+export type SendMessageMutationResult = Apollo.MutationResult<SendMessageMutation>;
+export type SendMessageMutationOptions = Apollo.BaseMutationOptions<SendMessageMutation, SendMessageMutationVariables>;

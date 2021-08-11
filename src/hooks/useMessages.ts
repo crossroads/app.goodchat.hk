@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNotifications } from './useNotifications'
 import { useSafeSetState } from "./useSafeSetState"
 import { MessageContent } from "../typings/goodchat"
 import { GraphQLError } from "graphql";
@@ -6,6 +7,7 @@ import { useAsync } from './useAsync'
 import uniqueId from 'lodash/uniqueId'
 import uniqBy from 'lodash/sortedUniqBy'
 import update from 'immutability-helper'
+import { QueryTypes } from '../typings/goodchat'
 import {
   ConversationMessagesQuery,
   SendMessageMutation,
@@ -21,14 +23,9 @@ import {
 
 const DEFAULT_PAGE_SIZE = 25;
 
-type Definite<T> = Exclude<T, null | undefined>
-
 type Callback<T = void> = (arg: T) => any
 
-export type ConversationRecord = ConversationMessagesQuery["conversation"]
-
-export type MessageRecord = Definite<ConversationRecord>["messages"][0];
-
+type MessageRecord = QueryTypes.MessageRecord
 export interface WrappedMessage {
   uid: string
   type: "localMessage" | "savedMessage"
@@ -150,20 +147,30 @@ export const useMessages = (props: UseMessagesProps) => {
 
   const { refetch } = useConversationMessagesQuery({ skip: true });
 
-  const { error: subscriptionError } = useNewMessagesSubSubscription({
-    variables: { conversationId: Number(conversationId) },
-    onSubscriptionData: ({ subscriptionData }) => {
-      const message = subscriptionData.data?.messageEvent?.message
-
-      if (!message) return;
-
+  useNotifications({
+    onNewMessage: (message) => {
       const wrapper = wrapMessage(message);
 
       addMessages([wrapper]);
       onNewMessage(wrapper)
       markAsRead()
     }
-  });
+  })
+
+  // const { error: subscriptionError } = useNewMessagesSubSubscription({
+  //   variables: { conversationId: Number(conversationId) },
+  //   onSubscriptionData: ({ subscriptionData }) => {
+  //     const message = subscriptionData.data?.messageEvent?.message
+
+  //     if (!message) return;
+
+  //     const wrapper = wrapMessage(message);
+
+  //     addMessages([wrapper]);
+  //     onNewMessage(wrapper)
+  //     markAsRead()
+  //   }
+  // });
 
   // ---------------------------------
   // ~ HOOK API
@@ -295,7 +302,7 @@ export const useMessages = (props: UseMessagesProps) => {
     complete,
     createMessage,
     retry: pushMessage,
-    error: error || subscriptionError || null
+    error: error || null
   }
 }
 

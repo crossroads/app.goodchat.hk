@@ -1,6 +1,6 @@
 import GoodChatMockedProvider from "test-utils/components/GoodChatMockedProvider/GoodChatMockedProvider";
 import { render, RenderOptions, RenderResult } from "@testing-library/react";
-import AuthProvider from "components/AuthProvider/AuthProvider";
+import AuthProvider from "providers/AuthProvider/AuthProvider";
 import MainRouter from "components/MainRouter/MainRouter";
 import { createMemoryHistory } from "history";
 import { act } from "react-dom/test-utils";

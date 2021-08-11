@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, render } from "@testing-library/react";
-import AuthProvider from "components/AuthProvider/AuthProvider";
+import AuthProvider from "providers/AuthProvider/AuthProvider";
 import PrivateRoute from "components/PrivateRoute/PrivateRoute";
 import { Router, Redirect as MockRedirect } from "react-router";
 import { createMemoryHistory } from "history";

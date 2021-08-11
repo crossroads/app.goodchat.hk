@@ -1,3 +1,6 @@
+import { ConversationMessagesQuery } from '../generated/graphql'
+import { Definite } from './lang'
+
 /**
  * Message Content Object - Common properties
  *
@@ -46,4 +49,7 @@ export enum AuthorType {
 };
 
 export * from '../generated/graphql'
-
+export declare namespace QueryTypes {
+  export type ConversationRecord = ConversationMessagesQuery["conversation"]
+  export type MessageRecord = Definite<ConversationRecord>["messages"][0];
+}

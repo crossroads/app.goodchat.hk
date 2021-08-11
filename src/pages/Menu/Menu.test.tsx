@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { testPageHeader } from "test-utils/matchers";
 import Menu from "pages/Menu/Menu";
 import userEvent, { TargetElement } from "@testing-library/user-event";
-import AuthProvider from "components/AuthProvider/AuthProvider";
+import AuthProvider from "providers/AuthProvider/AuthProvider";
 import { renderPage } from "test-utils/renderers";
 import useAuth from "hooks/useAuth/useAuth";
 import { ionFireEvent } from "@ionic/react-test-utils";

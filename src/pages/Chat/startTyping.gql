@@ -1,5 +1,0 @@
-mutation startTyping($conversationId: Int!) {
-  startTyping(conversationId: $conversationId) {
-    id
-  }
-}

@@ -2,8 +2,8 @@ import React from "react";
 import { IonApp } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import MainRouter from "components/MainRouter/MainRouter";
-import AuthProvider from "components/AuthProvider/AuthProvider";
-import GoodChatProvider from "components/GoodChatProvider/GoodChatProvider";
+import AuthProvider from "providers/AuthProvider/AuthProvider";
+import GoodChatProvider from "providers/GoodChatProvider/GoodChatProvider";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
