@@ -116,7 +116,7 @@ platform :android do
       version_name:             version_name,
       json_key:                 ReleaseUtils::Android.json_key_filepath,
       apk:                      ReleaseUtils::Android.apk_path,
-      release_status:           'inProgress',
+      release_status:           'completed',
       skip_upload_images:       true,
       skip_upload_screenshots:  true,
     )
