@@ -44,6 +44,11 @@ commands:
           root: ~/
           paths: code/build
 
+  setup_node:
+    steps:
+      - node/install-packages:
+          version: 7.20.3
+
   setup_environment:
     steps:
       - run: echo 'export GC_ENV_FILE=<< pipeline.parameters.gc_env_file >>' >> $BASH_ENV
@@ -110,6 +115,7 @@ jobs:
     steps:
       - restore_repo
       - setup_environment
+      - setup_node
       - node/install-packages:
           override-ci-command: npm ci --include=dev
           with-cache: true
@@ -119,6 +125,7 @@ jobs:
     steps:
       - restore_repo
       - apply_environment
+      - setup_node
       - node/install-packages:
           override-ci-command: npm ci --include=dev
           with-cache: true
@@ -132,6 +139,7 @@ jobs:
     steps:
       - restore_repo
       - apply_environment
+      - setup_node
       - node/install-packages:
           override-ci-command: npm ci --include=dev
           with-cache: true
