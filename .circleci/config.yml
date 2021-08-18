@@ -46,7 +46,7 @@ commands:
 
   setup_node:
     steps:
-      - node/install-packages:
+      - node/install-npm:
           version: 7.20.3
 
   setup_environment:
