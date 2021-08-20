@@ -8,6 +8,8 @@ subscription NewMessagesSub {
       conversationId
       content
       createdAt
+      customerDeliveryStatus
+      customerDeliveryError
     }
   }
 }

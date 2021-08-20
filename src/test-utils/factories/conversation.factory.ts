@@ -6,6 +6,7 @@ import {
   Conversation,
   Message,
   ConversationType,
+  DeliveryStatus
 } from '../../typings/goodchat'
 
 // ---------------------------------
@@ -48,6 +49,7 @@ export const conversationFactory = Factory.define<Conversation, ConversationFact
     messages: messages,
     readReceipts: [],
     staffs: [],
+    tags: [],
     _computed: {
       conversationId: id,
       totalMessageCount: 0,

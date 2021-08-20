@@ -3,7 +3,10 @@ mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime
     id
     authorType
     authorId
+    conversationId
     content
     createdAt
+    customerDeliveryStatus
+    customerDeliveryError
   }
 }

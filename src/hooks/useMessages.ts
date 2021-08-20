@@ -8,13 +8,12 @@ import uniqueId from 'lodash/uniqueId'
 import uniqBy from 'lodash/sortedUniqBy'
 import update from 'immutability-helper'
 import { QueryTypes } from '../typings/goodchat'
+import { fireAndForget } from "lib/utils/async";
 import {
-  ConversationMessagesQuery,
   SendMessageMutation,
   useConversationMessagesQuery,
   useMarkAsReadMutation,
-  useNewMessagesSubSubscription,
-  useSendMessageMutation,
+  useSendMessageMutation
 } from "../generated/graphql";
 
 // --------------------------------
@@ -83,7 +82,7 @@ export const useMessages = (props: UseMessagesProps) => {
   })
 
   useEffect(() => {
-    markAsRead()
+    fireAndForget(markAsRead);
   }, [])
 
   const addMessages = (newMessages?: WrappedMessage[]) => {
@@ -153,7 +152,7 @@ export const useMessages = (props: UseMessagesProps) => {
 
       addMessages([wrapper]);
       onNewMessage(wrapper)
-      markAsRead()
+      fireAndForget(markAsRead);
     }
   })
 

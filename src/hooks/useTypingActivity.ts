@@ -1,10 +1,12 @@
-import { 
-  useStartTypingMutation, 
-  useStopTypingMutation
-} from 'generated/graphql'
+import { fireAndForget } from 'lib/utils/async';
 import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
 import throttle from 'lodash/throttle';
+import {
+  useStartTypingMutation,
+  useStopTypingMutation
+} from 'generated/graphql'
+
 
 const useTypingActivity = (conversationId: number) => {
   const [startTyping] = useStartTypingMutation({
@@ -13,7 +15,7 @@ const useTypingActivity = (conversationId: number) => {
     }
   })
   const throttledStartTyping = useCallback(
-    throttle(startTyping, 1500), 
+    throttle(() => fireAndForget(startTyping), 1500),
     [startTyping]
   );
 
@@ -22,8 +24,9 @@ const useTypingActivity = (conversationId: number) => {
       conversationId: conversationId
     }
   })
+
   const debouncedStopTyping = useCallback(
-    debounce(stopTyping, 2000), 
+    debounce(() => fireAndForget(stopTyping), 2000),
     [stopTyping]
   );
 

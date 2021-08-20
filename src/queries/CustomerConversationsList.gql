@@ -7,7 +7,14 @@ query CustomerConversationsList($type: ConversationType, $limit: Int, $after: In
       displayName
     }
     messages(limit: 1) {
+      id
+      authorType
+      authorId
+      conversationId
       content
+      createdAt
+      customerDeliveryStatus
+      customerDeliveryError
     },
     _computed {
       unreadMessageCount
@@ -26,7 +33,14 @@ subscription conversations($type: ConversationType) {
         displayName
       }
       messages(limit: 1) {
+        id
+        authorType
+        authorId
+        conversationId
         content
+        createdAt
+        customerDeliveryStatus
+        customerDeliveryError
       }
       _computed {
         unreadMessageCount

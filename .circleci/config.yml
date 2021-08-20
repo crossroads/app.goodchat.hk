@@ -181,7 +181,8 @@ jobs:
       - run: (cd fastlane && bundle install)
       - run: brew install azure-cli
       - run: brew install node@14
-      - run: npm install
+      - run: npm install -g npm@7
+      - run: npm install --include=dev
       - run: az login --service-principal --username $AZURE_SP --password $AZURE_SP_PASSWORD --tenant $AZURE_SP_TENANT
       - run: mkdir -pv ~/Library/MobileDevice/Provisioning\ Profiles/
       - when:

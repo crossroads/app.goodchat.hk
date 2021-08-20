@@ -4,6 +4,7 @@ import { WrappedMessage, useMessages } from "hooks/useMessages"
 import React, { useRef, useState } from "react"
 import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
 import { useTranslation } from "react-i18next"
+import useTypingActivity from 'hooks/useTypingActivity'
 import { MessageFooter } from 'components/Chat/MessageFooter'
 import { MessageBody } from 'components/Chat/MessageBody'
 import { timeString } from "lib/utils/strings"
@@ -30,7 +31,6 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/react";
-import useTypingActivity from 'hooks/useTypingActivity'
 
 // ---------------------------------
 // ~ TYPES

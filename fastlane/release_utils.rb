@@ -44,7 +44,7 @@ module ReleaseUtils
 
   def assert_env_vars_exist!(required_vars)
     missing_vars = required_vars.select { |key| !ENV[key] }
-    
+
     if missing_vars.length > 0
       Shell.error("Missing Environment variables:")
       missing_vars.each { |key|  Shell.info("- #{key}") }
@@ -62,7 +62,7 @@ module ReleaseUtils
     def ionic_config_path
       File.join(ReleaseUtils.root_folder, 'ionic.config.json')
     end
-  
+
     def inject_ionic_app_id
       Shell.info("Injecting the Ionic App ID into config files")
 
@@ -70,7 +70,7 @@ module ReleaseUtils
 
       IOS.plist_set('IonAppId', ionic_app_id)
       Android.strings_xml_set('ionic_app_id', ionic_app_id)
-    end  
+    end
 
     def enable_code_push(channel:, method:)
       IOS.plist_set('IonChannelName', channel)
@@ -94,7 +94,7 @@ module ReleaseUtils
     def error(str)
       log("Error: #{str}".colorize('red'))
     end
-  
+
     def sh(cmd)
       Dir.chdir(ReleaseUtils.root_folder) { system(ENV, cmd) }
     end
@@ -165,17 +165,17 @@ module ReleaseUtils
     def prepare_assets!
       Shell.xsh %{ npm run cap:sync -- android }
     end
-    
+
     def assert_environment!
       ReleaseUtils.assert_env_vars_exist! [
         'GOOGLE_PLAY_KEY_FILE'
       ]
     end
-    
+
     def project_folder
       File.join [ReleaseUtils.root_folder, 'android']
     end
-    
+
     def strings_xml_set(key, value)
       FileUtils.edit_xml(Android.strings_xml_path, "string[@name='#{key}']") do |e|
         e.text = value

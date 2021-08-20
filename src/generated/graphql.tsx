@@ -171,6 +171,7 @@ export type Conversation = {
   messages: Array<Message>;
   readReceipts: Array<ReadReceipt>;
   staffs: Array<Staff>;
+  tags: Array<Tag>;
   _computed: ConversationAggregates;
 };
 
@@ -272,6 +273,8 @@ export type Mutation = {
   stopTyping: Conversation;
   markAsRead: ReadReceipt;
   createConversation: Conversation;
+  tagConversation: Conversation;
+  untagConversation: Conversation;
 };
 
 
@@ -305,6 +308,18 @@ export type MutationCreateConversationArgs = {
 };
 
 
+export type MutationTagConversationArgs = {
+  conversationId: Scalars['Int'];
+  tagId: Scalars['Int'];
+};
+
+
+export type MutationUntagConversationArgs = {
+  conversationId: Scalars['Int'];
+  tagId: Scalars['Int'];
+};
+
+
 
 
 
@@ -320,6 +335,7 @@ export type MutationCreateConversationArgs = {
 export type Query = {
   __typename?: 'Query';
   goodchatProfile: Staff;
+  tags: Array<Tag>;
   conversations: Array<Conversation>;
   conversation?: Maybe<Conversation>;
   customers: Array<Customer>;
@@ -330,6 +346,7 @@ export type QueryConversationsArgs = {
   limit?: Maybe<Scalars['Int']>;
   after?: Maybe<Scalars['Int']>;
   type?: Maybe<ConversationType>;
+  tagIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 
@@ -408,6 +425,14 @@ export enum SubscriptionAction {
   Update = 'UPDATE',
   Delete = 'DELETE'
 }
+
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
 
 
 
@@ -491,7 +516,7 @@ export type ConversationMessagesQuery = (
     & Pick<Conversation, 'id'>
     & { messages: Array<(
       { __typename?: 'Message' }
-      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
     )> }
   )> }
 );
@@ -513,7 +538,7 @@ export type CustomerConversationsListQuery = (
       & Pick<Customer, 'displayName'>
     )>, messages: Array<(
       { __typename?: 'Message' }
-      & Pick<Message, 'content'>
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
     )>, _computed: (
       { __typename?: 'ConversationAggregates' }
       & Pick<ConversationAggregates, 'unreadMessageCount'>
@@ -539,7 +564,7 @@ export type ConversationsSubscription = (
         & Pick<Customer, 'displayName'>
       )>, messages: Array<(
         { __typename?: 'Message' }
-        & Pick<Message, 'content'>
+        & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
       )>, _computed: (
         { __typename?: 'ConversationAggregates' }
         & Pick<ConversationAggregates, 'unreadMessageCount'>
@@ -558,7 +583,7 @@ export type NewMessagesSubSubscription = (
     & Pick<MessageEvent, 'action'>
     & { message: (
       { __typename?: 'Message' }
-      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt'>
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
     ) }
   ) }
 );
@@ -574,7 +599,7 @@ export type SendMessageMutation = (
   { __typename?: 'Mutation' }
   & { sendMessage: (
     { __typename?: 'Message' }
-    & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt'>
+    & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
   ) }
 );
 
@@ -746,6 +771,8 @@ export const ConversationMessagesDocument = gql`
       authorId
       content
       createdAt
+      customerDeliveryStatus
+      customerDeliveryError
     }
   }
 }
@@ -790,7 +817,14 @@ export const CustomerConversationsListDocument = gql`
       displayName
     }
     messages(limit: 1) {
+      id
+      authorType
+      authorId
+      conversationId
       content
+      createdAt
+      customerDeliveryStatus
+      customerDeliveryError
     }
     _computed {
       unreadMessageCount
@@ -840,7 +874,14 @@ export const ConversationsDocument = gql`
         displayName
       }
       messages(limit: 1) {
+        id
+        authorType
+        authorId
+        conversationId
         content
+        createdAt
+        customerDeliveryStatus
+        customerDeliveryError
       }
       _computed {
         unreadMessageCount
@@ -883,6 +924,8 @@ export const NewMessagesSubDocument = gql`
       conversationId
       content
       createdAt
+      customerDeliveryStatus
+      customerDeliveryError
     }
   }
 }
@@ -915,8 +958,11 @@ export const SendMessageDocument = gql`
     id
     authorType
     authorId
+    conversationId
     content
     createdAt
+    customerDeliveryStatus
+    customerDeliveryError
   }
 }
     `;
