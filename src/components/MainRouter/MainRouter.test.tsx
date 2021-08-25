@@ -3,7 +3,6 @@ import * as factories from 'test-utils/factories'
 import { ConversationType } from "generated/graphql";
 import * as Chat from "pages/Chat/Chat";
 import mediator from "lib/services/Mediator/Mediator";
-import { ApolloError } from "@apollo/client";
 import { act } from "react-dom/test-utils";
 
 // prevents not wrapped in act warning
