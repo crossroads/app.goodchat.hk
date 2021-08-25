@@ -3,6 +3,7 @@ import { AuthorType, ConversationType } from "typings/goodchat"
 import { WrappedMessage, useMessages } from "hooks/useMessages"
 import React, { useRef, useState } from "react"
 import { useLayoutTrigger } from 'hooks/useLayoutTrigger'
+import { useOnceContentRendered } from "hooks/useMutation"
 import { useTranslation } from "react-i18next"
 import useTypingActivity from 'hooks/useTypingActivity'
 import { MessageFooter } from 'components/Chat/MessageFooter'
@@ -67,6 +68,7 @@ const getMessageTime = (message: WrappedMessage) => {
   return timeString(new Date(message.timestamp));
 }
 
+
 // ---------------------------------
 // ~ STYLE
 // ---------------------------------
@@ -87,6 +89,7 @@ const Chat: React.FC = () => {
   const [disableInfiniteScroll, setDisableInfiniteScroll] = useState(false);
   const { conversationId } = useParams<ChatPageParams>();
   const ionContent = useRef<HTMLIonContentElement>(null);
+  const ionList = useRef<HTMLIonListElement>(null);
   const { t } = useTranslation();
 
   // ---------------------------------
@@ -95,9 +98,11 @@ const Chat: React.FC = () => {
 
   const [triggerScroll] = useLayoutTrigger(() => {
     if (ionContent.current?.scrollToBottom) {
-      ionContent.current.scrollToBottom(500);
+      ionContent.current.scrollToBottom(250);
     }
   })
+
+  useOnceContentRendered(ionList, triggerScroll);
 
   // ---------------------------------
   // ~ DATA
@@ -110,12 +115,8 @@ const Chat: React.FC = () => {
     error
   } = useMessages({
     conversationId: Number(conversationId),
-    onComplete: () => {
-      setDisableInfiniteScroll(true)
-    },
-    onNewMessage: () => {
-      triggerScroll();
-    }
+    onComplete: () => setDisableInfiniteScroll(true),
+    onNewMessage: () => triggerScroll()
   })
 
   const { data: details } = useConversationDetailsQuery({
@@ -189,7 +190,8 @@ const Chat: React.FC = () => {
           <IonInfiniteScrollContent loadingSpinner="circles"></IonInfiniteScrollContent>
         </IonInfiniteScroll>
 
-        <IonList>
+        <IonList ref={ionList}>
+
           {/* List of messages */}
           {messages.map((m) => {
             const side = m.record?.authorType === AuthorType.CUSTOMER ? "start" : "end"
@@ -209,8 +211,8 @@ const Chat: React.FC = () => {
 
         {/* Input Message Box */}
         <Sticky position="bottom" zIndex={9999}>
-          <MessageInput 
-            onSubmit={onInputSubmit} 
+          <MessageInput
+            onSubmit={onInputSubmit}
             submitOnEnter={true}
             onChange={type}
           />
