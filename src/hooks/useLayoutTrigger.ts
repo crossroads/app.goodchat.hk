@@ -16,8 +16,10 @@ type UseCounterTuple = [TriggerFunc]
   const [counter, setCounter] = useState(0);
 
   useEffect(() => {
-    const timeout = setTimeout(fn, 0);
-    return () => clearTimeout(timeout);
+    if (counter > 0) {
+      const timeout = setTimeout(fn, 0);
+      return () => clearTimeout(timeout);
+    }
   }, [counter])
 
   const trigger : TriggerFunc = () => {

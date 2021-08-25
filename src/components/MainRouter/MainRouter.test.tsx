@@ -2,6 +2,8 @@ import { renderPage } from "test-utils/renderers";
 import * as factories from 'test-utils/factories'
 import { ConversationType } from "generated/graphql";
 import * as Chat from "pages/Chat/Chat";
+import mediator from "lib/services/Mediator/Mediator";
+import { act } from "react-dom/test-utils";
 
 // prevents not wrapped in act warning
 jest.spyOn(Chat, 'default').mockImplementation(() => null);
@@ -57,5 +59,19 @@ describe("Authenticated User", () => {
       })
       expect(history.location.pathname).toEqual(expectedPath);
     });
+  });
+
+  it('redirects to the login page if a 401 is propagated', async () => {
+    const { history } = await renderPage('/home');
+
+    expect(history.location.pathname).toEqual('/home');
+
+    act(() => {
+      mediator.emit("graphQLError", {
+        extensions: { code: "UNAUTHENTICATED" }
+      } as any);
+    });
+
+    expect(history.location.pathname).toEqual('/login');
   });
 });
