@@ -516,7 +516,7 @@ export type ConversationMessagesQuery = (
     & Pick<Conversation, 'id'>
     & { messages: Array<(
       { __typename?: 'Message' }
-      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
+      & Pick<Message, 'id' | 'authorType' | 'authorId' | 'content' | 'createdAt' | 'conversationId' | 'customerDeliveryStatus' | 'customerDeliveryError'>
     )> }
   )> }
 );
@@ -585,6 +585,17 @@ export type NewMessagesSubSubscription = (
       { __typename?: 'Message' }
       & Pick<Message, 'id' | 'authorType' | 'authorId' | 'conversationId' | 'content' | 'createdAt' | 'customerDeliveryStatus' | 'customerDeliveryError'>
     ) }
+  ) }
+);
+
+export type UserProfileQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserProfileQuery = (
+  { __typename?: 'Query' }
+  & { goodchatProfile: (
+    { __typename?: 'Staff' }
+    & Pick<Staff, 'id' | 'createdAt' | 'updatedAt' | 'externalId' | 'displayName' | 'metadata' | 'permissions'>
   ) }
 );
 
@@ -771,6 +782,7 @@ export const ConversationMessagesDocument = gql`
       authorId
       content
       createdAt
+      conversationId
       customerDeliveryStatus
       customerDeliveryError
     }
@@ -952,6 +964,46 @@ export function useNewMessagesSubSubscription(baseOptions?: Apollo.SubscriptionH
       }
 export type NewMessagesSubSubscriptionHookResult = ReturnType<typeof useNewMessagesSubSubscription>;
 export type NewMessagesSubSubscriptionResult = Apollo.SubscriptionResult<NewMessagesSubSubscription>;
+export const UserProfileDocument = gql`
+    query UserProfile {
+  goodchatProfile {
+    id
+    createdAt
+    updatedAt
+    externalId
+    displayName
+    metadata
+    permissions
+  }
+}
+    `;
+
+/**
+ * __useUserProfileQuery__
+ *
+ * To run a query within a React component, call `useUserProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserProfileQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserProfileQuery(baseOptions?: Apollo.QueryHookOptions<UserProfileQuery, UserProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserProfileQuery, UserProfileQueryVariables>(UserProfileDocument, options);
+      }
+export function useUserProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserProfileQuery, UserProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserProfileQuery, UserProfileQueryVariables>(UserProfileDocument, options);
+        }
+export type UserProfileQueryHookResult = ReturnType<typeof useUserProfileQuery>;
+export type UserProfileLazyQueryHookResult = ReturnType<typeof useUserProfileLazyQuery>;
+export type UserProfileQueryResult = Apollo.QueryResult<UserProfileQuery, UserProfileQueryVariables>;
 export const SendMessageDocument = gql`
     mutation sendMessage($conversationId: Int!, $text: String!, $timestamp: DateTime!) {
   sendMessage(conversationId: $conversationId, text: $text, timestamp: $timestamp) {
