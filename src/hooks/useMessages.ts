@@ -148,6 +148,8 @@ export const useMessages = (props: UseMessagesProps) => {
 
   useNotifications({
     onNewMessage: (message) => {
+      if (message.conversationId !== conversationId) return;
+
       const wrapper = wrapMessage(message);
 
       addMessages([wrapper]);

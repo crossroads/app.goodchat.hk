@@ -134,6 +134,7 @@ describe('Content', () => {
     act(() => {
       onNewMessage(
         factories.messageFactory.build({
+          conversationId: conversation.id,
           content: {
             type: 'text',
             text: 'a subscription message'
@@ -458,6 +459,7 @@ describe('Content', () => {
       act(() => {
         onNewMessage(
           factories.messageFactory.build({
+            conversationId: conversation.id,
             content: {
               type: 'text',
               text: 'a subscription message'
@@ -473,6 +475,45 @@ describe('Content', () => {
       const lastMessage = container.querySelector('ion-item:last-child .chat-message .chat-message-content.text');
       expect(lastMessage).toBeInTheDocument();
       expect(lastMessage).toHaveTextContent('a subscription message')
+    })
+  
+    it('doesnt show incoming messages from other conversations', async () => {
+      let onNewMessage: any = null
+
+      const original = UseNotificationsMod.useNotifications;
+      const spy = jest.spyOn(UseNotificationsMod, 'useNotifications')
+        .mockImplementation(({...args}) => {
+          onNewMessage = args.onNewMessage!
+          return original({...args})
+        })
+
+      const { container } = await renderChat();
+
+      expect(spy).toBeCalledWith(
+        expect.objectContaining({
+          onNewMessage: expect.any(Function)
+        })
+      )
+
+      expect(container.querySelectorAll('ion-item')).toHaveLength(PAGE_SIZE)
+      expect(onNewMessage).not.toBeNull();
+
+      act(() => {
+        onNewMessage(
+          factories.messageFactory.build({
+            conversationId: 99999999999, // wrong conversation id
+            content: {
+              type: 'text',
+              text: 'a subscription message'
+            }
+          })
+        )
+      })
+
+      await new Promise((done) => setTimeout(done, 1000));
+
+      // Check that no new message was added to the list
+      expect(container.querySelectorAll('ion-item')).toHaveLength(PAGE_SIZE)
     })
   })
 })
